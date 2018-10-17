@@ -1,0 +1,22 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/thesidjway/agv_ws/src/optimal-visual-servoing/src/OptimizationProblem.cc
+OptimizationProblem.h
+/home/thesidjway/agv_ws/src/optimal-visual-servoing/src/OptimizationProblem.h
+
+/home/thesidjway/agv_ws/src/optimal-visual-servoing/src/OptimizationProblem.h
+cstdlib
+-
+vector
+-
+ctime
+-
+iostream
+-
+

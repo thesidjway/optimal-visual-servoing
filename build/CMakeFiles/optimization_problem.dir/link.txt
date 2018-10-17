@@ -1,0 +1,1 @@
+/usr/bin/c++      CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.o  -o optimization_problem -rdynamic /usr/local/lib/libceres.so.1.11.0 -lglog -Wl,-rpath,/usr/local/lib 
