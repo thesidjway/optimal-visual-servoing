@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/thesidjway/agv_ws/src/optimal-visual-servoing
+CMAKE_SOURCE_DIR = /home/thesidjway/research_ws/src/optimal-visual-servoing
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/thesidjway/agv_ws/src/optimal-visual-servoing/build
+CMAKE_BINARY_DIR = /home/thesidjway/research_ws/src/optimal-visual-servoing/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/optimization_problem.dir/depend.make
@@ -59,16 +59,16 @@ include CMakeFiles/optimization_problem.dir/flags.make
 
 CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.o: CMakeFiles/optimization_problem.dir/flags.make
 CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.o: ../src/OptimizationProblem.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/thesidjway/agv_ws/src/optimal-visual-servoing/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.o -c /home/thesidjway/agv_ws/src/optimal-visual-servoing/src/OptimizationProblem.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/thesidjway/research_ws/src/optimal-visual-servoing/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.o -c /home/thesidjway/research_ws/src/optimal-visual-servoing/src/OptimizationProblem.cc
 
 CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/thesidjway/agv_ws/src/optimal-visual-servoing/src/OptimizationProblem.cc > CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.i
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/thesidjway/research_ws/src/optimal-visual-servoing/src/OptimizationProblem.cc > CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.i
 
 CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/thesidjway/agv_ws/src/optimal-visual-servoing/src/OptimizationProblem.cc -o CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.s
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/thesidjway/research_ws/src/optimal-visual-servoing/src/OptimizationProblem.cc -o CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.s
 
 CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.o.requires:
 
@@ -81,19 +81,173 @@ CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.o.provides: CMake
 CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.o.provides.build: CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.o
 
 
+CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.o: CMakeFiles/optimization_problem.dir/flags.make
+CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.o: ../src/CircleOfInterest.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/thesidjway/research_ws/src/optimal-visual-servoing/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.o -c /home/thesidjway/research_ws/src/optimal-visual-servoing/src/CircleOfInterest.cc
+
+CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/thesidjway/research_ws/src/optimal-visual-servoing/src/CircleOfInterest.cc > CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.i
+
+CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/thesidjway/research_ws/src/optimal-visual-servoing/src/CircleOfInterest.cc -o CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.s
+
+CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.o.requires:
+
+.PHONY : CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.o.requires
+
+CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.o.provides: CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.o.requires
+	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.o.provides.build
+.PHONY : CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.o.provides
+
+CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.o.provides.build: CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.o
+
+
+CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.o: CMakeFiles/optimization_problem.dir/flags.make
+CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.o: ../src/ArucoTagsDetection.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/thesidjway/research_ws/src/optimal-visual-servoing/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.o -c /home/thesidjway/research_ws/src/optimal-visual-servoing/src/ArucoTagsDetection.cc
+
+CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/thesidjway/research_ws/src/optimal-visual-servoing/src/ArucoTagsDetection.cc > CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.i
+
+CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/thesidjway/research_ws/src/optimal-visual-servoing/src/ArucoTagsDetection.cc -o CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.s
+
+CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.o.requires:
+
+.PHONY : CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.o.requires
+
+CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.o.provides: CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.o.requires
+	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.o.provides.build
+.PHONY : CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.o.provides
+
+CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.o.provides.build: CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.o
+
+
+CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o: CMakeFiles/optimization_problem.dir/flags.make
+CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o: ../src/RobotFeasibleRegion.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/thesidjway/research_ws/src/optimal-visual-servoing/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o -c /home/thesidjway/research_ws/src/optimal-visual-servoing/src/RobotFeasibleRegion.cc
+
+CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/thesidjway/research_ws/src/optimal-visual-servoing/src/RobotFeasibleRegion.cc > CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.i
+
+CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/thesidjway/research_ws/src/optimal-visual-servoing/src/RobotFeasibleRegion.cc -o CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.s
+
+CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o.requires:
+
+.PHONY : CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o.requires
+
+CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o.provides: CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o.requires
+	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o.provides.build
+.PHONY : CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o.provides
+
+CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o.provides.build: CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o
+
+
 # Object files for target optimization_problem
 optimization_problem_OBJECTS = \
-"CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.o"
+"CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.o" \
+"CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.o" \
+"CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.o" \
+"CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o"
 
 # External object files for target optimization_problem
 optimization_problem_EXTERNAL_OBJECTS =
 
 optimization_problem: CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.o
+optimization_problem: CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.o
+optimization_problem: CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.o
+optimization_problem: CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o
 optimization_problem: CMakeFiles/optimization_problem.dir/build.make
-optimization_problem: /usr/local/lib/libceres.so.1.11.0
+optimization_problem: /usr/local/lib/libceres.a
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_stitching3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_superres3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_videostab3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_aruco3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_bgsegm3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_bioinspired3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_ccalib3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_cvv3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_dpm3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_face3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_fuzzy3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_hdf3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_img_hash3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_line_descriptor3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_optflow3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_reg3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_rgbd3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_saliency3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_stereo3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_structured_light3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_surface_matching3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_tracking3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_xfeatures2d3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_ximgproc3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_xobjdetect3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_xphoto3.so.3.3.1
 optimization_problem: /usr/lib/x86_64-linux-gnu/libglog.so
+optimization_problem: /usr/lib/x86_64-linux-gnu/libgflags.so
+optimization_problem: /usr/lib/x86_64-linux-gnu/libspqr.so
+optimization_problem: /usr/lib/x86_64-linux-gnu/libtbb.so
+optimization_problem: /usr/lib/x86_64-linux-gnu/libtbbmalloc.so
+optimization_problem: /usr/lib/x86_64-linux-gnu/libcholmod.so
+optimization_problem: /usr/lib/x86_64-linux-gnu/libccolamd.so
+optimization_problem: /usr/lib/x86_64-linux-gnu/libcamd.so
+optimization_problem: /usr/lib/x86_64-linux-gnu/libcolamd.so
+optimization_problem: /usr/lib/x86_64-linux-gnu/libamd.so
+optimization_problem: /usr/lib/liblapack.so
+optimization_problem: /usr/lib/libf77blas.so
+optimization_problem: /usr/lib/libatlas.so
+optimization_problem: /usr/lib/x86_64-linux-gnu/libsuitesparseconfig.so
+optimization_problem: /usr/lib/x86_64-linux-gnu/librt.so
+optimization_problem: /usr/local/lib/libmetis.so
+optimization_problem: /usr/lib/x86_64-linux-gnu/libcxsparse.so
+optimization_problem: /usr/lib/x86_64-linux-gnu/libspqr.so
+optimization_problem: /usr/lib/x86_64-linux-gnu/libtbb.so
+optimization_problem: /usr/lib/x86_64-linux-gnu/libtbbmalloc.so
+optimization_problem: /usr/lib/x86_64-linux-gnu/libcholmod.so
+optimization_problem: /usr/lib/x86_64-linux-gnu/libccolamd.so
+optimization_problem: /usr/lib/x86_64-linux-gnu/libcamd.so
+optimization_problem: /usr/lib/x86_64-linux-gnu/libcolamd.so
+optimization_problem: /usr/lib/x86_64-linux-gnu/libamd.so
+optimization_problem: /usr/lib/liblapack.so
+optimization_problem: /usr/lib/libf77blas.so
+optimization_problem: /usr/lib/libatlas.so
+optimization_problem: /usr/lib/x86_64-linux-gnu/libsuitesparseconfig.so
+optimization_problem: /usr/lib/x86_64-linux-gnu/librt.so
+optimization_problem: /usr/local/lib/libmetis.so
+optimization_problem: /usr/lib/x86_64-linux-gnu/libcxsparse.so
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_shape3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_photo3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_datasets3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_plot3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_text3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_dnn3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_ml3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_video3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_calib3d3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_features2d3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_highgui3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_videoio3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_viz3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_phase_unwrapping3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_flann3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_imgcodecs3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_objdetect3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_imgproc3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_core3.so.3.3.1
 optimization_problem: CMakeFiles/optimization_problem.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/thesidjway/agv_ws/src/optimal-visual-servoing/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable optimization_problem"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/thesidjway/research_ws/src/optimal-visual-servoing/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable optimization_problem"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/optimization_problem.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -102,6 +256,9 @@ CMakeFiles/optimization_problem.dir/build: optimization_problem
 .PHONY : CMakeFiles/optimization_problem.dir/build
 
 CMakeFiles/optimization_problem.dir/requires: CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.o.requires
+CMakeFiles/optimization_problem.dir/requires: CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.o.requires
+CMakeFiles/optimization_problem.dir/requires: CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.o.requires
+CMakeFiles/optimization_problem.dir/requires: CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o.requires
 
 .PHONY : CMakeFiles/optimization_problem.dir/requires
 
@@ -110,6 +267,6 @@ CMakeFiles/optimization_problem.dir/clean:
 .PHONY : CMakeFiles/optimization_problem.dir/clean
 
 CMakeFiles/optimization_problem.dir/depend:
-	cd /home/thesidjway/agv_ws/src/optimal-visual-servoing/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/thesidjway/agv_ws/src/optimal-visual-servoing /home/thesidjway/agv_ws/src/optimal-visual-servoing /home/thesidjway/agv_ws/src/optimal-visual-servoing/build /home/thesidjway/agv_ws/src/optimal-visual-servoing/build /home/thesidjway/agv_ws/src/optimal-visual-servoing/build/CMakeFiles/optimization_problem.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/thesidjway/research_ws/src/optimal-visual-servoing/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/thesidjway/research_ws/src/optimal-visual-servoing /home/thesidjway/research_ws/src/optimal-visual-servoing /home/thesidjway/research_ws/src/optimal-visual-servoing/build /home/thesidjway/research_ws/src/optimal-visual-servoing/build /home/thesidjway/research_ws/src/optimal-visual-servoing/build/CMakeFiles/optimization_problem.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/optimization_problem.dir/depend
 

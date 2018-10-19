@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/thesidjway/agv_ws/src/optimal-visual-servoing
+CMAKE_SOURCE_DIR = /home/thesidjway/research_ws/src/optimal-visual-servoing
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/thesidjway/agv_ws/src/optimal-visual-servoing/build
+CMAKE_BINARY_DIR = /home/thesidjway/research_ws/src/optimal-visual-servoing/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/thesidjway/agv_ws/src/optimal-visual-servoing/build/CMakeFiles /home/thesidjway/agv_ws/src/optimal-visual-servoing/build/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/thesidjway/research_ws/src/optimal-visual-servoing/build/CMakeFiles /home/thesidjway/research_ws/src/optimal-visual-servoing/build/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/thesidjway/agv_ws/src/optimal-visual-servoing/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/thesidjway/research_ws/src/optimal-visual-servoing/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -123,6 +123,60 @@ optimization_problem/fast:
 	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/build
 .PHONY : optimization_problem/fast
 
+src/ArucoTagsDetection.o: src/ArucoTagsDetection.cc.o
+
+.PHONY : src/ArucoTagsDetection.o
+
+# target to build an object file
+src/ArucoTagsDetection.cc.o:
+	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.o
+.PHONY : src/ArucoTagsDetection.cc.o
+
+src/ArucoTagsDetection.i: src/ArucoTagsDetection.cc.i
+
+.PHONY : src/ArucoTagsDetection.i
+
+# target to preprocess a source file
+src/ArucoTagsDetection.cc.i:
+	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.i
+.PHONY : src/ArucoTagsDetection.cc.i
+
+src/ArucoTagsDetection.s: src/ArucoTagsDetection.cc.s
+
+.PHONY : src/ArucoTagsDetection.s
+
+# target to generate assembly for a file
+src/ArucoTagsDetection.cc.s:
+	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.s
+.PHONY : src/ArucoTagsDetection.cc.s
+
+src/CircleOfInterest.o: src/CircleOfInterest.cc.o
+
+.PHONY : src/CircleOfInterest.o
+
+# target to build an object file
+src/CircleOfInterest.cc.o:
+	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.o
+.PHONY : src/CircleOfInterest.cc.o
+
+src/CircleOfInterest.i: src/CircleOfInterest.cc.i
+
+.PHONY : src/CircleOfInterest.i
+
+# target to preprocess a source file
+src/CircleOfInterest.cc.i:
+	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.i
+.PHONY : src/CircleOfInterest.cc.i
+
+src/CircleOfInterest.s: src/CircleOfInterest.cc.s
+
+.PHONY : src/CircleOfInterest.s
+
+# target to generate assembly for a file
+src/CircleOfInterest.cc.s:
+	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.s
+.PHONY : src/CircleOfInterest.cc.s
+
 src/OptimizationProblem.o: src/OptimizationProblem.cc.o
 
 .PHONY : src/OptimizationProblem.o
@@ -150,6 +204,33 @@ src/OptimizationProblem.cc.s:
 	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.s
 .PHONY : src/OptimizationProblem.cc.s
 
+src/RobotFeasibleRegion.o: src/RobotFeasibleRegion.cc.o
+
+.PHONY : src/RobotFeasibleRegion.o
+
+# target to build an object file
+src/RobotFeasibleRegion.cc.o:
+	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o
+.PHONY : src/RobotFeasibleRegion.cc.o
+
+src/RobotFeasibleRegion.i: src/RobotFeasibleRegion.cc.i
+
+.PHONY : src/RobotFeasibleRegion.i
+
+# target to preprocess a source file
+src/RobotFeasibleRegion.cc.i:
+	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.i
+.PHONY : src/RobotFeasibleRegion.cc.i
+
+src/RobotFeasibleRegion.s: src/RobotFeasibleRegion.cc.s
+
+.PHONY : src/RobotFeasibleRegion.s
+
+# target to generate assembly for a file
+src/RobotFeasibleRegion.cc.s:
+	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.s
+.PHONY : src/RobotFeasibleRegion.cc.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -159,9 +240,18 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... optimization_problem"
+	@echo "... src/ArucoTagsDetection.o"
+	@echo "... src/ArucoTagsDetection.i"
+	@echo "... src/ArucoTagsDetection.s"
+	@echo "... src/CircleOfInterest.o"
+	@echo "... src/CircleOfInterest.i"
+	@echo "... src/CircleOfInterest.s"
 	@echo "... src/OptimizationProblem.o"
 	@echo "... src/OptimizationProblem.i"
 	@echo "... src/OptimizationProblem.s"
+	@echo "... src/RobotFeasibleRegion.o"
+	@echo "... src/RobotFeasibleRegion.i"
+	@echo "... src/RobotFeasibleRegion.s"
 .PHONY : help
 
 
