@@ -16,5 +16,29 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
+#pragma once
 
-#include <optimal_visual_servoing/RobotFeasibleRegion.h>
+struct Velocities {
+    double vel;
+    double omega;
+};
+
+struct RobotState {
+    double x;
+    double y;
+    double yaw;
+    double vel;
+    double omega;
+};
+
+class DynamicWindow
+{
+private:
+    void propagateMotion ( RobotState& state );
+    void calcTrajectory();
+
+public:
+    DynamicWindow();
+    ~DynamicWindow();
+    void getFeasibleSearchSpace ( RobotState& state );
+};

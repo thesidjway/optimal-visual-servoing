@@ -20,7 +20,8 @@
 #include <optimal_visual_servoing/ArucoTagsDetection.h>
 
 ArucoTagsDetection::ArucoTagsDetection() {
-    readDetectorParameters ( "/home/thesidjway/experimental_ws/src/markers-depth-estimator/data/detector_params.yml" );
+    params_ = cv::aruco::DetectorParameters::create();
+    readDetectorParameters ( "/home/thesidjway/detector_params.yml" );
 
 }
 
@@ -55,16 +56,19 @@ bool ArucoTagsDetection::readDetectorParameters ( std::string filename ) {
     return true;
 }
 
-void ArucoTagsDetection::detectArucoTags ( cv::Mat& img ) {
+void ArucoTagsDetection::detectArucoTags ( cv::Mat& img, Eigen::Vector3d& point ) {
     std::vector<int> markerIds;
     std::vector<std::vector<cv::Point2f>> markerCorners;
-    cv::Mat inputImage = cv::imread ( "/home/thesidjway/experimental_ws/src/markers-depth-estimator/data/image-test.png" );
     cv::Ptr<cv::aruco::Dictionary> dictionary = cv::aruco::getPredefinedDictionary ( 16 );
-    cv::aruco::detectMarkers ( inputImage,
+    cv::aruco::detectMarkers ( img,
                                dictionary,
                                markerCorners,
                                markerIds,
                                params_,
                                cv::noArray() );
+    // @TODO
+    //cv::aruco::estimatePoseSingleMarkers(markerCorners, );
+    //point(0) = ( markerCorners[0][0].x + markerCorners[0][1].x + markerCorners[0][2].x + markerCorners[0][3].x ) / 4 ;
+    //point(1) = ( markerCorners[0][0].y + markerCorners[0][1].y + markerCorners[0][2].y + markerCorners[0][3].y ) / 4 ;
 }
 

@@ -129,28 +129,28 @@ CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.o.provides: CMakeF
 CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.o.provides.build: CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.o
 
 
-CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o: CMakeFiles/optimization_problem.dir/flags.make
-CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o: ../src/RobotFeasibleRegion.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/thesidjway/research_ws/src/optimal-visual-servoing/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o -c /home/thesidjway/research_ws/src/optimal-visual-servoing/src/RobotFeasibleRegion.cc
+CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o: CMakeFiles/optimization_problem.dir/flags.make
+CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o: ../src/DynamicWindow.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/thesidjway/research_ws/src/optimal-visual-servoing/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o -c /home/thesidjway/research_ws/src/optimal-visual-servoing/src/DynamicWindow.cc
 
-CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/thesidjway/research_ws/src/optimal-visual-servoing/src/RobotFeasibleRegion.cc > CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.i
+CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/thesidjway/research_ws/src/optimal-visual-servoing/src/DynamicWindow.cc > CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.i
 
-CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/thesidjway/research_ws/src/optimal-visual-servoing/src/RobotFeasibleRegion.cc -o CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.s
+CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/thesidjway/research_ws/src/optimal-visual-servoing/src/DynamicWindow.cc -o CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.s
 
-CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o.requires:
+CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o.requires:
 
-.PHONY : CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o.requires
+.PHONY : CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o.requires
 
-CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o.provides: CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o.requires
-	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o.provides.build
-.PHONY : CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o.provides
+CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o.provides: CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o.requires
+	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o.provides.build
+.PHONY : CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o.provides
 
-CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o.provides.build: CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o
+CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o.provides.build: CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o
 
 
 # Object files for target optimization_problem
@@ -158,7 +158,7 @@ optimization_problem_OBJECTS = \
 "CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.o" \
 "CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.o" \
 "CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.o" \
-"CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o"
+"CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o"
 
 # External object files for target optimization_problem
 optimization_problem_EXTERNAL_OBJECTS =
@@ -166,7 +166,7 @@ optimization_problem_EXTERNAL_OBJECTS =
 optimization_problem: CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.o
 optimization_problem: CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.o
 optimization_problem: CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.o
-optimization_problem: CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o
+optimization_problem: CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o
 optimization_problem: CMakeFiles/optimization_problem.dir/build.make
 optimization_problem: /usr/local/lib/libceres.a
 optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_stitching3.so.3.3.1
@@ -258,7 +258,7 @@ CMakeFiles/optimization_problem.dir/build: optimization_problem
 CMakeFiles/optimization_problem.dir/requires: CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.o.requires
 CMakeFiles/optimization_problem.dir/requires: CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.o.requires
 CMakeFiles/optimization_problem.dir/requires: CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.o.requires
-CMakeFiles/optimization_problem.dir/requires: CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o.requires
+CMakeFiles/optimization_problem.dir/requires: CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o.requires
 
 .PHONY : CMakeFiles/optimization_problem.dir/requires
 

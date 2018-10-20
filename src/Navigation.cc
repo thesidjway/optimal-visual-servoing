@@ -17,17 +17,4 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-  
-    Ptr<aruco::DetectorParameters> detectorParams = aruco::DetectorParameters::create();
-    readDetectorParameters("/home/thesidjway/experimental_ws/src/markers-depth-estimator/data/detector_params.yml", detectorParams);
-    std::vector<int> markerIds;
-    std::vector<std::vector<cv::Point2f>> markerCorners;
-    cv::Mat inputImage = imread("/home/thesidjway/experimental_ws/src/markers-depth-estimator/data/image-test.png");
-    cv::Ptr<cv::aruco::Dictionary> dictionary = cv::aruco::getPredefinedDictionary(16);
-    cv::aruco::detectMarkers(inputImage, 
-			     dictionary, 
-			     markerCorners, 
-			     markerIds,
-			     detectorParams,
-			     noArray()
-			    );
+#include <optimal_visual_servoing/Navigation.h>

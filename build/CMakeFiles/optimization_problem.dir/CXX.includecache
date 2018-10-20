@@ -11,10 +11,14 @@ opencv2/opencv.hpp
 -
 opencv2/aruco.hpp
 -
+Eigen/Eigen
+-
 
 ../include/optimal_visual_servoing/CircleOfInterest.h
 Eigen/Eigen
 -
+
+../include/optimal_visual_servoing/DynamicWindow.h
 
 ../include/optimal_visual_servoing/OptimizationProblem.h
 cstdlib
@@ -28,8 +32,6 @@ iostream
 ceres/ceres.h
 -
 
-../include/optimal_visual_servoing/RobotFeasibleRegion.h
-
 /home/thesidjway/research_ws/src/optimal-visual-servoing/src/ArucoTagsDetection.cc
 optimal_visual_servoing/ArucoTagsDetection.h
 -
@@ -38,12 +40,12 @@ optimal_visual_servoing/ArucoTagsDetection.h
 optimal_visual_servoing/CircleOfInterest.h
 -
 
-/home/thesidjway/research_ws/src/optimal-visual-servoing/src/OptimizationProblem.cc
-optimal_visual_servoing/OptimizationProblem.h
+/home/thesidjway/research_ws/src/optimal-visual-servoing/src/DynamicWindow.cc
+optimal_visual_servoing/DynamicWindow.h
 -
 
-/home/thesidjway/research_ws/src/optimal-visual-servoing/src/RobotFeasibleRegion.cc
-optimal_visual_servoing/RobotFeasibleRegion.h
+/home/thesidjway/research_ws/src/optimal-visual-servoing/src/OptimizationProblem.cc
+optimal_visual_servoing/OptimizationProblem.h
 -
 
 /opt/ros/kinetic/include/opencv-3.3.1-dev/opencv/cxcore.h

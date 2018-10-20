@@ -139,9 +139,9 @@ CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.o
 CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.o
  ../include/optimal_visual_servoing/CircleOfInterest.h
  /home/thesidjway/research_ws/src/optimal-visual-servoing/src/CircleOfInterest.cc
+CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o
+ ../include/optimal_visual_servoing/DynamicWindow.h
+ /home/thesidjway/research_ws/src/optimal-visual-servoing/src/DynamicWindow.cc
 CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.o
  ../include/optimal_visual_servoing/OptimizationProblem.h
  /home/thesidjway/research_ws/src/optimal-visual-servoing/src/OptimizationProblem.cc
-CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o
- ../include/optimal_visual_servoing/RobotFeasibleRegion.h
- /home/thesidjway/research_ws/src/optimal-visual-servoing/src/RobotFeasibleRegion.cc

@@ -20,6 +20,7 @@
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/aruco.hpp>
+#include <Eigen/Eigen>
 
 class ArucoTagsDetection
 {
@@ -29,5 +30,5 @@ private:
 public:
     ArucoTagsDetection();
     ~ArucoTagsDetection();
-    void detectArucoTags ( cv::Mat& img );
+    void detectArucoTags ( cv::Mat& img, Eigen::Vector3d& point );
 };

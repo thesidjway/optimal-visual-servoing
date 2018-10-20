@@ -139,9 +139,9 @@ CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.o: /opt/ros/kineti
 CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.o: ../include/optimal_visual_servoing/CircleOfInterest.h
 CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.o: ../src/CircleOfInterest.cc
 
+CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o: ../include/optimal_visual_servoing/DynamicWindow.h
+CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o: ../src/DynamicWindow.cc
+
 CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.o: ../include/optimal_visual_servoing/OptimizationProblem.h
 CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.o: ../src/OptimizationProblem.cc
-
-CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o: ../include/optimal_visual_servoing/RobotFeasibleRegion.h
-CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o: ../src/RobotFeasibleRegion.cc
 

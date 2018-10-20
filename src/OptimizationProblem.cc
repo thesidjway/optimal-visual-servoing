@@ -35,7 +35,6 @@ void OptimizationProblem::generateData ( std::vector<RangeDataTuple>& gen_data )
 
 
 void OptimizationProblem::addRangeFactor ( RangeDataTuple& tuple ) {
-    std::cout << tuple.median_dist << " " << tuple.bearing << " " << tuple.width << std::endl;
     ceres::CostFunction* cost_function =
         DistanceError::Create ( tuple );
     problem.AddResidualBlock ( cost_function,

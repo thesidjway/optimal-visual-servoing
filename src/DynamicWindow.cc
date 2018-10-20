@@ -17,22 +17,25 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <optimal_visual_servoing/CircleOfInterest.h>
+#include <optimal_visual_servoing/DynamicWindow.h>
 
-CircleOfInterest::CircleOfInterest() {  
-
-}
-
-CircleOfInterest::~CircleOfInterest() {
+DynamicWindow::DynamicWindow() {
 
 }
 
+DynamicWindow::~DynamicWindow() {
 
-void CircleOfInterest::getCircleOfInterest ( Eigen::Vector3d& target_point, Circle& circle ) {
-    if ( target_point ( 2 ) < sphere_radius_ ) {
-        circle = Circle ( sqrt ( sphere_radius_ * sphere_radius_ - target_point ( 2 ) * target_point ( 2 ) ), target_point ( 0 ), target_point ( 1 ) );
-    } else {
-        circle = Circle ( 1 , target_point(0) , target_point(1) );
-    }
+}
+
+void DynamicWindow::propagateMotion( RobotState& state ) {
+  
+}
+
+void DynamicWindow::calcTrajectory() {
+
+}
+
+void DynamicWindow::getFeasibleSearchSpace ( RobotState& state ) {
+
 }
 

@@ -177,6 +177,33 @@ src/CircleOfInterest.cc.s:
 	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.s
 .PHONY : src/CircleOfInterest.cc.s
 
+src/DynamicWindow.o: src/DynamicWindow.cc.o
+
+.PHONY : src/DynamicWindow.o
+
+# target to build an object file
+src/DynamicWindow.cc.o:
+	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o
+.PHONY : src/DynamicWindow.cc.o
+
+src/DynamicWindow.i: src/DynamicWindow.cc.i
+
+.PHONY : src/DynamicWindow.i
+
+# target to preprocess a source file
+src/DynamicWindow.cc.i:
+	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.i
+.PHONY : src/DynamicWindow.cc.i
+
+src/DynamicWindow.s: src/DynamicWindow.cc.s
+
+.PHONY : src/DynamicWindow.s
+
+# target to generate assembly for a file
+src/DynamicWindow.cc.s:
+	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.s
+.PHONY : src/DynamicWindow.cc.s
+
 src/OptimizationProblem.o: src/OptimizationProblem.cc.o
 
 .PHONY : src/OptimizationProblem.o
@@ -204,33 +231,6 @@ src/OptimizationProblem.cc.s:
 	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.s
 .PHONY : src/OptimizationProblem.cc.s
 
-src/RobotFeasibleRegion.o: src/RobotFeasibleRegion.cc.o
-
-.PHONY : src/RobotFeasibleRegion.o
-
-# target to build an object file
-src/RobotFeasibleRegion.cc.o:
-	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.o
-.PHONY : src/RobotFeasibleRegion.cc.o
-
-src/RobotFeasibleRegion.i: src/RobotFeasibleRegion.cc.i
-
-.PHONY : src/RobotFeasibleRegion.i
-
-# target to preprocess a source file
-src/RobotFeasibleRegion.cc.i:
-	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.i
-.PHONY : src/RobotFeasibleRegion.cc.i
-
-src/RobotFeasibleRegion.s: src/RobotFeasibleRegion.cc.s
-
-.PHONY : src/RobotFeasibleRegion.s
-
-# target to generate assembly for a file
-src/RobotFeasibleRegion.cc.s:
-	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/RobotFeasibleRegion.cc.s
-.PHONY : src/RobotFeasibleRegion.cc.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -246,12 +246,12 @@ help:
 	@echo "... src/CircleOfInterest.o"
 	@echo "... src/CircleOfInterest.i"
 	@echo "... src/CircleOfInterest.s"
+	@echo "... src/DynamicWindow.o"
+	@echo "... src/DynamicWindow.i"
+	@echo "... src/DynamicWindow.s"
 	@echo "... src/OptimizationProblem.o"
 	@echo "... src/OptimizationProblem.i"
 	@echo "... src/OptimizationProblem.s"
-	@echo "... src/RobotFeasibleRegion.o"
-	@echo "... src/RobotFeasibleRegion.i"
-	@echo "... src/RobotFeasibleRegion.s"
 .PHONY : help
 
 
