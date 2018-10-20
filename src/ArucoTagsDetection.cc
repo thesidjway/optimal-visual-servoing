@@ -58,7 +58,7 @@ bool ArucoTagsDetection::readDetectorParameters ( std::string filename ) {
 
 
 
-void ArucoTagsDetection::detectArucoTags ( cv::Mat& img, Eigen::Vector3d& point ) {
+void ArucoTagsDetection::detectArucoTags ( cv::Mat &img, Eigen::Vector3d &point ) {
     std::vector<int> markerIds;
     std::vector<std::vector<cv::Point2f>> markerCorners;
     cv::Ptr<cv::aruco::Dictionary> dictionary = cv::aruco::getPredefinedDictionary ( 16 );
@@ -69,7 +69,7 @@ void ArucoTagsDetection::detectArucoTags ( cv::Mat& img, Eigen::Vector3d& point 
                                detector_params_,
                                cv::noArray() );
     cv::Mat r_marker, t_marker;
-    cv::aruco::estimatePoseSingleMarkers(markerCorners, pose_estimation_params_.marker_length, pose_estimation_params_.K, cv::noArray(), r_marker, t_marker);
+    cv::aruco::estimatePoseSingleMarkers ( markerCorners, pose_estimation_params_.marker_length, pose_estimation_params_.K, cv::noArray(), r_marker, t_marker );
     std::cout << r_marker << std::endl;
     std::cout << t_marker << std::endl;
     //point(0) = ( markerCorners[0][0].x + markerCorners[0][1].x + markerCorners[0][2].x + markerCorners[0][3].x ) / 4 ;

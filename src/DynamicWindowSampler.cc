@@ -28,7 +28,7 @@ DynamicWindowSampler::~DynamicWindowSampler() {
 }
 
 
-void DynamicWindowSampler::propagateMotion ( RobotState& state, Velocity& curr_velocity ) {
+void DynamicWindowSampler::propagateMotion ( RobotState &state, Velocity &curr_velocity ) {
     state.yaw += curr_velocity.omega * params_.dt;
     state.x += curr_velocity.vel * cos ( state.yaw ) * params_.dt;
     state.y += curr_velocity.vel * sin ( state.yaw ) * params_.dt;
@@ -36,12 +36,12 @@ void DynamicWindowSampler::propagateMotion ( RobotState& state, Velocity& curr_v
     state.omega = curr_velocity.omega;
 }
 
-void DynamicWindowSampler::calcTrajectory ( RobotState& state, Velocity curr_velocity) {
+void DynamicWindowSampler::calcTrajectory ( RobotState &state, Velocity curr_velocity ) {
     propagateMotion ( state, curr_velocity );
     //state.printState();
 }
 
-void DynamicWindowSampler::calcDynamicWindow ( const RobotState state, DynamicWindow& dynamic_window ) {
+void DynamicWindowSampler::calcDynamicWindow ( const RobotState state, DynamicWindow &dynamic_window ) {
     DynamicWindow Vs = DynamicWindow ( params_.min_speed, params_.max_speed,
                                        -params_.max_yawrate, params_.max_yawrate );
 
@@ -56,13 +56,13 @@ void DynamicWindowSampler::calcDynamicWindow ( const RobotState state, DynamicWi
 }
 
 
-void DynamicWindowSampler::getFeasibleSearchSpace ( RobotState& state, std::vector<RobotState>& feasible_states) {
+void DynamicWindowSampler::getFeasibleSearchSpace ( RobotState &state, std::vector<RobotState> &feasible_states ) {
     DynamicWindow dynamic_window;
     calcDynamicWindow ( state, dynamic_window );
-    for ( double i = dynamic_window.vmin ; i < dynamic_window.vmax ; i+= params_.v_reso ) {
-        for ( double j = dynamic_window.yawrate_min ; j < dynamic_window.yawrate_max ; j+= params_.yawrate_reso ) {
+    for ( double i = dynamic_window.vmin ; i < dynamic_window.vmax ; i += params_.v_reso ) {
+        for ( double j = dynamic_window.yawrate_min ; j < dynamic_window.yawrate_max ; j += params_.yawrate_reso ) {
             calcTrajectory ( state, Velocity ( i , j ) );
-	    feasible_states.push_back(state);
+            feasible_states.push_back ( state );
         }
     }
 }

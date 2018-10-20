@@ -19,7 +19,7 @@
 
 #include <optimal_visual_servoing/CircleOfInterest.h>
 
-CircleOfInterest::CircleOfInterest() {  
+CircleOfInterest::CircleOfInterest() {
 
 }
 
@@ -28,11 +28,11 @@ CircleOfInterest::~CircleOfInterest() {
 }
 
 
-void CircleOfInterest::getCircleOfInterest ( Eigen::Vector3d& target_point, Circle& circle ) {
+void CircleOfInterest::getCircleOfInterest ( Eigen::Vector3d &target_point, Circle &circle ) {
     if ( target_point ( 2 ) < sphere_radius_ ) {
         circle = Circle ( sqrt ( sphere_radius_ * sphere_radius_ - target_point ( 2 ) * target_point ( 2 ) ), target_point ( 0 ), target_point ( 1 ) );
     } else {
-        circle = Circle ( 1 , target_point(0) , target_point(1) );
+        circle = Circle ( 1 , target_point ( 0 ) , target_point ( 1 ) );
     }
 }
 

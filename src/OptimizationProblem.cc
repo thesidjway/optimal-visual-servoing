@@ -19,7 +19,7 @@
 
 #include <optimal_visual_servoing/OptimizationProblem.h>
 
-void OptimizationProblem::generateData ( std::vector<RangeDataTuple>& gen_data ) {
+void OptimizationProblem::generateData ( std::vector<RangeDataTuple> &gen_data ) {
     srand ( time ( NULL ) );
     int angle_init = 0;
     int angle_final = 0;
@@ -34,8 +34,8 @@ void OptimizationProblem::generateData ( std::vector<RangeDataTuple>& gen_data )
 
 
 
-void OptimizationProblem::addRangeFactor ( RangeDataTuple& tuple ) {
-    ceres::CostFunction* cost_function =
+void OptimizationProblem::addRangeFactor ( RangeDataTuple &tuple ) {
+    ceres::CostFunction *cost_function =
         DistanceError::Create ( tuple );
     problem.AddResidualBlock ( cost_function,
                                NULL /* squared loss */,

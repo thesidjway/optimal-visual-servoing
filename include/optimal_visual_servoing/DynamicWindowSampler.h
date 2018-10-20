@@ -88,13 +88,13 @@ struct DynamicWindowParams {
 class DynamicWindowSampler
 {
 private:
-    void propagateMotion ( RobotState& state, Velocity& curr_velocity );
-    void calcDynamicWindow ( const RobotState state, DynamicWindow& dynamic_window );
-    void calcTrajectory ( RobotState& state, Velocity curr_velocity );
+    void propagateMotion ( RobotState &state, Velocity &curr_velocity );
+    void calcDynamicWindow ( const RobotState state, DynamicWindow &dynamic_window );
+    void calcTrajectory ( RobotState &state, Velocity curr_velocity );
     DynamicWindowParams params_;
 
 public:
     DynamicWindowSampler();
     ~DynamicWindowSampler();
-    void getFeasibleSearchSpace ( RobotState& state, std::vector<RobotState>& feasible_states );
+    void getFeasibleSearchSpace ( RobotState &state, std::vector<RobotState> &feasible_states );
 };

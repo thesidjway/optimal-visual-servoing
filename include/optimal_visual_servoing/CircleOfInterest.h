@@ -34,5 +34,5 @@ public:
     ~CircleOfInterest();
 private:
     double sphere_radius_ = 5;
-    void getCircleOfInterest ( Eigen::Vector3d& target_point, Circle& circle );
+    void getCircleOfInterest ( Eigen::Vector3d &target_point, Circle &circle );
 };
