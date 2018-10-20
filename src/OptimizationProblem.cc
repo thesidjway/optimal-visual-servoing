@@ -51,5 +51,4 @@ void OptimizationProblem::optimizeGraph() {
     options.minimizer_progress_to_stdout = true;
     ceres::Solver::Summary summary;
     ceres::Solve ( options, &problem, &summary );
-    std::cout << r1 << " and " << theta1 << std::endl;
 }

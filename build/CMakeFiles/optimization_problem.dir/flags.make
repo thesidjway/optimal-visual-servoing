@@ -6,5 +6,5 @@ CXX_FLAGS =   -std=gnu++11
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/thesidjway/research_ws/src/optimal-visual-servoing/include -I/home/thesidjway/research_ws/src/optimal-visual-servoing/Eigen -isystem /opt/ros/kinetic/include/opencv-3.2.0-dev -isystem /opt/ros/kinetic/include/opencv-3.2.0-dev/opencv 
+CXX_INCLUDES = -I/home/thesidjway/research_ws/src/optimal-visual-servoing/include -I/home/thesidjway/research_ws/src/optimal-visual-servoing/Eigen -isystem /opt/ros/kinetic/include/opencv-3.3.1-dev -isystem /opt/ros/kinetic/include/opencv-3.3.1-dev/opencv 
 

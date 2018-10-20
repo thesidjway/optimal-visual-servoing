@@ -27,31 +27,28 @@ DynamicWindowSampler::~DynamicWindowSampler() {
 
 }
 
+
 void DynamicWindowSampler::propagateMotion ( RobotState& state, Velocity& curr_velocity ) {
+    state.yaw += curr_velocity.omega * params_.dt;
     state.x += curr_velocity.vel * cos ( state.yaw ) * params_.dt;
     state.y += curr_velocity.vel * sin ( state.yaw ) * params_.dt;
-    state.yaw += curr_velocity.omega * params_.dt;
     state.vel = curr_velocity.vel;
-    state.yaw = curr_velocity.omega;
+    state.omega = curr_velocity.omega;
 }
 
-void DynamicWindowSampler::calcTrajectory ( RobotState state, Velocity curr_velocity ) {
-    double time = 0;
-    while ( time <= params_.predict_time ) {
-        propagateMotion(state, curr_velocity);
-        state.printState();
-        time += params_.dt;
-    }
+void DynamicWindowSampler::calcTrajectory ( RobotState& state, Velocity curr_velocity) {
+    propagateMotion ( state, curr_velocity );
+    //state.printState();
 }
 
-void DynamicWindowSampler::calcDynamicWindow ( RobotState& state, DynamicWindow& dynamic_window ) {
+void DynamicWindowSampler::calcDynamicWindow ( const RobotState state, DynamicWindow& dynamic_window ) {
     DynamicWindow Vs = DynamicWindow ( params_.min_speed, params_.max_speed,
                                        -params_.max_yawrate, params_.max_yawrate );
 
     DynamicWindow Vd = DynamicWindow ( state.vel - params_.max_accel * params_.dt,
                                        state.vel + params_.max_accel * params_.dt,
-                                       state.yaw - params_.max_dyawrate * params_.dt,
-                                       state.yaw + params_.max_dyawrate * params_.dt );
+                                       state.omega - params_.max_dyawrate * params_.dt,
+                                       state.omega + params_.max_dyawrate * params_.dt );
 
     dynamic_window = DynamicWindow ( std::max ( Vs.vmin, Vd.vmin ), std::min ( Vs.vmax, Vd.vmax ),
                                      std::max ( Vs.yawrate_min, Vd.yawrate_min ), std::min ( Vs.yawrate_max, Vd.yawrate_max ) );
@@ -59,16 +56,16 @@ void DynamicWindowSampler::calcDynamicWindow ( RobotState& state, DynamicWindow&
 }
 
 
-void DynamicWindowSampler::getFeasibleSearchSpace ( RobotState& state ) {
+void DynamicWindowSampler::getFeasibleSearchSpace ( RobotState& state, std::vector<RobotState>& feasible_states) {
     DynamicWindow dynamic_window;
-    calcDynamicWindow(state, dynamic_window);
-    std::cout << dynamic_window.vmin << " " << dynamic_window.vmax << std::endl;
-    std::cout << dynamic_window.yawrate_min << " " << dynamic_window.yawrate_max << std::endl;
+    calcDynamicWindow ( state, dynamic_window );
     for ( double i = dynamic_window.vmin ; i < dynamic_window.vmax ; i+= params_.v_reso ) {
         for ( double j = dynamic_window.yawrate_min ; j < dynamic_window.yawrate_max ; j+= params_.yawrate_reso ) {
-            calcTrajectory(state, Velocity( i , j ));
+            calcTrajectory ( state, Velocity ( i , j ) );
+	    feasible_states.push_back(state);
         }
     }
 }
+
 
 
