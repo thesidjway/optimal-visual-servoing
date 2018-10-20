@@ -12,5 +12,5 @@ find_package(Ceres REQUIRED)
 find_package (Eigen3 REQUIRED)
 find_package(OpenCV REQUIRED)
 
-add_executable(optimization_problem src/OptimizationProblem.cc src/CircleOfInterest.cc src/ArucoTagsDetection.cc src/DynamicWindow.cc)
+add_executable(optimization_problem src/OptimizationProblem.cc src/CircleOfInterest.cc src/ArucoTagsDetection.cc src/DynamicWindowSampler.cc src/Wrapper.cc)
 target_link_libraries(optimization_problem ceres ${OpenCV_LIBRARIES})

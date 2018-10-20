@@ -129,28 +129,52 @@ CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.o.provides: CMakeF
 CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.o.provides.build: CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.o
 
 
-CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o: CMakeFiles/optimization_problem.dir/flags.make
-CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o: ../src/DynamicWindow.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/thesidjway/research_ws/src/optimal-visual-servoing/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o"
-	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o -c /home/thesidjway/research_ws/src/optimal-visual-servoing/src/DynamicWindow.cc
+CMakeFiles/optimization_problem.dir/src/DynamicWindowSampler.cc.o: CMakeFiles/optimization_problem.dir/flags.make
+CMakeFiles/optimization_problem.dir/src/DynamicWindowSampler.cc.o: ../src/DynamicWindowSampler.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/thesidjway/research_ws/src/optimal-visual-servoing/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/optimization_problem.dir/src/DynamicWindowSampler.cc.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/optimization_problem.dir/src/DynamicWindowSampler.cc.o -c /home/thesidjway/research_ws/src/optimal-visual-servoing/src/DynamicWindowSampler.cc
 
-CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.i"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/thesidjway/research_ws/src/optimal-visual-servoing/src/DynamicWindow.cc > CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.i
+CMakeFiles/optimization_problem.dir/src/DynamicWindowSampler.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/optimization_problem.dir/src/DynamicWindowSampler.cc.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/thesidjway/research_ws/src/optimal-visual-servoing/src/DynamicWindowSampler.cc > CMakeFiles/optimization_problem.dir/src/DynamicWindowSampler.cc.i
 
-CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.s"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/thesidjway/research_ws/src/optimal-visual-servoing/src/DynamicWindow.cc -o CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.s
+CMakeFiles/optimization_problem.dir/src/DynamicWindowSampler.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/optimization_problem.dir/src/DynamicWindowSampler.cc.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/thesidjway/research_ws/src/optimal-visual-servoing/src/DynamicWindowSampler.cc -o CMakeFiles/optimization_problem.dir/src/DynamicWindowSampler.cc.s
 
-CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o.requires:
+CMakeFiles/optimization_problem.dir/src/DynamicWindowSampler.cc.o.requires:
 
-.PHONY : CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o.requires
+.PHONY : CMakeFiles/optimization_problem.dir/src/DynamicWindowSampler.cc.o.requires
 
-CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o.provides: CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o.requires
-	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o.provides.build
-.PHONY : CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o.provides
+CMakeFiles/optimization_problem.dir/src/DynamicWindowSampler.cc.o.provides: CMakeFiles/optimization_problem.dir/src/DynamicWindowSampler.cc.o.requires
+	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/DynamicWindowSampler.cc.o.provides.build
+.PHONY : CMakeFiles/optimization_problem.dir/src/DynamicWindowSampler.cc.o.provides
 
-CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o.provides.build: CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o
+CMakeFiles/optimization_problem.dir/src/DynamicWindowSampler.cc.o.provides.build: CMakeFiles/optimization_problem.dir/src/DynamicWindowSampler.cc.o
+
+
+CMakeFiles/optimization_problem.dir/src/Wrapper.cc.o: CMakeFiles/optimization_problem.dir/flags.make
+CMakeFiles/optimization_problem.dir/src/Wrapper.cc.o: ../src/Wrapper.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/thesidjway/research_ws/src/optimal-visual-servoing/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/optimization_problem.dir/src/Wrapper.cc.o"
+	/usr/bin/c++   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/optimization_problem.dir/src/Wrapper.cc.o -c /home/thesidjway/research_ws/src/optimal-visual-servoing/src/Wrapper.cc
+
+CMakeFiles/optimization_problem.dir/src/Wrapper.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/optimization_problem.dir/src/Wrapper.cc.i"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/thesidjway/research_ws/src/optimal-visual-servoing/src/Wrapper.cc > CMakeFiles/optimization_problem.dir/src/Wrapper.cc.i
+
+CMakeFiles/optimization_problem.dir/src/Wrapper.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/optimization_problem.dir/src/Wrapper.cc.s"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/thesidjway/research_ws/src/optimal-visual-servoing/src/Wrapper.cc -o CMakeFiles/optimization_problem.dir/src/Wrapper.cc.s
+
+CMakeFiles/optimization_problem.dir/src/Wrapper.cc.o.requires:
+
+.PHONY : CMakeFiles/optimization_problem.dir/src/Wrapper.cc.o.requires
+
+CMakeFiles/optimization_problem.dir/src/Wrapper.cc.o.provides: CMakeFiles/optimization_problem.dir/src/Wrapper.cc.o.requires
+	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/Wrapper.cc.o.provides.build
+.PHONY : CMakeFiles/optimization_problem.dir/src/Wrapper.cc.o.provides
+
+CMakeFiles/optimization_problem.dir/src/Wrapper.cc.o.provides.build: CMakeFiles/optimization_problem.dir/src/Wrapper.cc.o
 
 
 # Object files for target optimization_problem
@@ -158,7 +182,8 @@ optimization_problem_OBJECTS = \
 "CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.o" \
 "CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.o" \
 "CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.o" \
-"CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o"
+"CMakeFiles/optimization_problem.dir/src/DynamicWindowSampler.cc.o" \
+"CMakeFiles/optimization_problem.dir/src/Wrapper.cc.o"
 
 # External object files for target optimization_problem
 optimization_problem_EXTERNAL_OBJECTS =
@@ -166,88 +191,55 @@ optimization_problem_EXTERNAL_OBJECTS =
 optimization_problem: CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.o
 optimization_problem: CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.o
 optimization_problem: CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.o
-optimization_problem: CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o
+optimization_problem: CMakeFiles/optimization_problem.dir/src/DynamicWindowSampler.cc.o
+optimization_problem: CMakeFiles/optimization_problem.dir/src/Wrapper.cc.o
 optimization_problem: CMakeFiles/optimization_problem.dir/build.make
-optimization_problem: /usr/local/lib/libceres.a
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_stitching3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_superres3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_videostab3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_aruco3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_bgsegm3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_bioinspired3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_ccalib3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_cvv3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_dpm3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_face3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_fuzzy3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_hdf3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_img_hash3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_line_descriptor3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_optflow3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_reg3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_rgbd3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_saliency3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_stereo3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_structured_light3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_surface_matching3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_tracking3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_xfeatures2d3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_ximgproc3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_xobjdetect3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_xphoto3.so.3.3.1
+optimization_problem: /usr/local/lib/libceres.so.1.11.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_stitching3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_superres3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_videostab3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_aruco3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_bgsegm3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_bioinspired3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_ccalib3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_cvv3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_datasets3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_dpm3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_face3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_fuzzy3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_hdf3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_line_descriptor3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_optflow3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_plot3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_reg3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_saliency3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_stereo3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_structured_light3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_surface_matching3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_text3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_xfeatures2d3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_ximgproc3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_xobjdetect3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_xphoto3.so.3.2.0
 optimization_problem: /usr/lib/x86_64-linux-gnu/libglog.so
-optimization_problem: /usr/lib/x86_64-linux-gnu/libgflags.so
-optimization_problem: /usr/lib/x86_64-linux-gnu/libspqr.so
-optimization_problem: /usr/lib/x86_64-linux-gnu/libtbb.so
-optimization_problem: /usr/lib/x86_64-linux-gnu/libtbbmalloc.so
-optimization_problem: /usr/lib/x86_64-linux-gnu/libcholmod.so
-optimization_problem: /usr/lib/x86_64-linux-gnu/libccolamd.so
-optimization_problem: /usr/lib/x86_64-linux-gnu/libcamd.so
-optimization_problem: /usr/lib/x86_64-linux-gnu/libcolamd.so
-optimization_problem: /usr/lib/x86_64-linux-gnu/libamd.so
-optimization_problem: /usr/lib/liblapack.so
-optimization_problem: /usr/lib/libf77blas.so
-optimization_problem: /usr/lib/libatlas.so
-optimization_problem: /usr/lib/x86_64-linux-gnu/libsuitesparseconfig.so
-optimization_problem: /usr/lib/x86_64-linux-gnu/librt.so
-optimization_problem: /usr/local/lib/libmetis.so
-optimization_problem: /usr/lib/x86_64-linux-gnu/libcxsparse.so
-optimization_problem: /usr/lib/x86_64-linux-gnu/libspqr.so
-optimization_problem: /usr/lib/x86_64-linux-gnu/libtbb.so
-optimization_problem: /usr/lib/x86_64-linux-gnu/libtbbmalloc.so
-optimization_problem: /usr/lib/x86_64-linux-gnu/libcholmod.so
-optimization_problem: /usr/lib/x86_64-linux-gnu/libccolamd.so
-optimization_problem: /usr/lib/x86_64-linux-gnu/libcamd.so
-optimization_problem: /usr/lib/x86_64-linux-gnu/libcolamd.so
-optimization_problem: /usr/lib/x86_64-linux-gnu/libamd.so
-optimization_problem: /usr/lib/liblapack.so
-optimization_problem: /usr/lib/libf77blas.so
-optimization_problem: /usr/lib/libatlas.so
-optimization_problem: /usr/lib/x86_64-linux-gnu/libsuitesparseconfig.so
-optimization_problem: /usr/lib/x86_64-linux-gnu/librt.so
-optimization_problem: /usr/local/lib/libmetis.so
-optimization_problem: /usr/lib/x86_64-linux-gnu/libcxsparse.so
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_shape3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_photo3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_datasets3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_plot3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_text3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_dnn3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_ml3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_video3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_calib3d3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_features2d3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_highgui3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_videoio3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_viz3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_phase_unwrapping3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_flann3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_imgcodecs3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_objdetect3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_imgproc3.so.3.3.1
-optimization_problem: /opt/ros/kinetic/lib/x86_64-linux-gnu/libopencv_core3.so.3.3.1
+optimization_problem: /opt/ros/kinetic/lib/libopencv_shape3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_video3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_viz3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_phase_unwrapping3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_rgbd3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_calib3d3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_features2d3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_flann3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_objdetect3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_ml3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_highgui3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_photo3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_videoio3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_imgcodecs3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_imgproc3.so.3.2.0
+optimization_problem: /opt/ros/kinetic/lib/libopencv_core3.so.3.2.0
 optimization_problem: CMakeFiles/optimization_problem.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/thesidjway/research_ws/src/optimal-visual-servoing/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable optimization_problem"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/thesidjway/research_ws/src/optimal-visual-servoing/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable optimization_problem"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/optimization_problem.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -258,7 +250,8 @@ CMakeFiles/optimization_problem.dir/build: optimization_problem
 CMakeFiles/optimization_problem.dir/requires: CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.o.requires
 CMakeFiles/optimization_problem.dir/requires: CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.o.requires
 CMakeFiles/optimization_problem.dir/requires: CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.o.requires
-CMakeFiles/optimization_problem.dir/requires: CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o.requires
+CMakeFiles/optimization_problem.dir/requires: CMakeFiles/optimization_problem.dir/src/DynamicWindowSampler.cc.o.requires
+CMakeFiles/optimization_problem.dir/requires: CMakeFiles/optimization_problem.dir/src/Wrapper.cc.o.requires
 
 .PHONY : CMakeFiles/optimization_problem.dir/requires
 

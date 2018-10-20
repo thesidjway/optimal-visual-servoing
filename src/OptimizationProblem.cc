@@ -53,13 +53,3 @@ void OptimizationProblem::optimizeGraph() {
     ceres::Solve ( options, &problem, &summary );
     std::cout << r1 << " and " << theta1 << std::endl;
 }
-
-int main ( int argc, char** argv ) {
-    OptimizationProblem opt_problem;
-    std::vector<RangeDataTuple> gen_data;
-    opt_problem.generateData ( gen_data );
-    for ( unsigned int i = 0 ; i < gen_data.size() ; i++ ) {
-        opt_problem.addRangeFactor ( gen_data[i] );
-    }
-    opt_problem.optimizeGraph();
-}

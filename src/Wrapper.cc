@@ -16,29 +16,19 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-#pragma once
 
-struct Velocities {
-    double vel;
-    double omega;
-};
+#include <optimal_visual_servoing/OptimizationProblem.h>
+#include <optimal_visual_servoing/DynamicWindowSampler.h>
 
-struct RobotState {
-    double x;
-    double y;
-    double yaw;
-    double vel;
-    double omega;
-};
-
-class DynamicWindow
-{
-private:
-    void propagateMotion ( RobotState& state );
-    void calcTrajectory();
-
-public:
-    DynamicWindow();
-    ~DynamicWindow();
-    void getFeasibleSearchSpace ( RobotState& state );
-};
+int main ( int argc, char** argv ) {
+    OptimizationProblem opt_problem;
+    DynamicWindowSampler dws;
+    RobotState a = RobotState(0,0,0,0,0.1);
+    dws.getFeasibleSearchSpace(a);
+    std::vector<RangeDataTuple> gen_data;
+    opt_problem.generateData ( gen_data );
+    for ( unsigned int i = 0 ; i < gen_data.size() ; i++ ) {
+        opt_problem.addRangeFactor ( gen_data[i] );
+    }
+    opt_problem.optimizeGraph();
+}

@@ -177,32 +177,32 @@ src/CircleOfInterest.cc.s:
 	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.s
 .PHONY : src/CircleOfInterest.cc.s
 
-src/DynamicWindow.o: src/DynamicWindow.cc.o
+src/DynamicWindowSampler.o: src/DynamicWindowSampler.cc.o
 
-.PHONY : src/DynamicWindow.o
+.PHONY : src/DynamicWindowSampler.o
 
 # target to build an object file
-src/DynamicWindow.cc.o:
-	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o
-.PHONY : src/DynamicWindow.cc.o
+src/DynamicWindowSampler.cc.o:
+	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/DynamicWindowSampler.cc.o
+.PHONY : src/DynamicWindowSampler.cc.o
 
-src/DynamicWindow.i: src/DynamicWindow.cc.i
+src/DynamicWindowSampler.i: src/DynamicWindowSampler.cc.i
 
-.PHONY : src/DynamicWindow.i
+.PHONY : src/DynamicWindowSampler.i
 
 # target to preprocess a source file
-src/DynamicWindow.cc.i:
-	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.i
-.PHONY : src/DynamicWindow.cc.i
+src/DynamicWindowSampler.cc.i:
+	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/DynamicWindowSampler.cc.i
+.PHONY : src/DynamicWindowSampler.cc.i
 
-src/DynamicWindow.s: src/DynamicWindow.cc.s
+src/DynamicWindowSampler.s: src/DynamicWindowSampler.cc.s
 
-.PHONY : src/DynamicWindow.s
+.PHONY : src/DynamicWindowSampler.s
 
 # target to generate assembly for a file
-src/DynamicWindow.cc.s:
-	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.s
-.PHONY : src/DynamicWindow.cc.s
+src/DynamicWindowSampler.cc.s:
+	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/DynamicWindowSampler.cc.s
+.PHONY : src/DynamicWindowSampler.cc.s
 
 src/OptimizationProblem.o: src/OptimizationProblem.cc.o
 
@@ -231,6 +231,33 @@ src/OptimizationProblem.cc.s:
 	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.s
 .PHONY : src/OptimizationProblem.cc.s
 
+src/Wrapper.o: src/Wrapper.cc.o
+
+.PHONY : src/Wrapper.o
+
+# target to build an object file
+src/Wrapper.cc.o:
+	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/Wrapper.cc.o
+.PHONY : src/Wrapper.cc.o
+
+src/Wrapper.i: src/Wrapper.cc.i
+
+.PHONY : src/Wrapper.i
+
+# target to preprocess a source file
+src/Wrapper.cc.i:
+	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/Wrapper.cc.i
+.PHONY : src/Wrapper.cc.i
+
+src/Wrapper.s: src/Wrapper.cc.s
+
+.PHONY : src/Wrapper.s
+
+# target to generate assembly for a file
+src/Wrapper.cc.s:
+	$(MAKE) -f CMakeFiles/optimization_problem.dir/build.make CMakeFiles/optimization_problem.dir/src/Wrapper.cc.s
+.PHONY : src/Wrapper.cc.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -246,12 +273,15 @@ help:
 	@echo "... src/CircleOfInterest.o"
 	@echo "... src/CircleOfInterest.i"
 	@echo "... src/CircleOfInterest.s"
-	@echo "... src/DynamicWindow.o"
-	@echo "... src/DynamicWindow.i"
-	@echo "... src/DynamicWindow.s"
+	@echo "... src/DynamicWindowSampler.o"
+	@echo "... src/DynamicWindowSampler.i"
+	@echo "... src/DynamicWindowSampler.s"
 	@echo "... src/OptimizationProblem.o"
 	@echo "... src/OptimizationProblem.i"
 	@echo "... src/OptimizationProblem.s"
+	@echo "... src/Wrapper.o"
+	@echo "... src/Wrapper.i"
+	@echo "... src/Wrapper.s"
 .PHONY : help
 
 

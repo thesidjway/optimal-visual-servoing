@@ -166,13 +166,13 @@ CMAKE_STRIP:FILEPATH=/usr/bin/strip
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
 //The directory containing a CMake configuration file for Ceres.
-Ceres_DIR:PATH=/usr/local/lib/cmake/Ceres
+Ceres_DIR:PATH=/usr/local/share/Ceres
 
 //Eigen include directory
 EIGEN_INCLUDE_DIR:STRING=/usr/include/eigen3
 
 //The directory containing a CMake configuration file for Eigen3.
-Eigen3_DIR:PATH=Eigen3_DIR-NOTFOUND
+Eigen3_DIR:PATH=/usr/lib/cmake/eigen3
 
 //Path to a file.
 GFLAGS_INCLUDE_DIR:PATH=/usr/include
@@ -190,7 +190,7 @@ GLOG_INCLUDE_DIR:PATH=/usr/include
 GLOG_LIBRARY:FILEPATH=/usr/lib/x86_64-linux-gnu/libglog.so
 
 //The directory containing a CMake configuration file for OpenCV.
-OpenCV_DIR:PATH=/opt/ros/kinetic/share/OpenCV-3.3.1-dev
+OpenCV_DIR:PATH=/opt/ros/kinetic/share/OpenCV-3.2.0-dev
 
 //Value Computed by CMake
 optimal_visual_servoing_BINARY_DIR:STATIC=/home/thesidjway/research_ws/src/optimal-visual-servoing/build
@@ -341,7 +341,7 @@ EIGEN_INCLUDE_DIR-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: Eigen3_DIR
 Eigen3_DIR-ADVANCED:INTERNAL=1
 //Details about finding OpenCV
-FIND_PACKAGE_MESSAGE_DETAILS_OpenCV:INTERNAL=[/opt/ros/kinetic][v3.3.1()]
+FIND_PACKAGE_MESSAGE_DETAILS_OpenCV:INTERNAL=[/opt/ros/kinetic][v3.2.0()]
 //ADVANCED property for variable: GFLAGS_INCLUDE_DIR
 GFLAGS_INCLUDE_DIR-ADVANCED:INTERNAL=1
 //Test GFLAGS_IN_GOOGLE_NAMESPACE

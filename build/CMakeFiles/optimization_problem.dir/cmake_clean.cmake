@@ -2,7 +2,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/optimization_problem.dir/src/OptimizationProblem.cc.o"
   "CMakeFiles/optimization_problem.dir/src/CircleOfInterest.cc.o"
   "CMakeFiles/optimization_problem.dir/src/ArucoTagsDetection.cc.o"
-  "CMakeFiles/optimization_problem.dir/src/DynamicWindow.cc.o"
+  "CMakeFiles/optimization_problem.dir/src/DynamicWindowSampler.cc.o"
+  "CMakeFiles/optimization_problem.dir/src/Wrapper.cc.o"
   "optimization_problem.pdb"
   "optimization_problem"
 )
