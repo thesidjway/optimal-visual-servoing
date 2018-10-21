@@ -42,5 +42,6 @@ public:
     ~OVSWrapper();
     void pointCloudCallback ( const sensor_msgs::LaserScanConstPtr& callback_cloud );
     void imageCallback ( const sensor_msgs::ImageConstPtr& callback_image );
-    
+    std::vector<RangeDataTuple> last_data_clusters_;
+
 };

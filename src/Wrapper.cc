@@ -28,7 +28,7 @@ OVSWrapper::~OVSWrapper() {
 }
 
 void OVSWrapper::pointCloudCallback ( const sensor_msgs::LaserScanConstPtr& laser_scan ) {
-    
+    std::cout << "YEET " << std::endl;
     sensor_msgs::PointCloud2 callback_cloud;
     laser_geometry::LaserProjection lp;
     lp.projectLaser ( *laser_scan, callback_cloud );
@@ -40,7 +40,8 @@ void OVSWrapper::pointCloudCallback ( const sensor_msgs::LaserScanConstPtr& lase
     cluster_extractor_.segmentPointcloud();
     std::vector<RangeDataTuple> segments;
     cluster_extractor_.extractSegmentFeatures ( segments );
-    
+    last_data_clusters_ = segments;
+
     return;
 }
 
@@ -65,7 +66,7 @@ void OVSWrapper::initializeRosPipeline() {
 int main ( int argc, char **argv ) {
     ros::init ( argc, argv, "optimal_visual_servoing" );
     OVSWrapper wrapper;
-    OptimizationProblem opt_problem;
+
 //     DynamicWindowSampler dws;
 //     ArucoTagsDetection detector;
 //     Eigen::Vector3d pt;
@@ -75,14 +76,17 @@ int main ( int argc, char **argv ) {
 //     RobotState a = RobotState ( 0, 0, 1.0, 0.2, 0.6 );
 //     std::vector<RobotState> feasible_states;
 //     dws.getFeasibleSearchSpace ( a, feasible_states );
-    std::vector<RangeDataTuple> gen_data;
-    opt_problem.generateData ( gen_data );
-    for ( unsigned int i = 0 ; i < gen_data.size() ; i++ ) {
-        opt_problem.addRangeFactor ( gen_data[i] );
-    }
-    opt_problem.optimizeGraph();
 
     while ( ros::ok() ) {
+        if (wrapper.last_data_clusters_.size() > 0) {
+	  OptimizationProblem opt_problem;
+	  for ( unsigned int i = 0 ; i < wrapper.last_data_clusters_.size() ; i++ ) {
+	      opt_problem.addRangeFactor ( wrapper.last_data_clusters_[i] );
+	  }
+	  opt_problem.optimizeGraph();
+	  wrapper.last_data_clusters_.clear();
+	}
+
         ros::spinOnce();
     }
 

@@ -46,44 +46,37 @@ void ClusterExtractor::extractSegmentFeatures ( std::vector<RangeDataTuple>& seg
 
     for ( std::vector<pcl::PointIndices>::const_iterator it = cluster_indices_.begin (); it != cluster_indices_.end (); ++it ) {
         pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_cluster ( new pcl::PointCloud<pcl::PointXYZ> );
-        float median_dist, bearing;
-        float max_dist = -1.0, min_dist = 9999.0, max_bearing = -1.0, min_bearing = 361.0;
-        float distal_angle, frontal_angle, width = 0.0;
+        double min_dist = 1000.0, width = -62.0;
+        Eigen::Vector2d bearing_v1, bearing_v2, bearing, x ( 1,0 );
 
 
         for ( std::vector<int>::const_iterator pit = it->indices.begin (); pit != it->indices.end (); ++pit ) {
             cloud_cluster->points.push_back ( input_cloud_->points[*pit] );
-
-            pcl::PointXYZ samp = cloud_cluster->points[0];
-            distal_angle  = atan2f ( samp._PointXYZ::data[1], samp._PointXYZ::data[0] );
-            frontal_angle = distal_angle;
-            for ( unsigned int k = 0; k < cloud_cluster->points.size(); k++ ) {
-                pcl::PointXYZ v = cloud_cluster->points[k];
-                float r_dist = v._PointXYZ::data[0] * v._PointXYZ::data[0] + v._PointXYZ::data[1] * v._PointXYZ::data[1];
-                float theta  = atan2f ( v._PointXYZ::data[1], v._PointXYZ::data[0] ); // (y,x)
-                max_dist = std::max ( r_dist, max_dist );
-                min_dist = std::min ( r_dist, min_dist );
-                max_bearing = std::max ( theta, max_bearing );
-                min_bearing = std::min ( theta, min_bearing );
-                if ( theta < frontal_angle || ( k == ( cloud_cluster->points.size() - 1 ) ) ) {
-                    width = width + frontal_angle - distal_angle;
-                    distal_angle = theta;
-                    frontal_angle = distal_angle;
-                } else {
-                    frontal_angle = theta;
-                }
-                //std::cout << "sample parameters: " << r_dist << " : " << theta <<  std::endl;
-            }
-
-            bearing = max_bearing - width / 2.0;
-            if ( width > M_PI && bearing > 0.0 ) {
-                bearing = bearing - M_PI;
-            } else if ( width > M_PI && bearing <= 0.0 ) {
-                bearing = bearing + M_PI;
-            }
         }
 
-        RangeDataTuple cluster = RangeDataTuple ( min_dist, bearing, width );
+        pcl::PointXYZ v1 = cloud_cluster->points[0];
+        Eigen::Vector2d pcl_v1 ( v1._PointXYZ::data[0], v1._PointXYZ::data[1] );
+        pcl::PointXYZ v2 = cloud_cluster->points[cloud_cluster->points.size() - 1];
+        Eigen::Vector2d pcl_v2 ( v2._PointXYZ::data[0], v2._PointXYZ::data[1] );
+        double angle1 = atan2 ( pcl_v1 ( 1 ) , pcl_v1 ( 0 ) ) ;
+        double angle2 = atan2 ( pcl_v2 ( 1 ) , pcl_v2 ( 0 ) ) ;
+        double bearing_angle = ( angle1 + angle2 ) / 2.0 * 180.0 / M_PI;
+
+        if ( angle2 < angle1 ) {
+            angle2 += 2 * M_PI ;
+        }
+        width = ( angle2 - angle1 ) * 180.0 / M_PI ;
+
+
+        for ( int j=0; j < cloud_cluster->points.size(); j++ ) {
+            pcl::PointXYZ pt = cloud_cluster->points[j];
+            Eigen::Vector2d pcl_pt ( pt._PointXYZ::data[0], pt._PointXYZ::data[1] );
+            min_dist = std::min ( min_dist, pcl_pt.norm() );
+        }
+
+
+
+        RangeDataTuple cluster = RangeDataTuple ( min_dist, bearing_angle, width );
         segments.push_back ( cluster );
         cluster.printDataTuple();
         std::cout << "PointCloud representing the Cluster: " << cloud_cluster->points.size () << " data points." << std::endl;

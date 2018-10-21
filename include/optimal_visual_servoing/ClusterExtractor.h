@@ -35,6 +35,7 @@
 #include <pcl/PCLPointCloud2.h>
 #include <pcl/conversions.h>
 #include <pcl_ros/point_cloud.h>
+#include <Eigen/Dense>
 
 
 struct ClusterExtractionParams {
