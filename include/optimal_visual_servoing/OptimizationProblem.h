@@ -58,6 +58,7 @@ private:
 public:
     OptimizationProblem() {}
     ~OptimizationProblem() {}
+    void addTagFactor ();
     void addRangeFactor ( RangeDataTuple &tuple );
     void generateData ( std::vector<RangeDataTuple> &gen_data );
     void optimizeGraph();

@@ -48,5 +48,5 @@ private:
 public:
     ArucoTagsDetection();
     ~ArucoTagsDetection();
-    void detectArucoTags ( cv::Mat &img, Eigen::Vector3d &point );
+    void detectArucoTags ( cv::Mat &img, Eigen::Vector3d &marker_point, Eigen::Vector2d &marker_projection );
 };

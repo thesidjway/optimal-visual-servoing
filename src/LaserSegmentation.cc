@@ -74,8 +74,8 @@ void ClusterExtractor::extractSegmentFeatures ( std::vector<RangeDataTuple> &seg
             } else if ( width > M_PI && bearing <= 0.0 ) {
                 bearing = bearing + M_PI;
             }
-            RangeDataTuple cluster = RangeDataTuple(min_dist, bearing, width);
-	    segments.push_back(cluster);
+            RangeDataTuple cluster = RangeDataTuple ( min_dist, bearing, width );
+            segments.push_back ( cluster );
         }
         std::cout << "PointCloud representing the Cluster: " << cloud_cluster->points.size () << " data points." << std::endl;
     }

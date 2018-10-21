@@ -31,6 +31,10 @@
 #include <pcl/segmentation/extract_clusters.h>
 #include <pcl/search/impl/search.hpp>
 #include <pcl/search/impl/organized.hpp>
+#include <pcl_conversions/pcl_conversions.h>
+#include <pcl/PCLPointCloud2.h>
+#include <pcl/conversions.h>
+#include <pcl_ros/point_cloud.h>
 
 
 struct ClusterExtractionParams {
