@@ -14,39 +14,46 @@
 
   You should have received a copy of the GNU General Public License
   along with this program; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+  Foundation, Inc., 51 Franklin Stree_t, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <optimal_visual_servoing/LaserSegmentation.h>
+#include <optimal_visual_servoing/ClusterExtractor.h>
 
 ClusterExtractor::ClusterExtractor() {
-    pcl::search::KdTree<pcl::PointXYZ>::Ptr tree ( new pcl::search::KdTree<pcl::PointXYZ> );
-
+    tree_ = boost::make_shared<pcl::search::KdTree<pcl::PointXYZ>>();
 }
 
 ClusterExtractor::~ClusterExtractor() {
 
 }
 
-void ClusterExtractor::segmentPointcloud ( ) {
-    tree->setInputCloud ( input_cloud );
-    euc_cluster.setClusterTolerance ( params_.cluster_tolerance );
-    euc_cluster.setMinClusterSize ( params_.min_cluster_size );
-    euc_cluster.setMaxClusterSize ( params_.max_cluster_size );
-    euc_cluster.setSearchMethod ( tree );
-    euc_cluster.setInputCloud ( input_cloud );
-    euc_cluster.extract ( cluster_indices );
+void ClusterExtractor::setInputCloud ( pcl::PointCloud< pcl::PointXYZ >::Ptr& cloud ) {
+    input_cloud_ = cloud;
 }
 
-void ClusterExtractor::extractSegmentFeatures ( std::vector<RangeDataTuple> &segments ) {
-    for ( std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin (); it != cluster_indices.end (); ++it ) {
-        pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_cluster ( new pcl::PointCloud<pcl::PointXYZ> );
-        for ( std::vector<int>::const_iterator pit = it->indices.begin (); pit != it->indices.end (); ++pit ) {
-            cloud_cluster->points.push_back ( input_cloud->points[*pit] );
 
-            float median_dist, bearing;
-            float max_dist = -1.0, min_dist = 9999.0, max_bearing = -1.0, min_bearing = 361.0;
-            float distal_angle, frontal_angle, width = 0.0;
+void ClusterExtractor::segmentPointcloud ( ) {
+    tree_->setInputCloud ( input_cloud_ );
+    euc_cluster_.setClusterTolerance ( params_.cluster_tolerance );
+    euc_cluster_.setMinClusterSize ( params_.min_cluster_size );
+    euc_cluster_.setMaxClusterSize ( params_.max_cluster_size );
+    euc_cluster_.setSearchMethod ( tree_ );
+    euc_cluster_.setInputCloud ( input_cloud_ );
+    euc_cluster_.extract ( cluster_indices_ );
+}
+
+void ClusterExtractor::extractSegmentFeatures ( std::vector<RangeDataTuple>& segments ) {
+
+    for ( std::vector<pcl::PointIndices>::const_iterator it = cluster_indices_.begin (); it != cluster_indices_.end (); ++it ) {
+        pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_cluster ( new pcl::PointCloud<pcl::PointXYZ> );
+        float median_dist, bearing;
+        float max_dist = -1.0, min_dist = 9999.0, max_bearing = -1.0, min_bearing = 361.0;
+        float distal_angle, frontal_angle, width = 0.0;
+
+
+        for ( std::vector<int>::const_iterator pit = it->indices.begin (); pit != it->indices.end (); ++pit ) {
+            cloud_cluster->points.push_back ( input_cloud_->points[*pit] );
+
             pcl::PointXYZ samp = cloud_cluster->points[0];
             distal_angle  = atan2f ( samp._PointXYZ::data[1], samp._PointXYZ::data[0] );
             frontal_angle = distal_angle;
@@ -74,9 +81,12 @@ void ClusterExtractor::extractSegmentFeatures ( std::vector<RangeDataTuple> &seg
             } else if ( width > M_PI && bearing <= 0.0 ) {
                 bearing = bearing + M_PI;
             }
-            RangeDataTuple cluster = RangeDataTuple ( min_dist, bearing, width );
-            segments.push_back ( cluster );
         }
+
+        RangeDataTuple cluster = RangeDataTuple ( min_dist, bearing, width );
+        segments.push_back ( cluster );
+        cluster.printDataTuple();
         std::cout << "PointCloud representing the Cluster: " << cloud_cluster->points.size () << " data points." << std::endl;
     }
+    cluster_indices_.clear();
 }

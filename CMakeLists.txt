@@ -7,12 +7,13 @@ find_package (catkin REQUIRED COMPONENTS
   roscpp
   rospy
   cv_bridge
+  laser_geometry
   std_msgs)
 
 catkin_package(
 #	INCLUDE_DIRS include
 	LIBRARIES optimal_visual_servoing
-	CATKIN_DEPENDS roscpp rospy std_msgs pcl_ros cv_bridge
+	CATKIN_DEPENDS roscpp rospy std_msgs pcl_ros cv_bridge laser_geometry
 )
 
 include_directories(
@@ -33,5 +34,5 @@ find_package (OpenCV REQUIRED)
 find_package (PCL REQUIRED COMPONENTS common io)
 
 
-add_executable(optimal_visual_servoing src/OptimizationProblem.cc src/CircleOfInterest.cc src/ArucoTagsDetection.cc src/DynamicWindowSampler.cc src/Wrapper.cc src/LaserSegmentation.cc)
+add_executable(optimal_visual_servoing src/OptimizationProblem.cc src/CircleOfInterest.cc src/ArucoTagsDetection.cc src/DynamicWindowSampler.cc src/Wrapper.cc src/ClusterExtractor.cc)
 target_link_libraries(optimal_visual_servoing ceres ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} pcl_search pcl_segmentation )

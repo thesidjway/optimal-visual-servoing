@@ -45,7 +45,7 @@ struct ClusterExtractionParams {
                               int max_cluster_size )
         : cluster_tolerance ( cluster_tolerance ), max_cluster_size ( max_cluster_size ), min_cluster_size ( min_cluster_size ) {}
 
-    double cluster_tolerance = 0.7f;
+    double cluster_tolerance = 0.1f; // 1.0 equals 1 m
     int min_cluster_size  = 10;
     int max_cluster_size  = 5000;
 };
@@ -54,15 +54,17 @@ class ClusterExtractor
 {
 private:
     ClusterExtractionParams params_;
-    std::vector<pcl::PointIndices> cluster_indices;
-    pcl::EuclideanClusterExtraction<pcl::PointXYZ> euc_cluster;
-    pcl::search::KdTree<pcl::PointXYZ>::Ptr tree;
-    pcl::PointCloud< pcl::PointXYZ >::Ptr input_cloud;
+    std::vector<pcl::PointIndices> cluster_indices_;
+    pcl::EuclideanClusterExtraction<pcl::PointXYZ> euc_cluster_;
+    pcl::PointCloud< pcl::PointXYZ >::Ptr input_cloud_;
+    pcl::search::KdTree<pcl::PointXYZ>::Ptr tree_; 
+    
 
 public:
     ClusterExtractor();
     ~ClusterExtractor();
     void segmentPointcloud ();
+    void setInputCloud ( pcl::PointCloud< pcl::PointXYZ >::Ptr& cloud );
     void extractSegmentFeatures ( std::vector<RangeDataTuple>& segments );
 
 };

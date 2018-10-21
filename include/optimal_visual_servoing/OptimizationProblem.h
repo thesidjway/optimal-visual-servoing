@@ -25,10 +25,14 @@
 #include <ceres/ceres.h>
 
 struct RangeDataTuple {
+    RangeDataTuple () {}
     RangeDataTuple ( double median_dist, double bearing, double width ) : median_dist ( median_dist ), bearing ( bearing ), width ( width ) {}
     double median_dist;
     double bearing;
     double width;
+    void printDataTuple () {
+      std::cout << " median_dist : " << median_dist << ", bearing : " << bearing << " , width : " << width  << std::endl;
+    }
 };
 
 class OptimizationProblem
