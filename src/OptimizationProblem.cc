@@ -32,15 +32,13 @@ void OptimizationProblem::generateData ( std::vector<RangeDataTuple> &gen_data )
     }
 }
 
-
-
 void OptimizationProblem::addRangeFactor ( RangeDataTuple &tuple ) {
     ceres::CostFunction *cost_function =
-        DistanceError::Create ( tuple );
+        RangeError::Create ( tuple, 1 );
     problem.AddResidualBlock ( cost_function,
-                               NULL /* squared loss */,
-                               &r1,
-                               &theta1 );
+                               new ceres::ArctanLoss ( 1 ),
+                               &x1,
+                               &y1 );
 
 }
 
@@ -51,4 +49,5 @@ void OptimizationProblem::optimizeGraph() {
     options.minimizer_progress_to_stdout = true;
     ceres::Solver::Summary summary;
     ceres::Solve ( options, &problem, &summary );
+    std::cout << "DAUTA! " << x1 << " " << y1 << std::endl;
 }

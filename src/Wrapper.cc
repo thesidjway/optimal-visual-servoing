@@ -65,7 +65,7 @@ void OVSWrapper::initializeRosPipeline() {
 int main ( int argc, char **argv ) {
     ros::init ( argc, argv, "optimal_visual_servoing" );
     OVSWrapper wrapper;
-//     OptimizationProblem opt_problem;
+    OptimizationProblem opt_problem;
 //     DynamicWindowSampler dws;
 //     ArucoTagsDetection detector;
 //     Eigen::Vector3d pt;
@@ -75,12 +75,12 @@ int main ( int argc, char **argv ) {
 //     RobotState a = RobotState ( 0, 0, 1.0, 0.2, 0.6 );
 //     std::vector<RobotState> feasible_states;
 //     dws.getFeasibleSearchSpace ( a, feasible_states );
-//     std::vector<RangeDataTuple> gen_data;
-//     opt_problem.generateData ( gen_data );
-//     for ( unsigned int i = 0 ; i < gen_data.size() ; i++ ) {
-//         opt_problem.addRangeFactor ( gen_data[i] );
-//     }
-//     opt_problem.optimizeGraph();
+    std::vector<RangeDataTuple> gen_data;
+    opt_problem.generateData ( gen_data );
+    for ( unsigned int i = 0 ; i < gen_data.size() ; i++ ) {
+        opt_problem.addRangeFactor ( gen_data[i] );
+    }
+    opt_problem.optimizeGraph();
 
     while ( ros::ok() ) {
         ros::spinOnce();
