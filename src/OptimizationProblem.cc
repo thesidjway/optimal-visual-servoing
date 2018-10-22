@@ -36,7 +36,7 @@ void OptimizationProblem::addRangeFactor ( RangeDataTuple &tuple ) {
     ceres::CostFunction *cost_function =
         RangeError::Create ( tuple, 1 );
     problem.AddResidualBlock ( cost_function,
-                               new ceres::ArctanLoss ( 1 ),
+                               NULL,
                                &x1,
                                &y1 );
 
