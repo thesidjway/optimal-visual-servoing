@@ -21,6 +21,7 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/aruco.hpp>
 #include <Eigen/Eigen>
+#include <yaml-cpp/yaml.h>
 
 struct PoseEstimationParams {
     PoseEstimationParams() {
@@ -43,10 +44,10 @@ class ArucoTagsDetection
 private:
     cv::Ptr<cv::aruco::DetectorParameters> detector_params_;
     PoseEstimationParams pose_estimation_params_;
-    bool readDetectorParameters ( std::string filename );
-
+    
 public:
     ArucoTagsDetection();
     ~ArucoTagsDetection();
     void detectArucoTags ( cv::Mat &img, Eigen::Vector3d &marker_point, Eigen::Vector2d &marker_projection );
+    void readDetectorParameters ( std::string filename );
 };

@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <optimal_visual_servoing/OptimizationProblem.h>
+#include <optimal_visual_servoing/Optimization.h>
 
 #include <pcl/PCLPointCloud2.h>
 #include <pcl/conversions.h>
@@ -36,6 +36,7 @@
 #include <pcl/conversions.h>
 #include <pcl_ros/point_cloud.h>
 #include <Eigen/Dense>
+#include <yaml-cpp/yaml.h>
 
 
 struct ClusterExtractionParams {
@@ -58,18 +59,19 @@ private:
     std::vector<pcl::PointIndices> cluster_indices_;
     pcl::EuclideanClusterExtraction<pcl::PointXYZ> euc_cluster_;
     pcl::PointCloud< pcl::PointXYZ >::Ptr input_cloud_;
-    pcl::search::KdTree<pcl::PointXYZ>::Ptr tree_; 
-    
+    pcl::search::KdTree<pcl::PointXYZ>::Ptr tree_;
+
     template <typename PointT>
-    void fromPCLPointCloud2ToVelodyneCloud ( const pcl::PCLPointCloud2& msg, 
-					     pcl::PointCloud<PointT>& cloud1D, 
-					     std::vector< pcl::PointCloud<PointT> >& cloudVector, 
-					     unsigned int rings );
-    
+    void fromPCLPointCloud2ToVelodyneCloud ( const pcl::PCLPointCloud2& msg,
+            pcl::PointCloud<PointT>& cloud1D,
+            std::vector< pcl::PointCloud<PointT> >& cloudVector,
+            unsigned int rings );
+
 
 public:
     ClusterExtractor();
     ~ClusterExtractor();
+    void readClusteringParams ( std:: string params_file );
     void segmentPointcloud ();
     void setInputCloud ( pcl::PCLPointCloud2& cloud );
     void setInputCloud ( pcl::PointCloud< pcl::PointXYZ >::Ptr& cloud );

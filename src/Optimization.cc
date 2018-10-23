@@ -17,9 +17,9 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <optimal_visual_servoing/OptimizationProblem.h>
+#include <optimal_visual_servoing/Optimization.h>
 
-void OptimizationProblem::generateData ( std::vector<RangeDataTuple> &gen_data ) {
+void Optimization::generateData ( std::vector<RangeDataTuple> &gen_data ) {
     srand ( time ( NULL ) );
     int angle_init = 0;
     int angle_final = 0;
@@ -32,7 +32,7 @@ void OptimizationProblem::generateData ( std::vector<RangeDataTuple> &gen_data )
     }
 }
 
-void OptimizationProblem::addRangeFactor ( RangeDataTuple &tuple ) {
+void Optimization::addRangeFactor ( RangeDataTuple &tuple ) {
     ceres::CostFunction *cost_function =
         RangeError::Create ( tuple, 1 );
     problem.AddResidualBlock ( cost_function,
@@ -41,7 +41,15 @@ void OptimizationProblem::addRangeFactor ( RangeDataTuple &tuple ) {
 
 }
 
-void OptimizationProblem::optimizeGraph() {
+void Optimization::readOptimizationParams ( std::string params_file ) { //placeholder
+    YAML::Node config = YAML::LoadFile ( params_file );
+    params_.cluster_tolerance = config["clustering"]["cluster_tolerance"].as<double>();
+    params_.min_cluster_size = config["clustering"]["min_cluster_size"].as<int>();
+    params_.max_cluster_size = config["clustering"]["max_cluster_size"].as<int>();
+}
+
+
+void Optimization::optimizeGraph() {
     ceres::Solver::Options options;
     options.max_num_iterations = 100;
     options.linear_solver_type = ceres::DENSE_QR;

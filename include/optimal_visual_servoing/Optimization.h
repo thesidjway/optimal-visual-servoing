@@ -25,6 +25,7 @@
 #include <iostream>
 #include <ceres/ceres.h>
 #include <ceres/rotation.h>
+#include <yaml-cpp/yaml.h>
 
 struct RangeDataTuple {
     RangeDataTuple () {}
@@ -45,7 +46,20 @@ struct PTZCommand {
     double zoom;
 };
 
-class OptimizationProblem
+
+struct OptimizationParams { //Placeholder
+
+    OptimizationParams() {}
+    OptimizationParams ( double cluster_tolerance,
+                              int min_cluster_size,
+                              int max_cluster_size )
+        : cluster_tolerance ( cluster_tolerance ), max_cluster_size ( max_cluster_size ), min_cluster_size ( min_cluster_size ) {}
+
+    double cluster_tolerance = 0.1f; // 1.0 equals 1 m
+    int min_cluster_size  = 10;
+    int max_cluster_size  = 5000;
+};
+class Optimization
 {
 private:
 
@@ -255,15 +269,17 @@ private:
     ceres::Problem problem;
     double dx_dy_dtheta_vel_omega_[];
     double p_t[];
+    OptimizationParams params_;
 public:
-    OptimizationProblem() {}
-    ~OptimizationProblem() {}
+    Optimization() {}
+    ~Optimization() {}
     void addTagFactors ();
     void addRangeFactor ( RangeDataTuple &tuple );
     void generateData ( std::vector<RangeDataTuple> &gen_data );
     void optimizeGraph();
+    void readOptimizationParams ( std:: string params_file );
     inline PTZCommand getPTZCommand() {
-      return PTZCommand(p_t[0], p_t[1], 0);
+        return PTZCommand ( p_t[0] * 180.0 / M_PI, p_t[1] * 180.0 / M_PI, 0 );
     }
 };
 

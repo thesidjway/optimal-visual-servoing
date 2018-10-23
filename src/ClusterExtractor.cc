@@ -28,6 +28,14 @@ ClusterExtractor::~ClusterExtractor() {
 
 }
 
+void ClusterExtractor::readClusteringParams ( std::string params_file ) {
+    YAML::Node config = YAML::LoadFile ( params_file );
+    params_.cluster_tolerance = config["clustering"]["cluster_tolerance"].as<double>();
+    params_.min_cluster_size = config["clustering"]["min_cluster_size"].as<int>();
+    params_.max_cluster_size = config["clustering"]["max_cluster_size"].as<int>();
+}
+
+
 void ClusterExtractor::setInputCloud ( pcl::PCLPointCloud2& cloud ) {
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud1D ( new pcl::PointCloud<pcl::PointXYZ> );
     std::vector< pcl::PointCloud<pcl::PointXYZ> > cloud_vector;

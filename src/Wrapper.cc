@@ -19,8 +19,11 @@
 
 #include <optimal_visual_servoing/Wrapper.h>
 
-OVSWrapper::OVSWrapper() {
+OVSWrapper::OVSWrapper ( std:: string params_file ) {
     initializeRosPipeline();
+    cluster_extractor_.readClusteringParams ( params_file );
+    opt_problem_.readOptimizationParams ( params_file );
+    detector_.readDetectorParameters ( params_file );
 }
 
 OVSWrapper::~OVSWrapper() {
@@ -52,9 +55,10 @@ void OVSWrapper::pointCloudCallback3D ( const sensor_msgs::PointCloud2ConstPtr& 
     last_data_clusters_ = segments;
 }
 
-void OVSWrapper::imageCallback ( const sensor_msgs::ImageConstPtr& callback_image ) {
+void OVSWrapper::imageCallback ( const sensor_msgs::CompressedImageConstPtr& image_msg ) {
     try {
-        cv::Mat read_image_distorted = cv_bridge::toCvShare ( callback_image, "bgr8" )->image;
+        cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy ( image_msg, sensor_msgs::image_encodings::BGR8 );
+        cv::Mat read_image_distorted = cv_ptr->image;
         cv::cvtColor ( read_image_distorted, read_image_distorted, CV_BGR2GRAY );
         cv::Mat read_image;
         read_image = read_image_distorted;
@@ -66,18 +70,19 @@ void OVSWrapper::imageCallback ( const sensor_msgs::ImageConstPtr& callback_imag
 }
 
 void OVSWrapper::initializeRosPipeline() {
-    pc3d_sub_ = n_.subscribe ( "/velodyne_points", 10, &OVSWrapper::pointCloudCallback3D, this ); 
+    pc3d_sub_ = n_.subscribe ( "/velodyne_points", 10, &OVSWrapper::pointCloudCallback3D, this );
     pc2d_sub_ = n_.subscribe ( "summit_xl_a/front_laser/scan", 10, &OVSWrapper::pointCloudCallback2D, this ); // laser to point cloud data
-    image_sub_ = n_.subscribe ( "/cam0/image_raw", 10, &OVSWrapper::imageCallback, this ); // image data
-    ptz_pub_ = n_.advertise<axis_camera::Axis>("/axis_ptz/cmd", 1000);
+    image_sub_ = n_.subscribe ( "/axis_ptz/image_raw/compressed", 10, &OVSWrapper::imageCallback, this ); // image data
+    ptz_pub_ = n_.advertise<axis_camera::Axis> ( "/axis_ptz/cmd", 1000 );
 }
+
+
 
 int main ( int argc, char **argv ) {
     ros::init ( argc, argv, "optimal_visual_servoing" );
-    OVSWrapper wrapper;
-
+    OVSWrapper wrapper ( "/home/thesidjway/research_ws/src/optimal-visual-servoing/params/optimal_visual_servoing.yaml" );
 //     DynamicWindowSampler dws;
-//     ArucoTagsDetection detector;
+
 //     Eigen::Vector3d pt;
 //     Eigen::Vector2d proj;
 //     cv::Mat b = cv::imread ( "/home/thesidjway/deprecated_stuff/markers-depth-estimator/data/image-test.png" );
@@ -88,17 +93,17 @@ int main ( int argc, char **argv ) {
 
     while ( ros::ok() ) {
         if ( wrapper.last_data_clusters_.size() > 0 ) {
-            OptimizationProblem opt_problem;
+
             for ( unsigned int i = 0 ; i < wrapper.last_data_clusters_.size() ; i++ ) {
-                opt_problem.addRangeFactor ( wrapper.last_data_clusters_[i] );
+                wrapper.opt_problem_.addRangeFactor ( wrapper.last_data_clusters_[i] );
             }
-            opt_problem.optimizeGraph();
-	    PTZCommand cmd = opt_problem.getPTZCommand();
-	    axis_camera::Axis ptz_msg;
-	    ptz_msg.pan = cmd.pan;
-	    ptz_msg.tilt = cmd.tilt;
-	    ptz_msg.zoom = cmd.zoom;
-	    wrapper.ptz_pub_.publish(ptz_msg);
+            wrapper.opt_problem_.optimizeGraph();
+            PTZCommand cmd = wrapper.opt_problem_.getPTZCommand();
+            axis_camera::Axis ptz_msg;
+            ptz_msg.pan = cmd.pan;
+            ptz_msg.tilt = cmd.tilt;
+            ptz_msg.zoom = cmd.zoom;
+            wrapper.ptz_pub_.publish ( ptz_msg );
             wrapper.last_data_clusters_.clear();
         }
         ros::spinOnce();

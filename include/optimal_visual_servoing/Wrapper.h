@@ -17,17 +17,19 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <optimal_visual_servoing/OptimizationProblem.h>
+#include <optimal_visual_servoing/Optimization.h>
 #include <optimal_visual_servoing/DynamicWindowSampler.h>
 #include <optimal_visual_servoing/ArucoTagsDetection.h>
 #include <optimal_visual_servoing/ClusterExtractor.h>
 #include <ros/ros.h>
 #include <cv_bridge/cv_bridge.h>
+#include <image_transport/image_transport.h>
 #include <laser_geometry/laser_geometry.h>
 #include <image_transport/image_transport.h>
 #include <axis_camera/Axis.h>
 
 #include <sensor_msgs/PointCloud2.h>
+#include <sensor_msgs/CompressedImage.h>
 
 class OVSWrapper
 {
@@ -37,15 +39,18 @@ private:
     ros::Subscriber pc3d_sub_;
     ros::Subscriber image_sub_;
     void initializeRosPipeline();
-    ClusterExtractor cluster_extractor_;
 
 public:
-    OVSWrapper();
+    OVSWrapper ( std::string params_file );
     ~OVSWrapper();
-    ros::Publisher ptz_pub_; 
+    ClusterExtractor cluster_extractor_;
+    Optimization opt_problem_;
+    ArucoTagsDetection detector_;
+    
+    ros::Publisher ptz_pub_;
     void pointCloudCallback3D ( const sensor_msgs::PointCloud2ConstPtr& callback_cloud );
     void pointCloudCallback2D ( const sensor_msgs::LaserScanConstPtr& laser_scan );
-    void imageCallback ( const sensor_msgs::ImageConstPtr& callback_image );
+    void imageCallback ( const sensor_msgs::CompressedImageConstPtr& callback_image );
     std::vector<RangeDataTuple> last_data_clusters_;
 
 };
