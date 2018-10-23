@@ -37,6 +37,14 @@ struct RangeDataTuple {
     }
 };
 
+struct PTZCommand {
+    PTZCommand() {}
+    PTZCommand ( double pan, double tilt, double zoom ) : pan ( pan ), tilt ( tilt ), zoom ( zoom ) {}
+    double pan;
+    double tilt;
+    double zoom;
+};
+
 class OptimizationProblem
 {
 private:
@@ -246,6 +254,7 @@ private:
 
     ceres::Problem problem;
     double dx_dy_dtheta_vel_omega_[];
+    double p_t[];
 public:
     OptimizationProblem() {}
     ~OptimizationProblem() {}
@@ -253,6 +262,9 @@ public:
     void addRangeFactor ( RangeDataTuple &tuple );
     void generateData ( std::vector<RangeDataTuple> &gen_data );
     void optimizeGraph();
+    inline PTZCommand getPTZCommand() {
+      return PTZCommand(p_t[0], p_t[1], 0);
+    }
 };
 
 

@@ -72,6 +72,7 @@ public:
     ~ClusterExtractor();
     void segmentPointcloud ();
     void setInputCloud ( pcl::PCLPointCloud2& cloud );
+    void setInputCloud ( pcl::PointCloud< pcl::PointXYZ >::Ptr& cloud );
     void extractSegmentFeatures ( std::vector<RangeDataTuple>& segments );
 
 };

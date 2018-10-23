@@ -25,6 +25,7 @@
 #include <cv_bridge/cv_bridge.h>
 #include <laser_geometry/laser_geometry.h>
 #include <image_transport/image_transport.h>
+#include <axis_camera/Axis.h>
 
 #include <sensor_msgs/PointCloud2.h>
 
@@ -32,7 +33,8 @@ class OVSWrapper
 {
 private:
     ros::NodeHandle n_;
-    ros::Subscriber pc_sub_;
+    ros::Subscriber pc2d_sub_;
+    ros::Subscriber pc3d_sub_;
     ros::Subscriber image_sub_;
     void initializeRosPipeline();
     ClusterExtractor cluster_extractor_;
@@ -40,7 +42,9 @@ private:
 public:
     OVSWrapper();
     ~OVSWrapper();
-    void pointCloudCallback ( const sensor_msgs::PointCloud2ConstPtr& callback_cloud );
+    ros::Publisher ptz_pub_; 
+    void pointCloudCallback3D ( const sensor_msgs::PointCloud2ConstPtr& callback_cloud );
+    void pointCloudCallback2D ( const sensor_msgs::LaserScanConstPtr& laser_scan );
     void imageCallback ( const sensor_msgs::ImageConstPtr& callback_image );
     std::vector<RangeDataTuple> last_data_clusters_;
 

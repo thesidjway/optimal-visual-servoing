@@ -35,6 +35,9 @@ void ClusterExtractor::setInputCloud ( pcl::PCLPointCloud2& cloud ) {
     input_cloud_ = boost::make_shared < pcl::PointCloud< pcl::PointXYZ > > ( cloud_vector[8] );
 }
 
+void ClusterExtractor::setInputCloud ( pcl::PointCloud< pcl::PointXYZ >::Ptr& cloud ) {
+    input_cloud_ = cloud;
+}
 
 void ClusterExtractor::segmentPointcloud ( ) {
     tree_->setInputCloud ( input_cloud_ );

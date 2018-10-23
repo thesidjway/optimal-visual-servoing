@@ -27,7 +27,22 @@ OVSWrapper::~OVSWrapper() {
 
 }
 
-void OVSWrapper::pointCloudCallback ( const sensor_msgs::PointCloud2ConstPtr& cloud_msg ) {
+void OVSWrapper::pointCloudCallback2D ( const sensor_msgs::LaserScanConstPtr& laser_scan ) {
+    sensor_msgs::PointCloud2 callback_cloud;
+    laser_geometry::LaserProjection lp;
+    lp.projectLaser ( *laser_scan, callback_cloud );
+    pcl::PCLPointCloud2 pcl_pc2;
+    pcl_conversions::toPCL ( callback_cloud, pcl_pc2 );
+    pcl::PointCloud<pcl::PointXYZ>::Ptr raw_pcl ( new pcl::PointCloud<pcl::PointXYZ> );
+    pcl::fromPCLPointCloud2 ( pcl_pc2,*raw_pcl );
+    cluster_extractor_.setInputCloud ( raw_pcl );
+    cluster_extractor_.segmentPointcloud();
+    std::vector<RangeDataTuple> segments;
+    cluster_extractor_.extractSegmentFeatures ( segments );
+    last_data_clusters_ = segments;
+}
+
+void OVSWrapper::pointCloudCallback3D ( const sensor_msgs::PointCloud2ConstPtr& cloud_msg ) {
     pcl::PCLPointCloud2 pcl_pc2;
     pcl_conversions::toPCL ( *cloud_msg, pcl_pc2 );
     cluster_extractor_.setInputCloud ( pcl_pc2 );
@@ -35,8 +50,6 @@ void OVSWrapper::pointCloudCallback ( const sensor_msgs::PointCloud2ConstPtr& cl
     std::vector<RangeDataTuple> segments;
     cluster_extractor_.extractSegmentFeatures ( segments );
     last_data_clusters_ = segments;
-
-    return;
 }
 
 void OVSWrapper::imageCallback ( const sensor_msgs::ImageConstPtr& callback_image ) {
@@ -53,8 +66,10 @@ void OVSWrapper::imageCallback ( const sensor_msgs::ImageConstPtr& callback_imag
 }
 
 void OVSWrapper::initializeRosPipeline() {
-    pc_sub_ = n_.subscribe ( "/velodyne_points", 10, &OVSWrapper::pointCloudCallback, this ); // laser to point cloud data
+    pc3d_sub_ = n_.subscribe ( "/velodyne_points", 10, &OVSWrapper::pointCloudCallback3D, this ); 
+    pc2d_sub_ = n_.subscribe ( "summit_xl_a/front_laser/scan", 10, &OVSWrapper::pointCloudCallback2D, this ); // laser to point cloud data
     image_sub_ = n_.subscribe ( "/cam0/image_raw", 10, &OVSWrapper::imageCallback, this ); // image data
+    ptz_pub_ = n_.advertise<axis_camera::Axis>("/axis_ptz/cmd", 1000);
 }
 
 int main ( int argc, char **argv ) {
@@ -78,10 +93,14 @@ int main ( int argc, char **argv ) {
                 opt_problem.addRangeFactor ( wrapper.last_data_clusters_[i] );
             }
             opt_problem.optimizeGraph();
+	    PTZCommand cmd = opt_problem.getPTZCommand();
+	    axis_camera::Axis ptz_msg;
+	    ptz_msg.pan = cmd.pan;
+	    ptz_msg.tilt = cmd.tilt;
+	    ptz_msg.zoom = cmd.zoom;
+	    wrapper.ptz_pub_.publish(ptz_msg);
             wrapper.last_data_clusters_.clear();
         }
-
         ros::spinOnce();
     }
-
 }
