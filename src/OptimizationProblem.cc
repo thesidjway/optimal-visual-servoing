@@ -37,8 +37,7 @@ void OptimizationProblem::addRangeFactor ( RangeDataTuple &tuple ) {
         RangeError::Create ( tuple, 1 );
     problem.AddResidualBlock ( cost_function,
                                NULL,
-                               &x1,
-                               &y1 );
+                               dx_dy_dtheta_vel_omega_ );
 
 }
 
@@ -48,6 +47,6 @@ void OptimizationProblem::optimizeGraph() {
     options.linear_solver_type = ceres::DENSE_QR;
     options.minimizer_progress_to_stdout = true;
     ceres::Solver::Summary summary;
+    std::cout << "Results: " << dx_dy_dtheta_vel_omega_[0] << " " << dx_dy_dtheta_vel_omega_[1] << std::endl;
     ceres::Solve ( options, &problem, &summary );
-    std::cout << "DAUTA! " << x1 << " " << y1 << std::endl;
 }

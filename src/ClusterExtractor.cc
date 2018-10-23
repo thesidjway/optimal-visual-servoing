@@ -21,14 +21,18 @@
 
 ClusterExtractor::ClusterExtractor() {
     tree_ = boost::make_shared<pcl::search::KdTree<pcl::PointXYZ>>();
+    input_cloud_ = boost::make_shared < pcl::PointCloud< pcl::PointXYZ > > ();
 }
 
 ClusterExtractor::~ClusterExtractor() {
 
 }
 
-void ClusterExtractor::setInputCloud ( pcl::PointCloud< pcl::PointXYZ >::Ptr& cloud ) {
-    input_cloud_ = cloud;
+void ClusterExtractor::setInputCloud ( pcl::PCLPointCloud2& cloud ) {
+    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud1D ( new pcl::PointCloud<pcl::PointXYZ> );
+    std::vector< pcl::PointCloud<pcl::PointXYZ> > cloud_vector;
+    fromPCLPointCloud2ToVelodyneCloud ( cloud, *cloud1D, cloud_vector, 16 );
+    input_cloud_ = boost::make_shared < pcl::PointCloud< pcl::PointXYZ > > ( cloud_vector[8] );
 }
 
 
@@ -78,8 +82,62 @@ void ClusterExtractor::extractSegmentFeatures ( std::vector<RangeDataTuple>& seg
 
         RangeDataTuple cluster = RangeDataTuple ( min_dist, bearing_angle, width );
         segments.push_back ( cluster );
-        cluster.printDataTuple();
-        std::cout << "PointCloud representing the Cluster: " << cloud_cluster->points.size () << " data points." << std::endl;
+        //cluster.printDataTuple();
+        //std::cout << "PointCloud representing the Cluster: " << cloud_cluster->points.size () << " data points." << std::endl;
     }
     cluster_indices_.clear();
+}
+
+template <typename PointT>
+void ClusterExtractor::fromPCLPointCloud2ToVelodyneCloud ( const pcl::PCLPointCloud2& msg,
+        pcl::PointCloud<PointT>& cloud1D,
+        std::vector< pcl::PointCloud<PointT> >& cloudVector,
+        unsigned int rings ) {
+    cloud1D.header   = msg.header;
+    cloud1D.width    = msg.width;
+    cloud1D.height   = msg.height;
+    cloud1D.is_dense = msg.is_dense == 1;
+    uint32_t num_points = msg.width * msg.height;
+    cloud1D.points.resize ( num_points );
+    uint8_t* cloud_data1 = reinterpret_cast<uint8_t*> ( &cloud1D.points[0] );
+
+    pcl::PointCloud<PointT>* cloudPerLaser = new pcl::PointCloud<PointT>[rings];
+    uint8_t* cloud_data2[rings];
+
+    unsigned int pointsCounter[rings] = {0};
+
+    for ( unsigned int i=0; i<rings; ++i ) {
+        cloudPerLaser[i] = pcl::PointCloud<PointT>();
+        cloudPerLaser[i].header   = msg.header;
+        cloudPerLaser[i].width    = msg.width;
+        cloudPerLaser[i].height   = msg.height;
+        cloudPerLaser[i].is_dense = msg.is_dense == 1;
+        cloudPerLaser[i].points.resize ( num_points );
+        cloud_data2[i] = reinterpret_cast<uint8_t*> ( &cloudPerLaser[i].points[0] );
+    }
+
+    for ( uint32_t row = 0; row < msg.height; ++row ) {
+        const uint8_t* row_data = &msg.data[row * msg.row_step];
+
+        for ( uint32_t col = 0; col < msg.width; ++col ) {
+            const uint8_t* msg_data = row_data + col * msg.point_step;
+            uint16_t* ring = ( uint16_t* ) ( msg_data+20 );
+            memcpy ( cloud_data2[*ring], msg_data, 22 );
+            memcpy ( cloud_data1, msg_data, 22 );
+            pointsCounter[*ring]++;
+            cloud_data1 += sizeof ( PointT );
+            cloud_data2[*ring] += sizeof ( PointT );
+        }
+    }
+
+    cloudVector = std::vector< pcl::PointCloud<PointT> > ( rings );
+
+    for ( unsigned int i=0; i<rings; ++i ) {
+        cloudPerLaser[i].width = pointsCounter[i];
+        cloudPerLaser[i].height = 1;
+        cloudPerLaser[i].points.resize ( pointsCounter[i] );
+        cloudVector[i] = ( cloudPerLaser[i] );
+    }
+
+    delete[] cloudPerLaser;
 }

@@ -27,16 +27,10 @@ OVSWrapper::~OVSWrapper() {
 
 }
 
-void OVSWrapper::pointCloudCallback ( const sensor_msgs::LaserScanConstPtr& laser_scan ) {
-    std::cout << "YEET " << std::endl;
-    sensor_msgs::PointCloud2 callback_cloud;
-    laser_geometry::LaserProjection lp;
-    lp.projectLaser ( *laser_scan, callback_cloud );
+void OVSWrapper::pointCloudCallback ( const sensor_msgs::PointCloud2ConstPtr& cloud_msg ) {
     pcl::PCLPointCloud2 pcl_pc2;
-    pcl_conversions::toPCL ( callback_cloud, pcl_pc2 );
-    pcl::PointCloud<pcl::PointXYZ>::Ptr raw_pcl ( new pcl::PointCloud<pcl::PointXYZ> );
-    pcl::fromPCLPointCloud2 ( pcl_pc2,*raw_pcl );
-    cluster_extractor_.setInputCloud ( raw_pcl );
+    pcl_conversions::toPCL ( *cloud_msg, pcl_pc2 );
+    cluster_extractor_.setInputCloud ( pcl_pc2 );
     cluster_extractor_.segmentPointcloud();
     std::vector<RangeDataTuple> segments;
     cluster_extractor_.extractSegmentFeatures ( segments );
@@ -59,7 +53,7 @@ void OVSWrapper::imageCallback ( const sensor_msgs::ImageConstPtr& callback_imag
 }
 
 void OVSWrapper::initializeRosPipeline() {
-    pc_sub_ = n_.subscribe ( "summit_xl_a/front_laser/scan", 10, &OVSWrapper::pointCloudCallback, this ); // laser to point cloud data
+    pc_sub_ = n_.subscribe ( "/velodyne_points", 10, &OVSWrapper::pointCloudCallback, this ); // laser to point cloud data
     image_sub_ = n_.subscribe ( "/cam0/image_raw", 10, &OVSWrapper::imageCallback, this ); // image data
 }
 
@@ -78,14 +72,14 @@ int main ( int argc, char **argv ) {
 //     dws.getFeasibleSearchSpace ( a, feasible_states );
 
     while ( ros::ok() ) {
-        if (wrapper.last_data_clusters_.size() > 0) {
-	  OptimizationProblem opt_problem;
-	  for ( unsigned int i = 0 ; i < wrapper.last_data_clusters_.size() ; i++ ) {
-	      opt_problem.addRangeFactor ( wrapper.last_data_clusters_[i] );
-	  }
-	  opt_problem.optimizeGraph();
-	  wrapper.last_data_clusters_.clear();
-	}
+        if ( wrapper.last_data_clusters_.size() > 0 ) {
+            OptimizationProblem opt_problem;
+            for ( unsigned int i = 0 ; i < wrapper.last_data_clusters_.size() ; i++ ) {
+                opt_problem.addRangeFactor ( wrapper.last_data_clusters_[i] );
+            }
+            opt_problem.optimizeGraph();
+            wrapper.last_data_clusters_.clear();
+        }
 
         ros::spinOnce();
     }

@@ -60,12 +60,18 @@ private:
     pcl::PointCloud< pcl::PointXYZ >::Ptr input_cloud_;
     pcl::search::KdTree<pcl::PointXYZ>::Ptr tree_; 
     
+    template <typename PointT>
+    void fromPCLPointCloud2ToVelodyneCloud ( const pcl::PCLPointCloud2& msg, 
+					     pcl::PointCloud<PointT>& cloud1D, 
+					     std::vector< pcl::PointCloud<PointT> >& cloudVector, 
+					     unsigned int rings );
+    
 
 public:
     ClusterExtractor();
     ~ClusterExtractor();
     void segmentPointcloud ();
-    void setInputCloud ( pcl::PointCloud< pcl::PointXYZ >::Ptr& cloud );
+    void setInputCloud ( pcl::PCLPointCloud2& cloud );
     void extractSegmentFeatures ( std::vector<RangeDataTuple>& segments );
 
 };

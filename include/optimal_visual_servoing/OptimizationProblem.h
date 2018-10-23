@@ -41,45 +41,134 @@ class OptimizationProblem
 {
 private:
 
-    struct DistanceError {
-        DistanceError ( Eigen::Vector3d target_pt, double weight )
-            : target_pt ( target_pt ), weight ( weight ) {}
-
-        template <typename T>
-        bool operator() ( const T *const t,
-                          T *residuals ) const {
-            residuals[0] =  T ( sqrt ( ( T ( target_pt ( 0 ) ) - t[0] ) * ( T ( target_pt ( 0 ) ) - t[0] ) + ( T ( target_pt ( 1 ) ) - t[1] ) * ( T ( target_pt ( 1 ) )- t[1] ) + ( T ( target_pt ( 2 ) )- t[2] ) * ( T ( target_pt ( 2 ) ) - t[2] ) ) );
-            return true;
-        }
-        static ceres::CostFunction *Create ( Eigen::Vector3d target_pt, double weight ) {
-            return ( new ceres::AutoDiffCostFunction<DistanceError, 1, 3> ( new DistanceError ( target_pt, weight ) ) );
-        }
-        Eigen::Vector3d target_pt;
-        double weight;
-    };
-
     struct RangeError {
         RangeError ( RangeDataTuple data_tuple, double weight )
             : data_tuple ( data_tuple ), weight ( weight ) {}
-
         template <typename T>
-        bool operator() ( const T *const x1,
-                          const T *const y1,
+        bool operator() ( const T *const dx_dy_dtheta_vel_omega,
                           T *residuals ) const {
-            residuals[0] = T ( 1.0 ) / exp ( sqrt ( T ( x1[0] - data_tuple.median_dist * cos ( data_tuple.bearing ) ) * T ( x1[0] - data_tuple.median_dist * cos ( data_tuple.bearing ) ) +
-                                                    T ( y1[0] - data_tuple.median_dist * sin ( data_tuple.bearing ) ) * T ( y1[0] - data_tuple.median_dist * sin ( data_tuple.bearing ) ) ) * T ( sqrt ( x1[0] * x1[0]  + y1[0]  * y1[0] ) - data_tuple.median_dist ) ) ;
+            residuals[0] = exp ( sqrt ( T ( dx_dy_dtheta_vel_omega[0] - data_tuple.median_dist * cos ( data_tuple.bearing ) ) * T ( dx_dy_dtheta_vel_omega[0] - data_tuple.median_dist * cos ( data_tuple.bearing ) ) +
+                                        T ( dx_dy_dtheta_vel_omega[1] - data_tuple.median_dist * sin ( data_tuple.bearing ) ) * T ( dx_dy_dtheta_vel_omega[1] - data_tuple.median_dist * sin ( data_tuple.bearing ) ) ) ) *
+                           ( ( dx_dy_dtheta_vel_omega[0] - T ( 0.0 ) ) * ( dx_dy_dtheta_vel_omega[0] - T ( 0.0 ) )  + ( dx_dy_dtheta_vel_omega[1] - T ( 0.0 ) )  * ( dx_dy_dtheta_vel_omega[1] - T ( 0.0 ) ) - data_tuple.median_dist * data_tuple.median_dist ) ;
             return true;
         }
         static ceres::CostFunction *Create ( RangeDataTuple data_tuple, double weight ) {
-            return ( new ceres::AutoDiffCostFunction<RangeError, 1, 1, 1> ( new RangeError ( data_tuple, weight ) ) );
+            return ( new ceres::AutoDiffCostFunction<RangeError, 1, 5> ( new RangeError ( data_tuple, weight ) ) );
         }
         RangeDataTuple data_tuple;
         double weight;
     };
 
+    struct VelocityConstraints { //TO BE MODIFIED
+        VelocityConstraints ( double max_vel, double max_omega, double dt )
+            : max_vel ( max_vel ), max_omega ( max_omega ), dt ( dt ) {}
+
+        template <typename T>
+        bool operator () ( const T *const dx_dy_dtheta_vel_omega,
+                           T *residuals ) const {
+            residuals[0] = T ( max_vel * max_vel - dx_dy_dtheta_vel_omega[0] / dt * dx_dy_dtheta_vel_omega[0] / dt - dx_dy_dtheta_vel_omega[1] / dt * dx_dy_dtheta_vel_omega[1] / dt );
+            residuals[1] = T ( max_omega * max_omega - - dx_dy_dtheta_vel_omega[2] / dt * dx_dy_dtheta_vel_omega[2] / dt );
+            return true;
+        }
+        static ceres::CostFunction *Create ( double max_vel, double max_omega, double dt ) {
+            return ( new ceres::AutoDiffCostFunction<VelocityConstraints, 2, 5> ( new VelocityConstraints ( max_vel, max_omega, dt ) ) );
+        }
+        double max_vel;
+        double max_omega;
+        double dt;
+    };
+
+    struct PanConstraint { // HARD NONLINEAR CONSTRAINT ON PAN VALUE.
+        PanConstraint ( double weight )
+            : weight ( weight ) {}
+
+        template <typename T>
+        bool operator () ( const T *const p_t,
+                           T *residuals ) const {
+            residuals[0] = T ( weight ) * ( p_t[0] );
+            return true;
+        }
+        static ceres::CostFunction *Create ( double weight ) {
+            return ( new ceres::AutoDiffCostFunction<PanConstraint, 1, 2> ( new PanConstraint ( weight ) ) );
+        }
+        double weight;
+    };
+
+    struct PanTiltChangeError {
+        PanTiltChangeError ( double last_p, double last_t, double weight_p, double weight_t )
+            : last_p ( last_p ), last_t ( last_t ), weight_p ( weight_p ), weight_t ( weight_t ) {}
+
+        template <typename T>
+        bool operator () ( const T *const p_t,
+                           T *residuals ) const {
+            residuals[0] = T ( weight_p ) * ( p_t[0] - T ( last_p ) );
+            residuals[1] = T ( weight_t ) * ( p_t[1] - T ( last_t ) );
+            return true;
+        }
+        static ceres::CostFunction *Create ( double last_p, double last_t, double weight_p, double weight_t ) {
+            return ( new ceres::AutoDiffCostFunction<PanTiltChangeError, 2, 2> ( new PanTiltChangeError ( last_p, last_t, weight_p, weight_t ) ) );
+        }
+        double last_p;
+        double last_t;
+        double weight_p;
+        double weight_t;
+    };
+
+    struct DistanceError {
+        DistanceError ( Eigen::Vector4d target_in_cam, Eigen::Matrix4d cam_in_body_old, double weight, double desired_distance )
+            : target_in_cam ( target_in_cam ), cam_in_body_old ( cam_in_body_old ), weight ( weight ), desired_distance ( desired_distance ) {}
+
+        template <typename T>
+        bool operator() ( const T *const dx_dy_dtheta_vel_omega,
+                          T *residuals ) const {
+
+            T new_body_in_old_body[16];
+            T sdtheta = sin ( dx_dy_dtheta_vel_omega[2] );
+            T cdtheta = cos ( dx_dy_dtheta_vel_omega[2] );
+            T dx = dx_dy_dtheta_vel_omega[0];
+            T dy = dx_dy_dtheta_vel_omega[1];
+
+            new_body_in_old_body[0] = cdtheta;
+            new_body_in_old_body[1] = -sdtheta;
+            new_body_in_old_body[2] =  T ( 0.0 );
+            new_body_in_old_body[3] = dx;
+            new_body_in_old_body[4] = sdtheta;
+            new_body_in_old_body[5] = cdtheta;
+            new_body_in_old_body[6] = T ( 0.0 );
+            new_body_in_old_body[7] = dy;
+            new_body_in_old_body[8] = T ( 0.0 );
+            new_body_in_old_body[9] = T ( 0.0 );
+            new_body_in_old_body[10] = T ( 1.0 );
+            new_body_in_old_body[11] = T ( 0.0 );
+            new_body_in_old_body[12] = T ( 0.0 );
+            new_body_in_old_body[13] = T ( 0.0 );
+            new_body_in_old_body[14] = T ( 0.0 );
+            new_body_in_old_body[15] = T ( 1.0 );
+            Eigen::Map<const Eigen::Matrix<T, 4, 4> > eigen_new_body_in_old_body ( new_body_in_old_body );
+
+
+            Eigen::Matrix<T, 4, 4> Tcam_in_body_old = cam_in_body_old.cast<T> ();
+            Eigen::Matrix<T, 4, 1> Ttarget_in_cam = target_in_cam.cast<T>();
+            Eigen::Matrix<T, 4, 1> target_in_body_new = eigen_new_body_in_old_body.inverse() * Tcam_in_body_old * Ttarget_in_cam;
+
+            residuals[0] = T ( weight ) * T ( target_in_body_new.norm() ) - T ( desired_distance );
+            return true;
+        }
+
+        static ceres::CostFunction *Create ( Eigen::Vector4d target_in_cam, Eigen::Matrix4d cam_in_body_old, double weight, double desired_distance ) {
+            return ( new ceres::AutoDiffCostFunction<DistanceError, 1, 5> ( new DistanceError ( target_in_cam, cam_in_body_old, weight, desired_distance ) ) );
+        }
+
+        Eigen::Vector4d target_in_cam;
+        Eigen::Matrix4d cam_in_body_old;
+        double weight;
+        double desired_distance;
+    };
+
+
     struct ProjectionError {
-        ProjectionError ( Eigen::Vector4d target_pt, Eigen::Vector2d projection, Eigen::Matrix4d target_in_cam, Eigen::Matrix< double, 3, 4 > K, Eigen::Matrix4d cam_in_body_old, double weight )
-            : target_pt ( target_pt ), projection ( projection ), target_in_cam ( target_in_cam ), K ( K ), weight ( weight ), cam_in_body_old ( cam_in_body_old ) {}
+        ProjectionError ( Eigen::Vector2d projection, Eigen::Vector4d target_in_cam, Eigen::Matrix< double, 3, 4 > K, Eigen::Matrix4d cam_in_body_old, double weight )
+            : projection ( projection ), target_in_cam ( target_in_cam ), K ( K ), weight ( weight ), cam_in_body_old ( cam_in_body_old ) {}
 
         template <typename T>
         bool operator() ( const T *const p_t,
@@ -135,32 +224,28 @@ private:
 
             Eigen::Matrix<T, 3, 4> TK = K.cast <T> ();
             Eigen::Matrix<T, 4, 4> Tcam_in_body_old = cam_in_body_old.cast<T> ();
-            Eigen::Matrix<T, 4, 1> Ttarget_pt = target_pt.cast<T>();
+            Eigen::Matrix<T, 4, 1> Ttarget_in_cam = target_in_cam.cast<T>();
 
-            Eigen::Matrix<T, 3, 1> new_projection = TK * ( eigen_cam_in_body_new.inverse() * eigen_new_body_in_old_body.inverse()  * Tcam_in_body_old * Ttarget_pt );
+            Eigen::Matrix<T, 3, 1> new_projection = TK * ( eigen_cam_in_body_new.inverse() * eigen_new_body_in_old_body.inverse()  * Tcam_in_body_old * Ttarget_in_cam );
 
             residuals[0] = T ( weight ) * ( new_projection ( 0 , 0 ) - TK ( 0 , 2 ) );
             residuals[1] = T ( weight ) * ( new_projection ( 1 , 0 ) - TK ( 1 , 2 ) );
             return true;
         }
 
-        static ceres::CostFunction *Create ( Eigen::Vector4d target_pt, Eigen::Vector2d projection, Eigen::Matrix4d target_in_cam, Eigen::Matrix< double, 3, 4 > K, Eigen::Matrix4d cam_in_body_old, double weight ) {
-            return ( new ceres::AutoDiffCostFunction<ProjectionError, 2, 5, 2> ( new ProjectionError ( target_pt, projection, target_in_cam, K, cam_in_body_old, weight ) ) );
+        static ceres::CostFunction *Create ( Eigen::Vector2d projection, Eigen::Vector4d target_in_cam, Eigen::Matrix< double, 3, 4 > K, Eigen::Matrix4d cam_in_body_old, double weight ) {
+            return ( new ceres::AutoDiffCostFunction<ProjectionError, 2, 5, 2> ( new ProjectionError ( projection, target_in_cam, K, cam_in_body_old, weight ) ) );
         }
 
-        Eigen::Vector4d target_pt;
         Eigen::Vector2d projection;
-        Eigen::Matrix4d target_in_cam;
+        Eigen::Vector4d target_in_cam;
         Eigen::Matrix< double, 3, 4 > K;
         Eigen::Matrix4d cam_in_body_old;
-
         double weight;
-
     };
 
     ceres::Problem problem;
-    double x1 = 0;
-    double y1 = 0;
+    double dx_dy_dtheta_vel_omega_[];
 public:
     OptimizationProblem() {}
     ~OptimizationProblem() {}
@@ -169,3 +254,7 @@ public:
     void generateData ( std::vector<RangeDataTuple> &gen_data );
     void optimizeGraph();
 };
+
+
+
+
