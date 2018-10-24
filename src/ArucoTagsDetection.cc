@@ -60,7 +60,7 @@ void ArucoTagsDetection::readDetectorParameters ( std::string params_file ) {
 void ArucoTagsDetection::detectArucoTags ( cv::Mat &img, Eigen::Vector3d &marker_point, Eigen::Vector2d &marker_projection ) {
     std::vector<int> markerIds;
     std::vector<std::vector<cv::Point2f>> markerCorners;
-    cv::Ptr<cv::aruco::Dictionary> dictionary = cv::aruco::getPredefinedDictionary ( 16 );
+    cv::Ptr<cv::aruco::Dictionary> dictionary = cv::aruco::getPredefinedDictionary ( 8 ); //DICT_6X6_50 
     cv::aruco::detectMarkers ( img,
                                dictionary,
                                markerCorners,
@@ -69,10 +69,10 @@ void ArucoTagsDetection::detectArucoTags ( cv::Mat &img, Eigen::Vector3d &marker
                                cv::noArray() );
     cv::Mat r_marker, t_marker;
     cv::aruco::estimatePoseSingleMarkers ( markerCorners, pose_estimation_params_.marker_length, pose_estimation_params_.K, cv::noArray(), r_marker, t_marker );
-    std::cout << r_marker << std::endl;
-    std::cout << t_marker << std::endl;
-    marker_point = Eigen::Vector3d ( t_marker.at<double> ( 0,0 ), t_marker.at<double> ( 1,0 ), t_marker.at<double> ( 2,0 ) );
-    marker_projection ( 0 ) = ( markerCorners[0][0].x + markerCorners[0][1].x + markerCorners[0][2].x + markerCorners[0][3].x ) / 4 ;
-    marker_projection ( 1 ) = ( markerCorners[0][0].y + markerCorners[0][1].y + markerCorners[0][2].y + markerCorners[0][3].y ) / 4 ;
+    if ( t_marker.rows > 0 ) {
+        marker_point = Eigen::Vector3d ( t_marker.at<double> ( 0,0 ), t_marker.at<double> ( 1,0 ), t_marker.at<double> ( 2,0 ) );
+        marker_projection ( 0 ) = ( markerCorners[0][0].x + markerCorners[0][1].x + markerCorners[0][2].x + markerCorners[0][3].x ) / 4 ;
+        marker_projection ( 1 ) = ( markerCorners[0][0].y + markerCorners[0][1].y + markerCorners[0][2].y + markerCorners[0][3].y ) / 4 ;
+    }
 }
 

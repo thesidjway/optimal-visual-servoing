@@ -16,6 +16,7 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
+#pragma once
 
 #include <optimal_visual_servoing/Optimization.h>
 #include <optimal_visual_servoing/DynamicWindowSampler.h>
@@ -31,6 +32,26 @@
 #include <sensor_msgs/PointCloud2.h>
 #include <sensor_msgs/CompressedImage.h>
 
+
+struct WrapperParams {
+    WrapperParams() {
+    }
+    double fx = 300;
+    double fy = 300;
+    double cx = 160;
+    double cy = 120;
+    double k1 = 0.01;
+    double k2 = 0.01;
+    double p1 = 0.01;
+    double p2 = 0.01;
+    cv::Mat K;
+    cv::Mat dist;
+    std::string pc2dTopic;
+    std::string pc3dTopic;
+    std::string imageTopic;
+    std::string ptzTopic;
+};
+
 class OVSWrapper
 {
 private:
@@ -38,7 +59,9 @@ private:
     ros::Subscriber pc2d_sub_;
     ros::Subscriber pc3d_sub_;
     ros::Subscriber image_sub_;
+    WrapperParams wrapper_params_;
     void initializeRosPipeline();
+    void readWrapperParams ( std:: string params_file );
 
 public:
     OVSWrapper ( std::string params_file );
@@ -46,7 +69,7 @@ public:
     ClusterExtractor cluster_extractor_;
     Optimization opt_problem_;
     ArucoTagsDetection detector_;
-    
+
     ros::Publisher ptz_pub_;
     void pointCloudCallback3D ( const sensor_msgs::PointCloud2ConstPtr& callback_cloud );
     void pointCloudCallback2D ( const sensor_msgs::LaserScanConstPtr& laser_scan );

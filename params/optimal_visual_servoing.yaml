@@ -1,4 +1,10 @@
 %YAML:1.0
+ros:
+  pc_2d_topic: "summit_xl_a/front_laser/scan"
+  pc_3d_topic: "/velodyne_points"
+  image_topic: "/axis_ptz/image_raw/compressed"
+  ptz_topic: "/axis_ptz/cmd"
+
 clustering:
   cluster_tolerance: 0.1
   min_cluster_size: 10
@@ -35,3 +41,7 @@ camera:
   fy: 300
   cx: 160
   cy: 120
+  k1: 0.01
+  k2: 0.01
+  p1: 0.01
+  p2: 0.01

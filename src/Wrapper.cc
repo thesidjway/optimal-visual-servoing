@@ -20,6 +20,7 @@
 #include <optimal_visual_servoing/Wrapper.h>
 
 OVSWrapper::OVSWrapper ( std:: string params_file ) {
+    readWrapperParams ( params_file );
     initializeRosPipeline();
     cluster_extractor_.readClusteringParams ( params_file );
     opt_problem_.readOptimizationParams ( params_file );
@@ -28,6 +29,34 @@ OVSWrapper::OVSWrapper ( std:: string params_file ) {
 
 OVSWrapper::~OVSWrapper() {
 
+}
+
+void OVSWrapper::readWrapperParams ( std:: string params_file ) {
+    YAML::Node config = YAML::LoadFile ( params_file );
+    wrapper_params_.K = cv::Mat::eye ( 3 , 3 , CV_32F );
+    wrapper_params_.dist = cv::Mat::zeros ( 1 , 4 , CV_64F );
+
+    wrapper_params_.pc2dTopic = config["ros"]["pc_2d_topic"].as<std::string>();
+    wrapper_params_.pc3dTopic = config["ros"]["pc_3d_topic"].as<std::string>();
+    wrapper_params_.imageTopic = config["ros"]["image_topic"].as<std::string>();
+    wrapper_params_.ptzTopic = config["ros"]["ptz_topic"].as<std::string>();
+
+    wrapper_params_.fx = config["camera"]["fx"].as<double>();
+    wrapper_params_.fy = config["camera"]["fy"].as<double>();
+    wrapper_params_.cx = config["camera"]["cx"].as<double>();
+    wrapper_params_.cy = config["camera"]["cy"].as<double>();
+    wrapper_params_.k1 = config["camera"]["k1"].as<double>();
+    wrapper_params_.k2 = config["camera"]["k2"].as<double>();
+    wrapper_params_.p1 = config["camera"]["p1"].as<double>();
+    wrapper_params_.p2 = config["camera"]["p2"].as<double>();
+    wrapper_params_.K.at<float> ( 0, 0 ) = wrapper_params_.fx;
+    wrapper_params_.K.at<float> ( 0, 2 ) = wrapper_params_.cx;
+    wrapper_params_.K.at<float> ( 1, 1 ) = wrapper_params_.fy;
+    wrapper_params_.K.at<float> ( 1, 2 ) = wrapper_params_.cy;
+    wrapper_params_.dist.at<double> ( 0, 0 ) = wrapper_params_.k1;
+    wrapper_params_.dist.at<double> ( 0, 1 ) = wrapper_params_.k2;
+    wrapper_params_.dist.at<double> ( 0, 2 ) = wrapper_params_.p1;
+    wrapper_params_.dist.at<double> ( 0, 3 ) = wrapper_params_.p2;
 }
 
 void OVSWrapper::pointCloudCallback2D ( const sensor_msgs::LaserScanConstPtr& laser_scan ) {
@@ -61,8 +90,12 @@ void OVSWrapper::imageCallback ( const sensor_msgs::CompressedImageConstPtr& ima
         cv::Mat read_image_distorted = cv_ptr->image;
         cv::cvtColor ( read_image_distorted, read_image_distorted, CV_BGR2GRAY );
         cv::Mat read_image;
+        //cv::undistort ( read_image_distorted, read_image, wrapper_params_.K, wrapper_params_.dist );
         read_image = read_image_distorted;
         cv::imshow ( "Read Image", read_image );
+        Eigen::Vector3d pt;
+        Eigen::Vector2d proj;
+        detector_.detectArucoTags ( read_image, pt, proj );
         cv::waitKey ( 1 );
     } catch ( cv_bridge::Exception &e ) {
         ROS_ERROR ( "cv_bridge exception: %s", e.what() );
@@ -70,10 +103,10 @@ void OVSWrapper::imageCallback ( const sensor_msgs::CompressedImageConstPtr& ima
 }
 
 void OVSWrapper::initializeRosPipeline() {
-    pc3d_sub_ = n_.subscribe ( "/velodyne_points", 10, &OVSWrapper::pointCloudCallback3D, this );
-    pc2d_sub_ = n_.subscribe ( "summit_xl_a/front_laser/scan", 10, &OVSWrapper::pointCloudCallback2D, this ); // laser to point cloud data
-    image_sub_ = n_.subscribe ( "/axis_ptz/image_raw/compressed", 10, &OVSWrapper::imageCallback, this ); // image data
-    ptz_pub_ = n_.advertise<axis_camera::Axis> ( "/axis_ptz/cmd", 1000 );
+    pc3d_sub_ = n_.subscribe ( wrapper_params_.pc3dTopic, 10, &OVSWrapper::pointCloudCallback3D, this );
+    pc2d_sub_ = n_.subscribe ( wrapper_params_.pc2dTopic, 10, &OVSWrapper::pointCloudCallback2D, this ); // laser to point cloud data
+    image_sub_ = n_.subscribe ( wrapper_params_.imageTopic, 10, &OVSWrapper::imageCallback, this ); // image data
+    ptz_pub_ = n_.advertise<axis_camera::Axis> ( wrapper_params_.ptzTopic, 1000 );
 }
 
 
