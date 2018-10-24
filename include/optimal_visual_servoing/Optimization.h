@@ -35,13 +35,18 @@ struct OptimizationParams { //Placeholder
 
     OptimizationParams() {}
     OptimizationParams ( double cluster_tolerance,
-                              int min_cluster_size,
-                              int max_cluster_size )
+                         int min_cluster_size,
+                         int max_cluster_size )
         : cluster_tolerance ( cluster_tolerance ), max_cluster_size ( max_cluster_size ), min_cluster_size ( min_cluster_size ) {}
 
     double cluster_tolerance = 0.1f; // 1.0 equals 1 m
     int min_cluster_size  = 10;
     int max_cluster_size  = 5000;
+    double fx;
+    double fy;
+    double cx;
+    double cy;
+    Eigen::Matrix< double, 3, 4 > K;
 };
 
 class Optimization
@@ -50,18 +55,17 @@ private:
 
     ceres::Problem problem;
     double dx_dy_dtheta_vel_omega_[];
-    double p_t[];
+    double p_t_[];
     OptimizationParams params_;
 public:
     Optimization() {}
     ~Optimization() {}
-    void addTagFactors ();
-    void addRangeFactor ( RangeDataTuple &tuple );
-    void generateData ( std::vector<RangeDataTuple> &gen_data );
-    void optimizeGraph();
+    void addTagFactors ( Eigen::Vector4d target_in_cam, double weight );
+    void addRangeFactor ( RangeDataTuple &tuple, double weight );
+    void optimizeGraph( );
     void readOptimizationParams ( std:: string params_file );
     inline PTZCommand getPTZCommand() {
-        return PTZCommand ( p_t[0] * 180.0 / M_PI, p_t[1] * 180.0 / M_PI, 0 );
+        return PTZCommand ( p_t_[0] * 180.0 / M_PI, p_t_[1] * 180.0 / M_PI, 0 );
     }
 };
 

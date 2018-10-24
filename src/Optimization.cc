@@ -19,33 +19,55 @@
 
 #include <optimal_visual_servoing/Optimization.h>
 
-void Optimization::generateData ( std::vector<RangeDataTuple> &gen_data ) {
-    srand ( time ( NULL ) );
-    int angle_init = 0;
-    int angle_final = 0;
-    while ( angle_final < 360 ) {
-        double dist = rand() % 10 + 1;
-        int width = rand() % 30;
-        angle_final = std::min ( angle_init + width, 360 );
-        gen_data.push_back ( RangeDataTuple ( dist, ( angle_final + angle_init ) / 2.0, angle_final - angle_init ) );
-        angle_init = angle_final;
-    }
-}
-
-void Optimization::addRangeFactor ( RangeDataTuple &tuple ) {
+void Optimization::addRangeFactor ( RangeDataTuple &tuple, double weight ) {
     ceres::CostFunction *cost_function =
-        RangeError::Create ( tuple, 1 );
+        RangeError::Create ( tuple, weight );
     problem.AddResidualBlock ( cost_function,
                                NULL,
                                dx_dy_dtheta_vel_omega_ );
 
 }
 
+void Optimization::addTagFactors ( Eigen::Vector4d target_in_cam, double weight ) {
+    double cam_in_body_old[16];
+    double sp = sin ( p_t_[0] );
+    double st = sin ( p_t_[1] );
+    double cp = cos ( p_t_[0] );
+    double ct = cos ( p_t_[1] );
+    cam_in_body_old[0] = -sp;
+    cam_in_body_old[1] = st * cp;
+    cam_in_body_old[2] = cp * ct;
+    cam_in_body_old[3] = 0.0;
+    cam_in_body_old[4] = -cp;
+    cam_in_body_old[5] = -st * sp;
+    cam_in_body_old[6] = -ct * sp;
+    cam_in_body_old[7] = 0.0;
+    cam_in_body_old[8] = 0.0;
+    cam_in_body_old[9] = -ct;
+    cam_in_body_old[10] = st;
+    cam_in_body_old[11] = 0.0;
+    cam_in_body_old[12] = 0.0;
+    cam_in_body_old[13] = 0.0;
+    cam_in_body_old[14] = 0.0;
+    cam_in_body_old[15] = 1.0;
+    Eigen::Map<const Eigen::Matrix<double, 4, 4> > eigen_cam_in_body_old ( cam_in_body_old );
+    ceres::CostFunction *cost_function =
+        ProjectionError::Create ( target_in_cam, params_.K, eigen_cam_in_body_old, weight );
+}
+
+
 void Optimization::readOptimizationParams ( std::string params_file ) { //placeholder
     YAML::Node config = YAML::LoadFile ( params_file );
     params_.cluster_tolerance = config["clustering"]["cluster_tolerance"].as<double>();
     params_.min_cluster_size = config["clustering"]["min_cluster_size"].as<int>();
     params_.max_cluster_size = config["clustering"]["max_cluster_size"].as<int>();
+    params_.fx = config["camera"]["fx"].as<int>();
+    params_.fy = config["camera"]["fy"].as<int>();
+    params_.cx = config["camera"]["cx"].as<int>();
+    params_.cy = config["camera"]["cy"].as<int>();
+    params_.K << params_.fx, 0.0, params_.cx, 0.0,
+              0.0, params_.fy, params_.cy, 0.0,
+              0.0, 0.0, 0.0, 1.0;
 }
 
 

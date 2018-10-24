@@ -93,9 +93,16 @@ void OVSWrapper::imageCallback ( const sensor_msgs::CompressedImageConstPtr& ima
         //cv::undistort ( read_image_distorted, read_image, wrapper_params_.K, wrapper_params_.dist );
         read_image = read_image_distorted;
         cv::imshow ( "Read Image", read_image );
-        Eigen::Vector3d pt;
-        Eigen::Vector2d proj;
-        detector_.detectArucoTags ( read_image, pt, proj );
+
+//         Eigen::Vector4d pt;
+//         Eigen::Vector2d proj;
+//         detector_.detectArucoTags ( read_image, pt, proj );
+//         opt_problem_.addTagFactors ( pt, 1 );
+	
+	
+//         detector_.generateArucoTag ( "/home/thesidjway/marker.png", 
+// 				     "/home/thesidjway/charuco.png" );
+
         cv::waitKey ( 1 );
     } catch ( cv_bridge::Exception &e ) {
         ROS_ERROR ( "cv_bridge exception: %s", e.what() );
@@ -114,31 +121,22 @@ void OVSWrapper::initializeRosPipeline() {
 int main ( int argc, char **argv ) {
     ros::init ( argc, argv, "optimal_visual_servoing" );
     OVSWrapper wrapper ( "/home/thesidjway/research_ws/src/optimal-visual-servoing/params/optimal_visual_servoing.yaml" );
-//     DynamicWindowSampler dws;
-
-//     Eigen::Vector3d pt;
-//     Eigen::Vector2d proj;
-//     cv::Mat b = cv::imread ( "/home/thesidjway/deprecated_stuff/markers-depth-estimator/data/image-test.png" );
-//     detector.detectArucoTags ( b , pt, proj );
-//     RobotState a = RobotState ( 0, 0, 1.0, 0.2, 0.6 );
-//     std::vector<RobotState> feasible_states;
-//     dws.getFeasibleSearchSpace ( a, feasible_states );
 
     while ( ros::ok() ) {
-        if ( wrapper.last_data_clusters_.size() > 0 ) {
-
-            for ( unsigned int i = 0 ; i < wrapper.last_data_clusters_.size() ; i++ ) {
-                wrapper.opt_problem_.addRangeFactor ( wrapper.last_data_clusters_[i] );
-            }
-            wrapper.opt_problem_.optimizeGraph();
-            PTZCommand cmd = wrapper.opt_problem_.getPTZCommand();
-            axis_camera::Axis ptz_msg;
-            ptz_msg.pan = cmd.pan;
-            ptz_msg.tilt = cmd.tilt;
-            ptz_msg.zoom = cmd.zoom;
-            wrapper.ptz_pub_.publish ( ptz_msg );
-            wrapper.last_data_clusters_.clear();
-        }
+//         if ( wrapper.last_data_clusters_.size() > 0 ) {
+//
+//             for ( unsigned int i = 0 ; i < wrapper.last_data_clusters_.size() ; i++ ) {
+//                 wrapper.opt_problem_.addRangeFactor ( wrapper.last_data_clusters_[i], 1 );
+//             }
+//             wrapper.opt_problem_.optimizeGraph();
+//             PTZCommand cmd = wrapper.opt_problem_.getPTZCommand();
+//             axis_camera::Axis ptz_msg;
+//             ptz_msg.pan = cmd.pan;
+//             ptz_msg.tilt = cmd.tilt;
+//             ptz_msg.zoom = cmd.zoom;
+//             wrapper.ptz_pub_.publish ( ptz_msg );
+//             wrapper.last_data_clusters_.clear();
+//         }
         ros::spinOnce();
     }
 }

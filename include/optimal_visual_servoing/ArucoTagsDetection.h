@@ -20,6 +20,7 @@
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/aruco.hpp>
+#include <opencv2/aruco/charuco.hpp>
 #include <Eigen/Eigen>
 #include <yaml-cpp/yaml.h>
 
@@ -48,6 +49,7 @@ private:
 public:
     ArucoTagsDetection();
     ~ArucoTagsDetection();
-    void detectArucoTags ( cv::Mat &img, Eigen::Vector3d &marker_point, Eigen::Vector2d &marker_projection );
+    void generateArucoTag ( std::string output_file_marker, std::string output_file_charuco );
+    void detectArucoTags ( cv::Mat &img, Eigen::Vector4d &marker_point, Eigen::Vector2d &marker_projection );
     void readDetectorParameters ( std::string filename );
 };

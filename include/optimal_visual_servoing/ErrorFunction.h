@@ -78,22 +78,6 @@ struct VelocityConstraints { //TO BE MODIFIED
     double dt;
 };
 
-struct PanConstraint { // HARD NONLINEAR CONSTRAINT ON PAN VALUE.
-    PanConstraint ( double weight )
-        : weight ( weight ) {}
-
-    template <typename T>
-    bool operator () ( const T *const p_t,
-                       T *residuals ) const {
-        residuals[0] = T ( weight ) * ( p_t[0] );
-        return true;
-    }
-    static ceres::CostFunction *Create ( double weight ) {
-        return ( new ceres::AutoDiffCostFunction<PanConstraint, 1, 2> ( new PanConstraint ( weight ) ) );
-    }
-    double weight;
-};
-
 struct PanTiltChangeError {
     PanTiltChangeError ( double last_p, double last_t, double weight_p, double weight_t )
         : last_p ( last_p ), last_t ( last_t ), weight_p ( weight_p ), weight_t ( weight_t ) {}
@@ -167,8 +151,8 @@ struct DistanceError {
 
 
 struct ProjectionError {
-    ProjectionError ( Eigen::Vector2d projection, Eigen::Vector4d target_in_cam, Eigen::Matrix< double, 3, 4 > K, Eigen::Matrix4d cam_in_body_old, double weight )
-        : projection ( projection ), target_in_cam ( target_in_cam ), K ( K ), weight ( weight ), cam_in_body_old ( cam_in_body_old ) {}
+    ProjectionError ( Eigen::Vector4d target_in_cam, Eigen::Matrix< double, 3, 4 > K, Eigen::Matrix4d cam_in_body_old, double weight )
+        : target_in_cam ( target_in_cam ), K ( K ), weight ( weight ), cam_in_body_old ( cam_in_body_old ) {}
 
     template <typename T>
     bool operator() ( const T *const p_t,
@@ -233,11 +217,10 @@ struct ProjectionError {
         return true;
     }
 
-    static ceres::CostFunction *Create ( Eigen::Vector2d projection, Eigen::Vector4d target_in_cam, Eigen::Matrix< double, 3, 4 > K, Eigen::Matrix4d cam_in_body_old, double weight ) {
-        return ( new ceres::AutoDiffCostFunction<ProjectionError, 2, 5, 2> ( new ProjectionError ( projection, target_in_cam, K, cam_in_body_old, weight ) ) );
+    static ceres::CostFunction *Create ( Eigen::Vector4d target_in_cam, Eigen::Matrix< double, 3, 4 > K, Eigen::Matrix4d cam_in_body_old, double weight ) {
+        return ( new ceres::AutoDiffCostFunction<ProjectionError, 2, 5, 2> ( new ProjectionError ( target_in_cam, K, cam_in_body_old, weight ) ) );
     }
 
-    Eigen::Vector2d projection;
     Eigen::Vector4d target_in_cam;
     Eigen::Matrix< double, 3, 4 > K;
     Eigen::Matrix4d cam_in_body_old;
