@@ -45,11 +45,13 @@ struct ClusterExtractionParams {
     ClusterExtractionParams() {}
     ClusterExtractionParams ( double cluster_tolerance,
                               int min_cluster_size,
-			      double inlier_fraction,
-			      double inlier_tolerance,
-			      int min_line_segment_size,
-                              int max_cluster_size )
-        : cluster_tolerance ( cluster_tolerance ), max_cluster_size ( max_cluster_size ), inlier_fraction (inlier_fraction), inlier_tolerance (inlier_tolerance), min_line_segment_size (min_line_segment_size), min_cluster_size ( min_cluster_size ) {}
+                              double inlier_fraction,
+                              double inlier_tolerance,
+                              int min_line_segment_size,
+                              int max_cluster_size,
+			      int max_irregular_cluster_size
+			    )
+        : cluster_tolerance ( cluster_tolerance ), max_cluster_size ( max_cluster_size ), inlier_fraction ( inlier_fraction ), inlier_tolerance ( inlier_tolerance ), min_line_segment_size ( min_line_segment_size ), min_cluster_size ( min_cluster_size ), max_irregular_cluster_size (max_irregular_cluster_size) {}
 
     double cluster_tolerance = 0.1f; // 1.0 equals 1 m
     int min_cluster_size  = 10;
@@ -57,6 +59,7 @@ struct ClusterExtractionParams {
     double inlier_fraction = 0.85;
     double inlier_tolerance = 0.05;
     int min_line_segment_size = 10;
+    int max_irregular_cluster_size = 10;
 };
 
 class ClusterExtractor
@@ -85,5 +88,6 @@ public:
     void extractSegmentFeatures ( std::vector<RangeDataTuple>& segments, std::vector< LineSegmentDataTuple >& line_segments );
     float distFromLine ( float x, float y, float m, float c );
     void getLineParam ( float x1, float y1, float x2, float y2, float& m, float& c );
+    void computeClusterParams(double& width, double& min_dist, double& bearing_angle, pcl::PointCloud<pcl::PointXYZ>::Ptr& ip, int pt_size,  std::vector<RangeDataTuple>& segments);
     void computeSegments ( pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud,std::vector<LineSegmentDataTuple>&  extracted_segments,int frontal,int distal );
 };

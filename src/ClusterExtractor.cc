@@ -36,6 +36,7 @@ void ClusterExtractor::readClusteringParams ( std::string params_file ) {
     params_.inlier_fraction = config["clustering"]["inlier_fraction"].as<double>();
     params_.inlier_tolerance = config["clustering"]["inlier_tolerance"].as<double>();
     params_.min_line_segment_size = config["clustering"]["min_line_segment_size"].as<int>();
+    params_.max_irregular_cluster_size = config["clustering"]["max_irregular_cluster_size"].as<int>();
 }
 
 
@@ -69,12 +70,39 @@ void ClusterExtractor::getLineParam ( float x1, float y1, float x2, float y2, fl
     c = ( y1 - x1* ( y2 - y1 ) / ( x2 -x1 ) );
 }
 
+void ClusterExtractor::computeClusterParams ( double& width, double& min_dist, double& bearing_angle, pcl::PointCloud<pcl::PointXYZ>::Ptr& ip, int pt_size, std::vector<RangeDataTuple>& segments ) {
+    if ( pt_size > params_.max_irregular_cluster_size ) {
+        return;
+    }
+    min_dist = 1000.0, width = -62.0;
+    Eigen::Vector2d bearing_v1, bearing_v2, bearing, x ( 1,0 );
+    for ( int j=0; j<ip->points.size(); j++ ) {
+        for ( int k=0; k<ip->points.size(); k++ ) {
+            pcl::PointXYZ v1 = ip->points[j], v2 = ip->points[k];;
+            Eigen::Vector2d pcl_v1 ( v1._PointXYZ::data[0], v1._PointXYZ::data[1] );
+            Eigen::Vector2d pcl_v2 ( v2._PointXYZ::data[0], v2._PointXYZ::data[1] );
+            min_dist = std::min ( min_dist, pcl_v1.dot ( pcl_v1 ) );
+            double angle = atan2 ( pcl_v1 ( 0 ) *pcl_v2 ( 1 ) - pcl_v1 ( 1 ) *pcl_v2 ( 0 ), ( pcl_v1.dot ( pcl_v2 ) ) );
+            if ( ( angle ) > width ) {
+                width = ( angle );
+                bearing_v1 = pcl_v1;
+                bearing_v2 = pcl_v2;
+            }
 
+        }
+    }
+    bearing = bearing_v1 + bearing_v2;
+    bearing_angle = -1*atan2 ( bearing ( 0 ) * x ( 1 ) - bearing ( 1 ) * x ( 0 ), ( bearing.dot ( x ) ) );
+    std::cout << "ang width: " << width*180.0/M_PI << ", bearing angle: " <<  bearing_angle * 180.0/M_PI  << ", min_dist: " << min_dist << ", pt_size: " << pt_size << std::endl;
+    RangeDataTuple cluster = RangeDataTuple ( min_dist, bearing_angle, width );
+    segments.push_back ( cluster );
+}
 
 void ClusterExtractor::computeSegments ( pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud,std::vector<LineSegmentDataTuple>&  extracted_segments,int frontal,int distal ) {
 
-    if ( ( distal - frontal ) < params_.min_line_segment_size )                    
+    if ( ( distal - frontal ) < params_.min_line_segment_size ) {
         return;
+    }
 
     int inliers = 0, target_index;
     float  m , c, max_dist = -1;
@@ -116,19 +144,16 @@ void ClusterExtractor::extractSegmentFeatures ( std::vector<RangeDataTuple>& seg
 
     for ( std::vector<pcl::PointIndices>::const_iterator it = cluster_indices_.begin (); it != cluster_indices_.end (); ++it ) {
         pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_cluster ( new pcl::PointCloud<pcl::PointXYZ> );
-        double min_dist = 1000.0, width = -62.0;
-        Eigen::Vector2d bearing_v1, bearing_v2, bearing, x ( 1,0 );
-
 
         for ( std::vector<int>::const_iterator pit = it->indices.begin (); pit != it->indices.end (); ++pit ) {
             cloud_cluster->points.push_back ( input_cloud_->points[*pit] );
         }
         int frontal = 0;
         int distal = cloud_cluster->points.size() - 1;
+        double bearing_angle, width, min_dist;
+        computeClusterParams ( width, min_dist, bearing_angle, cloud_cluster, ( distal - frontal + 1 ), segments );
         computeSegments ( cloud_cluster,line_segments,frontal,distal );
 
-        RangeDataTuple cluster = RangeDataTuple ( min_dist, 0.0, width );
-        segments.push_back ( cluster );
         //cluster.printDataTuple();
         //std::cout << "PointCloud representing the Cluster: " << cloud_cluster->points.size () << " data points." << std::endl;
     }

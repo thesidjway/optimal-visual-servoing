@@ -45,7 +45,7 @@ class ArucoTagsDetection
 private:
     cv::Ptr<cv::aruco::DetectorParameters> detector_params_;
     PoseEstimationParams pose_estimation_params_;
-    
+
 public:
     ArucoTagsDetection();
     ~ArucoTagsDetection();

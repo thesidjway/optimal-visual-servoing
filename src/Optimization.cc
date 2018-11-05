@@ -20,7 +20,7 @@
 #include <optimal_visual_servoing/Optimization.h>
 
 Optimization::Optimization() {
-  
+
 }
 
 Optimization::~Optimization() {
@@ -40,7 +40,7 @@ void Optimization::addRangeFactor ( RangeDataTuple &tuple, double weight ) {
     problem_.SetParameterUpperBound ( dx_dy_dtheta_vel_omega_, 0, 0.3 );
 
     problem_.SetParameterLowerBound ( dx_dy_dtheta_vel_omega_, 1, -0.2 );
-    problem_.SetParameterUpperBound ( dx_dy_dtheta_vel_omega_, 1, 0.2);
+    problem_.SetParameterUpperBound ( dx_dy_dtheta_vel_omega_, 1, 0.2 );
 
     problem_.SetParameterLowerBound ( dx_dy_dtheta_vel_omega_, 2, -0.3 );
     problem_.SetParameterUpperBound ( dx_dy_dtheta_vel_omega_, 2, 0.3 );

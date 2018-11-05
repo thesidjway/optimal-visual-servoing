@@ -29,6 +29,7 @@
 #include <image_transport/image_transport.h>
 #include <axis_camera/Axis.h>
 #include <std_msgs/Float64.h>
+#include <yaml-cpp/yaml.h>
 
 #include <sensor_msgs/PointCloud2.h>
 #include <sensor_msgs/CompressedImage.h>
@@ -55,7 +56,7 @@ struct WrapperParams {
     std::string tiltTopic;
     std::string cmdVelTopic;
     std::string robotType;
-    
+
 };
 
 class OVSWrapper
@@ -81,8 +82,7 @@ public:
     ClusterExtractor cluster_extractor_;
     Optimization opt_problem_;
     ArucoTagsDetection detector_;
-    void publishPanAndTilt(double pan, double tilt);
-    void publishCommandVel(double vx, double w);
+    void publishPanAndTilt ( double pan, double tilt );
+    void publishCommandVel ( double vx, double w );
     std::vector<RangeDataTuple> last_data_clusters_;
-
 };

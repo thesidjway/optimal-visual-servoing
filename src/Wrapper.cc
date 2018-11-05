@@ -53,8 +53,6 @@ void OVSWrapper::publishCommandVel ( double vx, double w ) {
 }
 
 
-
-
 void OVSWrapper::readWrapperParams ( std:: string params_file ) {
     YAML::Node config = YAML::LoadFile ( params_file );
     wrapper_params_.K = cv::Mat::eye ( 3 , 3 , CV_32F );
@@ -132,10 +130,6 @@ void OVSWrapper::imageCallback ( const sensor_msgs::CompressedImageConstPtr& ima
 //         Eigen::Vector2d proj;
 //         detector_.detectArucoTags ( read_image, pt, proj );
 //         opt_problem_.addTagFactors ( pt, 1 );
-
-
-//         detector_.generateArucoTag ( "/home/thesidjway/marker.png",
-// 				     "/home/thesidjway/charuco.png" );
 
         cv::waitKey ( 1 );
     } catch ( cv_bridge::Exception &e ) {
