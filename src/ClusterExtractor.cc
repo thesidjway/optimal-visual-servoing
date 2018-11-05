@@ -93,7 +93,7 @@ void ClusterExtractor::computeClusterParams ( double& width, double& min_dist, d
     }
     bearing = bearing_v1 + bearing_v2;
     bearing_angle = -1*atan2 ( bearing ( 0 ) * x ( 1 ) - bearing ( 1 ) * x ( 0 ), ( bearing.dot ( x ) ) );
-    std::cout << "ang width: " << width*180.0/M_PI << ", bearing angle: " <<  bearing_angle * 180.0/M_PI  << ", min_dist: " << min_dist << ", pt_size: " << pt_size << std::endl;
+    //std::cout << "ang width: " << width*180.0/M_PI << ", bearing angle: " <<  bearing_angle * 180.0/M_PI  << ", min_dist: " << min_dist << ", pt_size: " << pt_size << std::endl;
     RangeDataTuple cluster = RangeDataTuple ( min_dist, bearing_angle, width );
     segments.push_back ( cluster );
 }

@@ -19,12 +19,12 @@
 
 #include <optimal_visual_servoing/Wrapper.h>
 
-OVSWrapper::OVSWrapper ( std:: string params_file ) {
+OVSWrapper::OVSWrapper ( std:: string params_file, std::string aruco_params_file ) {
     readWrapperParams ( params_file );
     initializeRosPipeline();
     cluster_extractor_.readClusteringParams ( params_file );
     opt_problem_.readOptimizationParams ( params_file );
-    detector_.readDetectorParameters ( params_file );
+    detector_.readDetectorParameters ( aruco_params_file );
 }
 
 OVSWrapper::~OVSWrapper() {
@@ -98,10 +98,9 @@ void OVSWrapper::pointCloudCallback2D ( const sensor_msgs::LaserScanConstPtr& la
     std::vector<RangeDataTuple> segments;
     std::vector<LineSegmentDataTuple> line_segments;
     cluster_extractor_.extractSegmentFeatures ( segments, line_segments );
-    for ( unsigned int i = 0 ; i < line_segments.size() ; i++ ) {
+    /*for ( unsigned int i = 0 ; i < line_segments.size() ; i++ ) {
         line_segments[i].printLineSegmentDataTuple();
-    }
-    std::cout << std::endl;
+    }*/
     last_data_clusters_ = segments;
 }
 
@@ -124,11 +123,13 @@ void OVSWrapper::imageCallback ( const sensor_msgs::CompressedImageConstPtr& ima
         cv::Mat read_image;
         //cv::undistort ( read_image_distorted, read_image, wrapper_params_.K, wrapper_params_.dist );
         read_image = read_image_distorted;
-        cv::imshow ( "Read Image", read_image );
+        
 
-//         Eigen::Vector4d pt;
-//         Eigen::Vector2d proj;
-//         detector_.detectArucoTags ( read_image, pt, proj );
+        Eigen::Vector4d pt;
+        Eigen::Vector2d proj;
+        detector_.detectArucoTags ( read_image, pt, proj );
+	
+	cv::imshow ( "Read Image", read_image );
 //         opt_problem_.addTagFactors ( pt, 1 );
 
         cv::waitKey ( 1 );
@@ -151,7 +152,8 @@ void OVSWrapper::initializeRosPipeline() {
 
 int main ( int argc, char **argv ) {
     ros::init ( argc, argv, "optimal_visual_servoing" );
-    OVSWrapper wrapper ( "/home/thesidjway/research_ws/src/optimal-visual-servoing/params/optimal_visual_servoing.yaml" );
+    OVSWrapper wrapper ( "/home/thesidjway/research_ws/src/optimal-visual-servoing/params/optimal_visual_servoing.yaml",
+                         "/home/thesidjway/research_ws/src/optimal-visual-servoing/params/aruco_params.yaml");
 
     while ( ros::ok() ) {
         if ( wrapper.last_data_clusters_.size() > 0 ) {

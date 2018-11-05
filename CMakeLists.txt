@@ -40,5 +40,5 @@ target_link_libraries(optimal_visual_servoing ceres ${catkin_LIBRARIES} ${OpenCV
 add_executable(calibration calibration/charuco_calib.cpp)
 target_link_libraries(calibration ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
-add_executable(tag_trajectory_generation src/TagTrajectoryGenerator.cc)
-target_link_libraries(tag_trajectory_generation ${catkin_LIBRARIES} yaml-cpp)
+add_executable(tag_trajectory_generator src/TagTrajectoryGenerator.cc)
+target_link_libraries(tag_trajectory_generator ${catkin_LIBRARIES} yaml-cpp)

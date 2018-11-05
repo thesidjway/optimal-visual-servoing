@@ -77,7 +77,7 @@ private:
     void pointCloudCallback2D ( const sensor_msgs::LaserScanConstPtr& laser_scan );
     void imageCallback ( const sensor_msgs::CompressedImageConstPtr& callback_image );
 public:
-    OVSWrapper ( std::string params_file );
+    OVSWrapper ( std::string params_file, std::string aruco_params_file );
     ~OVSWrapper();
     ClusterExtractor cluster_extractor_;
     Optimization opt_problem_;

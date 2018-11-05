@@ -20,7 +20,6 @@ clustering:
   max_irregular_cluster_size: 15
 
 aruco:
-  nmarkers: 1024
   adaptiveThreshWinSizeMin: 3
   adaptiveThreshWinSizeMax: 23
   adaptiveThreshWinSizeStep: 10
