@@ -19,12 +19,31 @@
 
 #include <optimal_visual_servoing/Optimization.h>
 
+Optimization::Optimization() {
+  
+}
+
+Optimization::~Optimization() {
+
+}
+
+
 void Optimization::addRangeFactor ( RangeDataTuple &tuple, double weight ) {
     ceres::CostFunction *cost_function =
         RangeError::Create ( tuple, weight );
-    problem.AddResidualBlock ( cost_function,
-                               NULL,
-                               dx_dy_dtheta_vel_omega_ );
+
+    problem_.AddResidualBlock ( cost_function,
+                                NULL,
+                                dx_dy_dtheta_vel_omega_ );
+
+    problem_.SetParameterLowerBound ( dx_dy_dtheta_vel_omega_, 0, -0.3 );
+    problem_.SetParameterUpperBound ( dx_dy_dtheta_vel_omega_, 0, 0.3 );
+
+    problem_.SetParameterLowerBound ( dx_dy_dtheta_vel_omega_, 1, -0.2 );
+    problem_.SetParameterUpperBound ( dx_dy_dtheta_vel_omega_, 1, 0.2);
+
+    problem_.SetParameterLowerBound ( dx_dy_dtheta_vel_omega_, 2, -0.3 );
+    problem_.SetParameterUpperBound ( dx_dy_dtheta_vel_omega_, 2, 0.3 );
 
 }
 
@@ -53,6 +72,8 @@ void Optimization::addTagFactors ( Eigen::Vector4d target_in_cam, double weight 
     Eigen::Map<const Eigen::Matrix<double, 4, 4> > eigen_cam_in_body_old ( cam_in_body_old );
     ceres::CostFunction *cost_function =
         ProjectionError::Create ( target_in_cam, params_.K, eigen_cam_in_body_old, weight );
+    problem_.SetParameterLowerBound ( p_t_, 0, -1.57 );
+    problem_.SetParameterUpperBound ( p_t_, 0, 1.57 );
 }
 
 
@@ -78,5 +99,5 @@ void Optimization::optimizeGraph() {
     options.minimizer_progress_to_stdout = true;
     ceres::Solver::Summary summary;
     std::cout << "Results: " << dx_dy_dtheta_vel_omega_[0] << " " << dx_dy_dtheta_vel_omega_[1] << std::endl;
-    ceres::Solve ( options, &problem, &summary );
+    ceres::Solve ( options, &problem_, &summary );
 }

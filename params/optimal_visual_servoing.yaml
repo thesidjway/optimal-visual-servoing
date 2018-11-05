@@ -2,13 +2,21 @@
 ros:
   pc_2d_topic: "summit_xl_a/front_laser/scan"
   pc_3d_topic: "/velodyne_points"
-  image_topic: "/axis_ptz/image_raw/compressed"
   ptz_topic: "/axis_ptz/cmd"
+  image_topic: "/summit_xl_a/summit_xl_a_front_ptz_camera/image_raw/compressed"
+  pan_topic: "/summit_xl_a/joint_pan_position_controller/command"
+  tilt_topic: "/summit_xl_a/joint_tilt_position_controller/command"
+  cmd_vel_topic: "/summit_xl_a/robotnik_base_control/cmd_vel"
+  robot_type: "summit_xl"
+
 
 clustering:
   cluster_tolerance: 0.1
   min_cluster_size: 10
   max_cluster_size: 1000
+  inlier_fraction: 0.85
+  inlier_tolerance: 0.05
+  min_line_segment_size: 10
 
 aruco:
   nmarkers: 1024

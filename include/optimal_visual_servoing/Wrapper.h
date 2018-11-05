@@ -28,6 +28,7 @@
 #include <laser_geometry/laser_geometry.h>
 #include <image_transport/image_transport.h>
 #include <axis_camera/Axis.h>
+#include <std_msgs/Float64.h>
 
 #include <sensor_msgs/PointCloud2.h>
 #include <sensor_msgs/CompressedImage.h>
@@ -50,6 +51,11 @@ struct WrapperParams {
     std::string pc3dTopic;
     std::string imageTopic;
     std::string ptzTopic;
+    std::string panTopic;
+    std::string tiltTopic;
+    std::string cmdVelTopic;
+    std::string robotType;
+    
 };
 
 class OVSWrapper
@@ -59,21 +65,24 @@ private:
     ros::Subscriber pc2d_sub_;
     ros::Subscriber pc3d_sub_;
     ros::Subscriber image_sub_;
+    ros::Publisher ptz_pub_;
+    ros::Publisher pan_pub_;
+    ros::Publisher tilt_pub_;
+    ros::Publisher cmd_vel_pub_;
     WrapperParams wrapper_params_;
     void initializeRosPipeline();
     void readWrapperParams ( std:: string params_file );
-
+    void pointCloudCallback3D ( const sensor_msgs::PointCloud2ConstPtr& callback_cloud );
+    void pointCloudCallback2D ( const sensor_msgs::LaserScanConstPtr& laser_scan );
+    void imageCallback ( const sensor_msgs::CompressedImageConstPtr& callback_image );
 public:
     OVSWrapper ( std::string params_file );
     ~OVSWrapper();
     ClusterExtractor cluster_extractor_;
     Optimization opt_problem_;
     ArucoTagsDetection detector_;
-
-    ros::Publisher ptz_pub_;
-    void pointCloudCallback3D ( const sensor_msgs::PointCloud2ConstPtr& callback_cloud );
-    void pointCloudCallback2D ( const sensor_msgs::LaserScanConstPtr& laser_scan );
-    void imageCallback ( const sensor_msgs::CompressedImageConstPtr& callback_image );
+    void publishPanAndTilt(double pan, double tilt);
+    void publishCommandVel(double vx, double w);
     std::vector<RangeDataTuple> last_data_clusters_;
 
 };

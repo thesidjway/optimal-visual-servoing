@@ -32,6 +32,18 @@ struct RangeDataTuple {
     }
 };
 
+struct LineSegmentDataTuple {
+    LineSegmentDataTuple () {}
+    LineSegmentDataTuple ( double x_frontal, double y_frontal, double x_distal, double y_distal ) : x_frontal ( x_frontal ), y_frontal ( y_frontal ), x_distal ( x_distal ), y_distal (y_distal) {}
+    double x_frontal;
+    double y_frontal;
+    double x_distal;
+    double y_distal;
+    void printLineSegmentDataTuple () {
+        std::cout << " x_frontal : " << x_frontal << ", y_frontal : " << y_frontal << " , x_distal : " << x_distal << " , y_distal : " << y_distal << std::endl;
+    }
+};
+
 struct PTZCommand {
     PTZCommand() {}
     PTZCommand ( double pan, double tilt, double zoom ) : pan ( pan ), tilt ( tilt ), zoom ( zoom ) {}

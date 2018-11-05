@@ -28,8 +28,32 @@ OVSWrapper::OVSWrapper ( std:: string params_file ) {
 }
 
 OVSWrapper::~OVSWrapper() {
-
 }
+
+void OVSWrapper::publishPanAndTilt ( double pan_desired, double tilt_desired ) {
+    if ( wrapper_params_.robotType == "husky" ) {
+        axis_camera::Axis ptz_msg;
+        ptz_msg.pan = pan_desired;
+        ptz_msg.tilt = tilt_desired;
+        ptz_pub_.publish ( ptz_msg );
+    } else if ( wrapper_params_.robotType == "summit_xl" ) {
+        std_msgs::Float64 pan_msg, tilt_msg;
+        pan_msg.data = pan_desired;
+        tilt_msg.data = tilt_desired;
+        pan_pub_.publish ( pan_msg );
+        tilt_pub_.publish ( tilt_msg );
+    }
+}
+
+void OVSWrapper::publishCommandVel ( double vx, double w ) {
+    geometry_msgs::Twist cmd_vel_msg;
+    cmd_vel_msg.linear.x = vx;
+    cmd_vel_msg.angular.z = w;
+    cmd_vel_pub_.publish ( cmd_vel_msg );
+}
+
+
+
 
 void OVSWrapper::readWrapperParams ( std:: string params_file ) {
     YAML::Node config = YAML::LoadFile ( params_file );
@@ -40,6 +64,10 @@ void OVSWrapper::readWrapperParams ( std:: string params_file ) {
     wrapper_params_.pc3dTopic = config["ros"]["pc_3d_topic"].as<std::string>();
     wrapper_params_.imageTopic = config["ros"]["image_topic"].as<std::string>();
     wrapper_params_.ptzTopic = config["ros"]["ptz_topic"].as<std::string>();
+    wrapper_params_.panTopic = config["ros"]["pan_topic"].as<std::string>();
+    wrapper_params_.tiltTopic = config["ros"]["tilt_topic"].as<std::string>();
+    wrapper_params_.cmdVelTopic = config["ros"]["cmd_vel_topic"].as<std::string>();
+    wrapper_params_.robotType = config["ros"]["robot_type"].as<std::string>();
 
     wrapper_params_.fx = config["camera"]["fx"].as<double>();
     wrapper_params_.fy = config["camera"]["fy"].as<double>();
@@ -70,7 +98,12 @@ void OVSWrapper::pointCloudCallback2D ( const sensor_msgs::LaserScanConstPtr& la
     cluster_extractor_.setInputCloud ( raw_pcl );
     cluster_extractor_.segmentPointcloud();
     std::vector<RangeDataTuple> segments;
-    cluster_extractor_.extractSegmentFeatures ( segments );
+    std::vector<LineSegmentDataTuple> line_segments;
+    cluster_extractor_.extractSegmentFeatures ( segments, line_segments );
+    for ( unsigned int i = 0 ; i < line_segments.size() ; i++ ) {
+        line_segments[i].printLineSegmentDataTuple();
+    }
+    std::cout << std::endl;
     last_data_clusters_ = segments;
 }
 
@@ -80,7 +113,8 @@ void OVSWrapper::pointCloudCallback3D ( const sensor_msgs::PointCloud2ConstPtr& 
     cluster_extractor_.setInputCloud ( pcl_pc2 );
     cluster_extractor_.segmentPointcloud();
     std::vector<RangeDataTuple> segments;
-    cluster_extractor_.extractSegmentFeatures ( segments );
+    std::vector<LineSegmentDataTuple> line_segments;
+    cluster_extractor_.extractSegmentFeatures ( segments, line_segments );
     last_data_clusters_ = segments;
 }
 
@@ -98,9 +132,9 @@ void OVSWrapper::imageCallback ( const sensor_msgs::CompressedImageConstPtr& ima
 //         Eigen::Vector2d proj;
 //         detector_.detectArucoTags ( read_image, pt, proj );
 //         opt_problem_.addTagFactors ( pt, 1 );
-	
-	
-//         detector_.generateArucoTag ( "/home/thesidjway/marker.png", 
+
+
+//         detector_.generateArucoTag ( "/home/thesidjway/marker.png",
 // 				     "/home/thesidjway/charuco.png" );
 
         cv::waitKey ( 1 );
@@ -114,6 +148,9 @@ void OVSWrapper::initializeRosPipeline() {
     pc2d_sub_ = n_.subscribe ( wrapper_params_.pc2dTopic, 10, &OVSWrapper::pointCloudCallback2D, this ); // laser to point cloud data
     image_sub_ = n_.subscribe ( wrapper_params_.imageTopic, 10, &OVSWrapper::imageCallback, this ); // image data
     ptz_pub_ = n_.advertise<axis_camera::Axis> ( wrapper_params_.ptzTopic, 1000 );
+    pan_pub_ = n_.advertise<std_msgs::Float64> ( wrapper_params_.panTopic, 1000 );
+    tilt_pub_ = n_.advertise<std_msgs::Float64> ( wrapper_params_.tiltTopic, 1000 );
+    cmd_vel_pub_ = n_.advertise<geometry_msgs::Twist> ( wrapper_params_.cmdVelTopic, 1000 );
 }
 
 
@@ -123,8 +160,7 @@ int main ( int argc, char **argv ) {
     OVSWrapper wrapper ( "/home/thesidjway/research_ws/src/optimal-visual-servoing/params/optimal_visual_servoing.yaml" );
 
     while ( ros::ok() ) {
-//         if ( wrapper.last_data_clusters_.size() > 0 ) {
-//
+        if ( wrapper.last_data_clusters_.size() > 0 ) {
 //             for ( unsigned int i = 0 ; i < wrapper.last_data_clusters_.size() ; i++ ) {
 //                 wrapper.opt_problem_.addRangeFactor ( wrapper.last_data_clusters_[i], 1 );
 //             }
@@ -135,8 +171,8 @@ int main ( int argc, char **argv ) {
 //             ptz_msg.tilt = cmd.tilt;
 //             ptz_msg.zoom = cmd.zoom;
 //             wrapper.ptz_pub_.publish ( ptz_msg );
-//             wrapper.last_data_clusters_.clear();
-//         }
+            wrapper.last_data_clusters_.clear();
+        }
         ros::spinOnce();
     }
 }

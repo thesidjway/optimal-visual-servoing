@@ -99,6 +99,7 @@ static bool readDetectorParameters(string filename, Ptr<aruco::DetectorParameter
     fs["maxErroneousBitsInBorderRate"] >> params->maxErroneousBitsInBorderRate;
     fs["minOtsuStdDev"] >> params->minOtsuStdDev;
     fs["errorCorrectionRate"] >> params->errorCorrectionRate;
+    cout << "Params acquired successfully" << endl;
     return true;
 }
 
@@ -196,16 +197,6 @@ int main(int argc, char *argv[]) {
         return 0;
     }
 
-    VideoCapture inputVideo;
-    int waitTime;
-    if(!video.empty()) {
-        inputVideo.open(video);
-        waitTime = 0;
-    } else {
-        inputVideo.open(camId);
-        waitTime = 10;
-    }
-
     Ptr<aruco::Dictionary> dictionary =
         aruco::getPredefinedDictionary(aruco::PREDEFINED_DICTIONARY_NAME(dictionaryId));
 
@@ -220,9 +211,14 @@ int main(int argc, char *argv[]) {
     vector< Mat > allImgs;
     Size imgSize;
 
-    while(inputVideo.grab()) {
+    for (int i = 1 ; i < 29 ; i++ ) {
         Mat image, imageCopy;
-        inputVideo.retrieve(image);
+        std::stringstream s;
+        s << "/home/thesidjway/research_ws/src/optimal-visual-servoing/data/calib_data/";
+        s << i << ".png";
+        image = imread(s.str());
+
+        cout << s.str() << endl;
 
         vector< int > ids;
         vector< vector< Point2f > > corners, rejected;
@@ -246,20 +242,13 @@ int main(int argc, char *argv[]) {
         if(currentCharucoCorners.total() > 0)
             aruco::drawDetectedCornersCharuco(imageCopy, currentCharucoCorners, currentCharucoIds);
 
-        putText(imageCopy, "Press 'c' to add current frame. 'ESC' to finish and calibrate",
-                Point(10, 20), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 0, 0), 2);
-
         imshow("out", imageCopy);
-        char key = (char)waitKey(waitTime);
-        if(key == 27) break;
-        if(key == 'c' && ids.size() > 0) {
-            cout << "Frame captured" << endl;
-            allCorners.push_back(corners);
-            allIds.push_back(ids);
-            allImgs.push_back(image);
-            imgSize = image.size();
-        }
-    }
+        cv::waitKey(1000);
+        allCorners.push_back(corners);
+        allIds.push_back(ids);
+        allImgs.push_back(image);
+        imgSize = image.size();
+      }
 
     if(allIds.size() < 1) {
         cerr << "Not enough captures for calibration" << endl;
@@ -355,4 +344,3 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
-

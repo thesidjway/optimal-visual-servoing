@@ -53,13 +53,13 @@ class Optimization
 {
 private:
 
-    ceres::Problem problem;
+    ceres::Problem problem_;
     double dx_dy_dtheta_vel_omega_[];
     double p_t_[];
     OptimizationParams params_;
 public:
-    Optimization() {}
-    ~Optimization() {}
+    Optimization();
+    ~Optimization();
     void addTagFactors ( Eigen::Vector4d target_in_cam, double weight );
     void addRangeFactor ( RangeDataTuple &tuple, double weight );
     void optimizeGraph( );
