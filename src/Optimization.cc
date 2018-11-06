@@ -72,8 +72,6 @@ void Optimization::addTagFactors ( Eigen::Vector4d target_in_cam, double weight 
     Eigen::Map<const Eigen::Matrix<double, 4, 4> > eigen_cam_in_body_old ( cam_in_body_old );
     ceres::CostFunction *cost_function =
         ProjectionError::Create ( target_in_cam, params_.K, eigen_cam_in_body_old, weight );
-    problem_.SetParameterLowerBound ( p_t_, 0, -1.57 );
-    problem_.SetParameterUpperBound ( p_t_, 0, 1.57 );
 }
 
 
@@ -82,10 +80,10 @@ void Optimization::readOptimizationParams ( std::string params_file ) { //placeh
     params_.cluster_tolerance = config["clustering"]["cluster_tolerance"].as<double>();
     params_.min_cluster_size = config["clustering"]["min_cluster_size"].as<int>();
     params_.max_cluster_size = config["clustering"]["max_cluster_size"].as<int>();
-    params_.fx = config["camera"]["fx"].as<int>();
-    params_.fy = config["camera"]["fy"].as<int>();
-    params_.cx = config["camera"]["cx"].as<int>();
-    params_.cy = config["camera"]["cy"].as<int>();
+    params_.fx = config["camera"]["fx"].as<double>();
+    params_.fy = config["camera"]["fy"].as<double>();
+    params_.cx = config["camera"]["cx"].as<double>();
+    params_.cy = config["camera"]["cy"].as<double>();
     params_.K << params_.fx, 0.0, params_.cx, 0.0,
               0.0, params_.fy, params_.cy, 0.0,
               0.0, 0.0, 0.0, 1.0;
@@ -97,7 +95,11 @@ void Optimization::optimizeGraph() {
     options.max_num_iterations = 100;
     options.linear_solver_type = ceres::DENSE_QR;
     options.minimizer_progress_to_stdout = true;
+//     problem_.SetParameterLowerBound ( p_t_, 0, -1.570755 );
+//     problem_.SetParameterUpperBound ( p_t_, 0, 1.570755 );
+//     problem_.SetParameterLowerBound ( p_t_, 1, 0 );
+//     problem_.SetParameterUpperBound ( p_t_, 1, 3.14159 );
     ceres::Solver::Summary summary;
-    std::cout << "Results: " << dx_dy_dtheta_vel_omega_[0] << " " << dx_dy_dtheta_vel_omega_[1] << std::endl;
+    std::cout << "Results: " << p_t_[0] << " " << p_t_[1] << std::endl;
     ceres::Solve ( options, &problem_, &summary );
 }

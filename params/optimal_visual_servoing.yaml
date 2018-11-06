@@ -45,14 +45,14 @@ aruco:
   markerLength: 0.1
 
 camera:
-  fx: 300
-  fy: 300
-  cx: 160
-  cy: 120
-  k1: 0.01
-  k2: 0.01
-  p1: 0.01
-  p2: 0.01
+  fx: 554.256258422
+  fy: 554.256258422
+  cx: 320
+  cy: 240
+  k1: 0.0
+  k2: 0.0
+  p1: 0.0
+  p2: 0.0
 
 trajectory:
   x_min: -10

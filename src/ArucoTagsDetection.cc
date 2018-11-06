@@ -45,9 +45,10 @@ void ArucoTagsDetection::generateArucoTag ( std::string output_file_marker, std:
 }
 
 void ArucoTagsDetection::readDetectorParameters ( std::string params_file ) {
-    cv::FileStorage fs(params_file, cv::FileStorage::READ);
-    if(!fs.isOpened())
-        exit(EXIT_FAILURE);
+    cv::FileStorage fs ( params_file, cv::FileStorage::READ );
+    if ( !fs.isOpened() ) {
+        exit ( EXIT_FAILURE );
+    }
     fs["adaptiveThreshWinSizeMin"] >> detector_params_->adaptiveThreshWinSizeMin;
     fs["adaptiveThreshWinSizeMax"] >> detector_params_->adaptiveThreshWinSizeMax;
     fs["adaptiveThreshWinSizeStep"] >> detector_params_->adaptiveThreshWinSizeStep;
@@ -70,6 +71,10 @@ void ArucoTagsDetection::readDetectorParameters ( std::string params_file ) {
     fs["fy"] >> pose_estimation_params_.fy;
     fs["cx"] >> pose_estimation_params_.cx;
     fs["cy"] >> pose_estimation_params_.cy;
+    pose_estimation_params_.K.at<double> ( 0,0 ) = pose_estimation_params_.fx;
+    pose_estimation_params_.K.at<double> ( 0,2 ) = pose_estimation_params_.cx;
+    pose_estimation_params_.K.at<double> ( 1,1 ) = pose_estimation_params_.fy;
+    pose_estimation_params_.K.at<double> ( 1,2 ) = pose_estimation_params_.cy;
     fs["markerLength"] >> pose_estimation_params_.marker_length;
 }
 
@@ -85,15 +90,13 @@ void ArucoTagsDetection::detectArucoTags ( cv::Mat &img, Eigen::Vector4d &marker
                                markerIds,
                                detector_params_,
                                cv::noArray() );
-    cv::aruco::drawDetectedMarkers(img, markerCorners, markerIds);
-        
-    for (unsigned int i = 0 ; i < markerIds.size() ; i++ ) {
-      std::cout << "Marker detected with ID: " << markerIds[i] << std::endl;
-    }
+    cv::aruco::drawDetectedMarkers ( img, markerCorners, markerIds );
+
     cv::Mat r_marker, t_marker;
     cv::aruco::estimatePoseSingleMarkers ( markerCorners, pose_estimation_params_.marker_length, pose_estimation_params_.K, cv::noArray(), r_marker, t_marker );
     if ( t_marker.rows > 0 ) {
-        marker_point = Eigen::Vector4d ( t_marker.at<double> ( 0,0 ) / t_marker.at<double> ( 2,0 ), t_marker.at<double> ( 1,0 ) / t_marker.at<double> ( 2,0 ), 1.0, 1.0 );
+        std::cout << t_marker.at<double> ( 0 , 0 ) << " " <<  t_marker.at<double> ( 0 , 1 ) << " " << t_marker.at<double> ( 0 , 2 ) << std::endl;
+        marker_point = Eigen::Vector4d ( t_marker.at<double> ( 0,0 ) / t_marker.at<double> ( 0 , 2 ), t_marker.at<double> ( 0 , 1 ) / t_marker.at<double> ( 0 , 2 ), 1.0, 1.0 );
         marker_projection ( 0 ) = ( markerCorners[0][0].x + markerCorners[0][1].x + markerCorners[0][2].x + markerCorners[0][3].x ) / 4 ;
         marker_projection ( 1 ) = ( markerCorners[0][0].y + markerCorners[0][1].y + markerCorners[0][2].y + markerCorners[0][3].y ) / 4 ;
     }

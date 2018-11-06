@@ -126,11 +126,15 @@ void OVSWrapper::imageCallback ( const sensor_msgs::CompressedImageConstPtr& ima
         
 
         Eigen::Vector4d pt;
-        Eigen::Vector2d proj;
+        Eigen::Vector2d proj(-10000,-10000);
         detector_.detectArucoTags ( read_image, pt, proj );
+	if (proj.norm() < 10000) {
+// 	  std::cout << pt << std::endl;
+	  opt_problem_.addTagFactors ( pt, 1 );
+	  opt_problem_.optimizeGraph();
+	}
 	
 	cv::imshow ( "Read Image", read_image );
-//         opt_problem_.addTagFactors ( pt, 1 );
 
         cv::waitKey ( 1 );
     } catch ( cv_bridge::Exception &e ) {

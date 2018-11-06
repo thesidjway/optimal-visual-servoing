@@ -98,14 +98,22 @@ void TagTrajectoryGenerator::bezier ( std::vector< std::vector< double > >& poin
 void TagTrajectoryGenerator::generateNRandomPoints ( std::vector<std::vector<double>>& points ) {
     std::srand ( time ( NULL ) );
     for ( unsigned int i = 0 ; i < params_.num_bezier_pts ; i++ ) {
-        double temp1 = fRand ( params_.x_min , params_.x_max );
-        double temp2 = fRand ( params_.y_min , params_.y_max );
-        double temp3 = fRand ( params_.z_min , params_.z_max );
-        std::vector<double> a;
-        a.push_back ( temp1 );
-        a.push_back ( temp2 );
-        a.push_back ( temp3 );
-        points.push_back ( a );
+        if ( i == 0 ) {
+            std::vector<double> a;
+            a.push_back ( 0 );
+            a.push_back ( 0 );
+            a.push_back ( 4 );
+            points.push_back ( a );
+        } else {
+            double temp1 = fRand ( params_.x_min , params_.x_max );
+            double temp2 = fRand ( params_.y_min , params_.y_max );
+            double temp3 = fRand ( params_.z_min , params_.z_max );
+            std::vector<double> a;
+            a.push_back ( temp1 );
+            a.push_back ( temp2 );
+            a.push_back ( temp3 );
+            points.push_back ( a );
+        }
     }
 }
 

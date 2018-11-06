@@ -52,5 +52,4 @@ public:
     void generateArucoTag ( std::string output_file_marker, std::string output_file_charuco );
     void detectArucoTags ( cv::Mat &img, Eigen::Vector4d &marker_point, Eigen::Vector2d &marker_projection );
     void readDetectorParameters ( std::string filename );
-    cv::FileNode params;
 };
