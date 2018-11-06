@@ -95,8 +95,8 @@ void ArucoTagsDetection::detectArucoTags ( cv::Mat &img, Eigen::Vector4d &marker
     cv::Mat r_marker, t_marker;
     cv::aruco::estimatePoseSingleMarkers ( markerCorners, pose_estimation_params_.marker_length, pose_estimation_params_.K, cv::noArray(), r_marker, t_marker );
     if ( t_marker.rows > 0 ) {
-        std::cout << t_marker.at<double> ( 0 , 0 ) << " " <<  t_marker.at<double> ( 0 , 1 ) << " " << t_marker.at<double> ( 0 , 2 ) << std::endl;
-        marker_point = Eigen::Vector4d ( t_marker.at<double> ( 0,0 ) / t_marker.at<double> ( 0 , 2 ), t_marker.at<double> ( 0 , 1 ) / t_marker.at<double> ( 0 , 2 ), 1.0, 1.0 );
+//         std::cout << t_marker.at<double> ( 0 , 0 ) << " " <<  t_marker.at<double> ( 0 , 1 ) << " " << t_marker.at<double> ( 0 , 2 ) << std::endl;
+        marker_point = Eigen::Vector4d ( t_marker.at<double> ( 0,0 ) , t_marker.at<double> ( 0 , 1 ) , t_marker.at<double> ( 0 , 2 ), 1.0 );
         marker_projection ( 0 ) = ( markerCorners[0][0].x + markerCorners[0][1].x + markerCorners[0][2].x + markerCorners[0][3].x ) / 4 ;
         marker_projection ( 1 ) = ( markerCorners[0][0].y + markerCorners[0][1].y + markerCorners[0][2].y + markerCorners[0][3].y ) / 4 ;
     }

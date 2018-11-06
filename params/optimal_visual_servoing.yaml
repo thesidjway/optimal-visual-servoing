@@ -55,15 +55,15 @@ camera:
   p2: 0.0
 
 trajectory:
-  x_min: -10
-  x_max: 10
+  x_min: -1
+  x_max: 1
   y_min: -10
   y_max: 10
   z_min: 3
   z_max: 5
   num_bezier_pts: 4
   num_traj_pts: 5000
-  publish_rate: 50
+  publish_rate: 100
   ros_topic: /gazebo/set_model_state
   model_name: aruco
   reference_frame: world

@@ -71,6 +71,7 @@ private:
     ros::Publisher tilt_pub_;
     ros::Publisher cmd_vel_pub_;
     WrapperParams wrapper_params_;
+    unsigned long num_images_ = 0;
     void initializeRosPipeline();
     void readWrapperParams ( std:: string params_file );
     void pointCloudCallback3D ( const sensor_msgs::PointCloud2ConstPtr& callback_cloud );
@@ -82,7 +83,7 @@ public:
     ClusterExtractor cluster_extractor_;
     Optimization opt_problem_;
     ArucoTagsDetection detector_;
-    void publishPanAndTilt ( double pan, double tilt );
+    void publishPanAndTilt ( PTZCommand cmd );
     void publishCommandVel ( double vx, double w );
     std::vector<RangeDataTuple> last_data_clusters_;
 };

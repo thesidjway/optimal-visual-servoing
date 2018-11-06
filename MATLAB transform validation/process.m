@@ -7,7 +7,8 @@ cp = cos(pan);
 ct = cos(tilt);
 
 Tderivedorig_new = [[cp * ct sp -st * cp 0.19];[-sp * ct cp sp * st 0];[st 0 ct 0.395];[0 0 0 1]];
-
+Tcam_in_tilt = [[0 0 1 0];[-1 0 0 0];[0 -1 0 0];[0 0 0 1]];
+Tcam_in_body = Tderivedorig_new * Tcam_in_tilt;
 
 for i = 1:size(poses_base)
     Tbase = eye(4);

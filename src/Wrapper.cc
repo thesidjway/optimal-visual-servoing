@@ -30,16 +30,16 @@ OVSWrapper::OVSWrapper ( std:: string params_file, std::string aruco_params_file
 OVSWrapper::~OVSWrapper() {
 }
 
-void OVSWrapper::publishPanAndTilt ( double pan_desired, double tilt_desired ) {
+void OVSWrapper::publishPanAndTilt ( PTZCommand cmd ) {
     if ( wrapper_params_.robotType == "husky" ) {
         axis_camera::Axis ptz_msg;
-        ptz_msg.pan = pan_desired;
-        ptz_msg.tilt = tilt_desired;
+        ptz_msg.pan = cmd.pan;
+        ptz_msg.tilt = cmd.tilt;
         ptz_pub_.publish ( ptz_msg );
     } else if ( wrapper_params_.robotType == "summit_xl" ) {
         std_msgs::Float64 pan_msg, tilt_msg;
-        pan_msg.data = pan_desired;
-        tilt_msg.data = tilt_desired;
+        pan_msg.data = cmd.pan;
+        tilt_msg.data = cmd.tilt;
         pan_pub_.publish ( pan_msg );
         tilt_pub_.publish ( tilt_msg );
     }
@@ -117,24 +117,26 @@ void OVSWrapper::pointCloudCallback3D ( const sensor_msgs::PointCloud2ConstPtr& 
 
 void OVSWrapper::imageCallback ( const sensor_msgs::CompressedImageConstPtr& image_msg ) {
     try {
+        
         cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy ( image_msg, sensor_msgs::image_encodings::BGR8 );
         cv::Mat read_image_distorted = cv_ptr->image;
         cv::cvtColor ( read_image_distorted, read_image_distorted, CV_BGR2GRAY );
         cv::Mat read_image;
         //cv::undistort ( read_image_distorted, read_image, wrapper_params_.K, wrapper_params_.dist );
         read_image = read_image_distorted;
-        
-
         Eigen::Vector4d pt;
-        Eigen::Vector2d proj(-10000,-10000);
+        Eigen::Vector2d proj ( -10000,-10000 );
         detector_.detectArucoTags ( read_image, pt, proj );
-	if (proj.norm() < 10000) {
+	num_images_ ++;
+        if ( proj.norm() < 10000 && num_images_% 10 == 0) {
 // 	  std::cout << pt << std::endl;
-	  opt_problem_.addTagFactors ( pt, 1 );
-	  opt_problem_.optimizeGraph();
-	}
-	
-	cv::imshow ( "Read Image", read_image );
+            opt_problem_.addTagFactors ( pt, 1 );
+            opt_problem_.optimizeGraph();
+            PTZCommand cmd = opt_problem_.getPTZCommand();
+            publishPanAndTilt ( cmd );
+        }
+
+        cv::imshow ( "Read Image", read_image );
 
         cv::waitKey ( 1 );
     } catch ( cv_bridge::Exception &e ) {
@@ -157,7 +159,7 @@ void OVSWrapper::initializeRosPipeline() {
 int main ( int argc, char **argv ) {
     ros::init ( argc, argv, "optimal_visual_servoing" );
     OVSWrapper wrapper ( "/home/thesidjway/research_ws/src/optimal-visual-servoing/params/optimal_visual_servoing.yaml",
-                         "/home/thesidjway/research_ws/src/optimal-visual-servoing/params/aruco_params.yaml");
+                         "/home/thesidjway/research_ws/src/optimal-visual-servoing/params/aruco_params.yaml" );
 
     while ( ros::ok() ) {
         if ( wrapper.last_data_clusters_.size() > 0 ) {
