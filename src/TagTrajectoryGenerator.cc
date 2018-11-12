@@ -102,7 +102,7 @@ void TagTrajectoryGenerator::generateNRandomPoints ( std::vector<std::vector<dou
             std::vector<double> a;
             a.push_back ( 0 );
             a.push_back ( 0 );
-            a.push_back ( 4 );
+            a.push_back ( (params_.z_max + params_.z_min) / 2  );
             points.push_back ( a );
         } else {
             double temp1 = fRand ( params_.x_min , params_.x_max );

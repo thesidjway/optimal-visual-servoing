@@ -47,17 +47,26 @@ private:
 
     ceres::Problem problem_;
     double dx_dy_dtheta_vel_omega_[];
+    double vel_omega_[];
     double p_t_[];
     OptimizationParams params_;
+    ceres::CostFunction *cost_function_distance;
+    ceres::CostFunction *cost_function_projection;
+    ceres::CostFunction *cost_function_range;
+    
 public:
     Optimization();
     ~Optimization();
     void addTagFactors ( Eigen::Vector4d target_in_cam, double weight );
+    void addDistanceFactor ( Eigen::Vector4d target_in_cam, Eigen::Vector3d last_gt, double dt, double weight, Eigen::Matrix4d tag_in_world );
     void addRangeFactor ( RangeDataTuple &tuple, double weight );
     void optimizeGraph( );
     void readOptimizationParams ( std:: string params_file );
     inline PTZCommand getPTZCommand() {
-        return PTZCommand ( p_t_[0] , p_t_[1] , 0 );
+        return PTZCommand ( asin ( sin ( p_t_[0] ) ) , acos ( cos ( p_t_[1] ) ) , 0 );
+    }
+    inline MotionCommand getMotionCommand() {
+        return MotionCommand ( vel_omega_[0], vel_omega_[1] );
     }
 };
 

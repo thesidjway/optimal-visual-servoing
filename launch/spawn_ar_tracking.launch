@@ -3,7 +3,7 @@
 <launch>
 
     <arg name="x" default="0.0" />
-    <arg name="y" default="0.5" />
+    <arg name="y" default="0.0" />
     <arg name="z" default="5" />
     <arg name="roll" default="0"/>
     <arg name="pitch" default="3.14159"/>
@@ -23,7 +23,8 @@
         <arg name="sdf_robot_file" value="$(arg sdf_robot_file)" />
         <arg name="robot_name" value="$(arg robot_name)" />
     </include>
-    
+
     <node name="tag_trajectory_generator" pkg="optimal_visual_servoing" type="tag_trajectory_generator" respawn="false" output="screen"/>
-    <node name="optimal_visual_servoing" pkg="optimal_visual_servoing" type="optimal_visual_servoing" respawn="false" output="screen"/>
+
+    <!-- <node name="optimal_visual_servoing" pkg="optimal_visual_servoing" type="optimal_visual_servoing" respawn="false" output="screen" /> -->
 </launch>

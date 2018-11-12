@@ -30,9 +30,11 @@
 #include <axis_camera/Axis.h>
 #include <std_msgs/Float64.h>
 #include <yaml-cpp/yaml.h>
-
+#include <gazebo_msgs/LinkStates.h>
+#include <gazebo_msgs/ModelStates.h>
 #include <sensor_msgs/PointCloud2.h>
 #include <sensor_msgs/CompressedImage.h>
+#include <mutex>
 
 
 struct WrapperParams {
@@ -56,7 +58,8 @@ struct WrapperParams {
     std::string tiltTopic;
     std::string cmdVelTopic;
     std::string robotType;
-
+    std::string gtTopic;
+    std::string tagTopic;
 };
 
 class OVSWrapper
@@ -65,6 +68,8 @@ private:
     ros::NodeHandle n_;
     ros::Subscriber pc2d_sub_;
     ros::Subscriber pc3d_sub_;
+    ros::Subscriber gt_sub_;
+    ros::Subscriber tag_sub_;
     ros::Subscriber image_sub_;
     ros::Publisher ptz_pub_;
     ros::Publisher pan_pub_;
@@ -77,6 +82,9 @@ private:
     void pointCloudCallback3D ( const sensor_msgs::PointCloud2ConstPtr& callback_cloud );
     void pointCloudCallback2D ( const sensor_msgs::LaserScanConstPtr& laser_scan );
     void imageCallback ( const sensor_msgs::CompressedImageConstPtr& callback_image );
+    void gtCallback ( const gazebo_msgs::LinkStatesConstPtr& gt_msg );
+    void arucoTagCallback ( const gazebo_msgs::ModelStatesConstPtr& msg );
+    
 public:
     OVSWrapper ( std::string params_file, std::string aruco_params_file );
     ~OVSWrapper();
@@ -86,4 +94,12 @@ public:
     void publishPanAndTilt ( PTZCommand cmd );
     void publishCommandVel ( double vx, double w );
     std::vector<RangeDataTuple> last_data_clusters_;
+    ros::Time last_optimization_time;
+    Eigen::Vector4d pt_for_optimization_;
+    bool ready_for_optimization_aruco_ = false;
+    Eigen::Vector3d last_gt_;
+    Eigen::Matrix4d Tbody_in_world_;
+    Eigen::Matrix4d Ttag_in_world_;
+    double temp_;
+    std::mutex m_;
 };

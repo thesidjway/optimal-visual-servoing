@@ -7,6 +7,8 @@ ros:
   pan_topic: "/summit_xl_a/joint_pan_position_controller/command"
   tilt_topic: "/summit_xl_a/joint_tilt_position_controller/command"
   cmd_vel_topic: "/summit_xl_a/robotnik_base_control/cmd_vel"
+  gt_topic: "/gazebo/link_states"
+  tag_topic: "/gazebo/model_states"
   robot_type: "summit_xl"
 
 
@@ -55,11 +57,11 @@ camera:
   p2: 0.0
 
 trajectory:
-  x_min: -1
-  x_max: 1
-  y_min: -10
-  y_max: 10
-  z_min: 3
+  x_min: -5
+  x_max: 5
+  y_min: -5
+  y_max: 5
+  z_min: 5
   z_max: 5
   num_bezier_pts: 4
   num_traj_pts: 5000
