@@ -34,12 +34,25 @@ Optimization::~Optimization() {
 }
 
 
-void Optimization::addRangeFactor ( RangeDataTuple &tuple, double weight ) {
-    cost_function_range =
-        RangeError::Create ( tuple, weight );
+void Optimization::addRangeFactors ( std::vector<RangeDataTuple> &cluster_tuples, std::vector<LineSegmentDataTuple> &line_tuples, double weight ) {
+    for ( uint i = 0 ; i < line_tuples.size() ; i++ ) {
+        ceres::CostFunction* cost_function_line =
+            LineSegmentError::Create ( line_tuples[i], weight );
+        cost_functions_range.push_back ( cost_function_line );
+    }
+    for ( uint i = 0 ; i < cluster_tuples.size() ; i++ ) {
+        ceres::CostFunction* cost_function_range =
+            ClusterError::Create ( cluster_tuples[i], weight );
+        cost_functions_range.push_back ( cost_function_range );
+    }
+
+    if ( cluster_tuples.size() > 0 || line_tuples.size() > 0 ) {
+        ready_for_range_ = true;
+    }
+
 }
 
-void Optimization::addDistanceFactor ( Eigen::Vector4d target_in_cam, Eigen::Vector3d last_gt, double dt, double weight, Eigen::Matrix4d tag_in_world ) {
+void Optimization::addDistanceFactor ( Eigen::Vector4d tag_in_cam, Eigen::Vector3d last_gt, double dt, double weight) {
     double cam_in_body_old[16];
     double tag_in_world_copy[16];
     double sp = sin ( p_t_new_[0] );
@@ -62,13 +75,10 @@ void Optimization::addDistanceFactor ( Eigen::Vector4d target_in_cam, Eigen::Vec
     cam_in_body_old[13] = 0.0;
     cam_in_body_old[14] = 0.0;
     cam_in_body_old[15] = 1.0;
-
-
     Eigen::Map<const Eigen::Matrix<double, 4, 4, Eigen::RowMajor> > eigen_cam_in_body_old ( cam_in_body_old );
-//     Eigen::Map<const Eigen::Matrix<double, 4, 4, Eigen::RowMajor> > eigen_tag_in_body_copy ( tag_in_body_copy );
-//     ceres::CostFunction *cost_function_motion = new ceres::AutoDiffCostFunction<CostFunctor, 1, 1> ( new DistanceError ( tag_in_world, 1, last_gt, dt ) );
-    cost_function_distance = xyError::Create ( tag_in_world, 1, last_gt, dt );
-//     problem_.AddResidualBlock ( cost_function_motion, NULL, vel_omega_ );
+    Eigen::Vector4d tag_in_body = eigen_cam_in_body_old * tag_in_cam;
+    std::cout << "Tag in body: [ " << tag_in_body(0,0) << " , " << tag_in_body(1,0) << " ]" <<  std::endl;
+    cost_function_distance = xyError::Create ( tag_in_body, 1, last_gt, dt );
     ready_for_distance_ = true;
 }
 
@@ -122,7 +132,7 @@ void Optimization::optimizeGraph() {
     ceres::Solver::Options options;
     options.max_num_iterations = 1000;
     options.linear_solver_type = ceres::SPARSE_NORMAL_CHOLESKY;
-    options.minimizer_progress_to_stdout = true;
+    options.minimizer_progress_to_stdout = false;
     ceres::Solver::Summary summary;
     if ( ready_for_projection_ ) {
         problem.AddResidualBlock ( cost_function_projection,
@@ -137,19 +147,23 @@ void Optimization::optimizeGraph() {
                                    x_y_theta_ );
     }
     if ( ready_for_range_ ) {
-        problem_.AddResidualBlock ( cost_function_range,
-                                    NULL,
-                                    x_y_theta_ );
+        for ( uint i = 0; i < cost_functions_range.size(); i++ ) {
+            problem.AddResidualBlock ( cost_functions_range[i],
+                                       NULL,
+                                       x_y_theta_ );
+        }
+        cost_functions_range.clear();
     }
 
 //     problem.SetParameterLowerBound ( vel_omega_, 0, -1.5 );
 //     problem.SetParameterUpperBound ( vel_omega_, 0, 1.5 );
 //     problem.SetParameterLowerBound ( vel_omega_, 1, -3 );
 //     problem.SetParameterUpperBound ( vel_omega_, 1, 3 );
-        ceres::Solve ( options, &problem, &summary );
+    ceres::Solve ( options, &problem, &summary );
 
-        ready_for_projection_ = false;
-        ready_for_distance_ = false;
-        std::cout << "Results Projection: " << p_t_new_[0] << " " << p_t_new_[1] << std::endl;
-        std::cout << "Results XY: " << x_y_theta_[0] << " " << x_y_theta_[1] << std::endl;
-    }
+    ready_for_projection_ = false;
+    ready_for_distance_ = false;
+    ready_for_range_ = false;
+    std::cout << "Results Projection: " << asin(sin(p_t_new_[0])) << " " << acos(cos(p_t_new_[1])) << std::endl;
+    std::cout << "Results XY: " << x_y_theta_[0] << " " << x_y_theta_[1] << std::endl;
+}

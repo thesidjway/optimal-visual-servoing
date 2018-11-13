@@ -44,8 +44,6 @@ struct OptimizationParams { //Placeholder
 class Optimization
 {
 private:
-
-    ceres::Problem problem_;
     double x_y_theta_[3];
     double vel_omega_[2];
     double p_t_[2];
@@ -55,7 +53,7 @@ private:
     OptimizationParams params_;
     ceres::CostFunction *cost_function_distance;
     ceres::CostFunction *cost_function_projection;
-    ceres::CostFunction *cost_function_range;
+    std::vector<ceres::CostFunction*> cost_functions_range;
     bool ready_for_projection_ = false;
     bool ready_for_distance_ = false;
     bool ready_for_range_ = false;
@@ -64,8 +62,8 @@ public:
     Optimization();
     ~Optimization();
     void addTagFactors ( Eigen::Vector4d target_in_cam, double weight );
-    void addDistanceFactor ( Eigen::Vector4d target_in_cam, Eigen::Vector3d last_gt, double dt, double weight, Eigen::Matrix4d tag_in_world );
-    void addRangeFactor ( RangeDataTuple &tuple, double weight );
+    void addDistanceFactor ( Eigen::Vector4d target_in_cam, Eigen::Vector3d last_gt, double dt, double weight );
+    void addRangeFactors ( std::vector<RangeDataTuple> &cluster_tuple, std::vector<LineSegmentDataTuple> &line_tuple, double weight );
     void optimizeGraph( );
     void readOptimizationParams ( std:: string params_file );
     inline PTZCommand getPTZCommand() {

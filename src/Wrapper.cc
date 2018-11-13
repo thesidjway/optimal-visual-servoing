@@ -105,10 +105,8 @@ void OVSWrapper::pointCloudCallback2D ( const sensor_msgs::LaserScanConstPtr& la
     std::vector<RangeDataTuple> segments;
     std::vector<LineSegmentDataTuple> line_segments;
     cluster_extractor_.extractSegmentFeatures ( segments, line_segments );
-    /*for ( unsigned int i = 0 ; i < line_segments.size() ; i++ ) {
-        line_segments[i].printLineSegmentDataTuple();
-    }*/
     last_data_clusters_ = segments;
+    last_line_segments_ = line_segments;
 }
 
 void OVSWrapper::pointCloudCallback3D ( const sensor_msgs::PointCloud2ConstPtr& cloud_msg ) {
@@ -258,34 +256,27 @@ int main ( int argc, char **argv ) {
     while ( ros::ok() ) {
         if ( ( ros::Time::now().toNSec() - wrapper.last_optimization_time.toNSec() ) > 99999999 ) {
             double dt = ( ros::Time::now().toNSec() - wrapper.last_optimization_time.toNSec() ) / 1000000000.0;
+            Eigen::Matrix4d tag_in_world = wrapper.Ttag_in_world_;
+            wrapper.opt_problem_.addDistanceFactor ( wrapper.pt_for_optimization_, wrapper.last_gt_, dt, 5 );
+            if ( wrapper.last_data_clusters_.size() > 0 || wrapper.last_line_segments_.size() > 0 ) {
+                wrapper.opt_problem_.addRangeFactors ( wrapper.last_data_clusters_, wrapper.last_line_segments_, 20 );
+                wrapper.last_data_clusters_.clear();
+                wrapper.last_line_segments_.clear();
+            }
             if ( wrapper.ready_for_optimization_aruco_ ) {
                 wrapper.opt_problem_.addTagFactors ( wrapper.pt_for_optimization_, 1 );
-//                 wrapper.opt_problem_.optimizeGraph();
                 PTZCommand cmd = wrapper.opt_problem_.getPTZCommand();
                 wrapper.publishPanAndTilt ( cmd );
                 wrapper.ready_for_optimization_aruco_ = false;
             }
-            Eigen::Matrix4d tag_in_world = wrapper.Ttag_in_world_;
-            wrapper.opt_problem_.addDistanceFactor ( wrapper.pt_for_optimization_, wrapper.last_gt_, dt, 1, tag_in_world );
             wrapper.opt_problem_.optimizeGraph();
 // 	    MotionCommand motion_cmd = wrapper.opt_problem_.getMotionCommand();
 // 	    wrapper.publishCommandVel ( motion_cmd.v, motion_cmd.omega );
             wrapper.last_optimization_time = ros::Time::now();
         }
 
-        if ( wrapper.last_data_clusters_.size() > 0 ) {
-//             for ( unsigned int i = 0 ; i < wrapper.last_data_clusters_.size() ; i++ ) {
-//                 wrapper.opt_problem_.addRangeFactor ( wrapper.last_data_clusters_[i], 1 );
-//             }
-//             wrapper.opt_problem_.optimizeGraph();
-//             PTZCommand cmd = wrapper.opt_problem_.getPTZCommand();
-//             axis_camera::Axis ptz_msg;
-//             ptz_msg.pan = cmd.pan;
-//             ptz_msg.tilt = cmd.tilt;
-//             ptz_msg.zoom = cmd.zoom;
-//             wrapper.ptz_pub_.publish ( ptz_msg );
-            wrapper.last_data_clusters_.clear();
-        }
+
         ros::spinOnce();
     }
 }
+

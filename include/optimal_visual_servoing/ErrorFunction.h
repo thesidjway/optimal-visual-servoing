@@ -61,21 +61,54 @@ struct MotionCommand {
 };
 
 
-struct RangeError {
-    RangeError ( RangeDataTuple data_tuple, double weight )
-        : data_tuple ( data_tuple ), weight ( weight ) {}
+struct ClusterError {
+    ClusterError ( RangeDataTuple cluster_tuple, double weight )
+        : cluster_tuple ( cluster_tuple ), weight ( weight ) {}
     template <typename T>
-    bool operator() ( const T *const dx_dy_dtheta_vel_omega,
+    bool operator() ( const T *const x_y_theta,
                       T *residuals ) const {
-        residuals[0] = exp ( sqrt ( T ( dx_dy_dtheta_vel_omega[0] - data_tuple.median_dist * cos ( data_tuple.bearing ) ) * T ( dx_dy_dtheta_vel_omega[0] - data_tuple.median_dist * cos ( data_tuple.bearing ) ) +
-                                    T ( dx_dy_dtheta_vel_omega[1] - data_tuple.median_dist * sin ( data_tuple.bearing ) ) * T ( dx_dy_dtheta_vel_omega[1] - data_tuple.median_dist * sin ( data_tuple.bearing ) ) ) ) *
-                       ( ( dx_dy_dtheta_vel_omega[0] - T ( 0.0 ) ) * ( dx_dy_dtheta_vel_omega[0] - T ( 0.0 ) )  + ( dx_dy_dtheta_vel_omega[1] - T ( 0.0 ) )  * ( dx_dy_dtheta_vel_omega[1] - T ( 0.0 ) ) - data_tuple.median_dist * data_tuple.median_dist ) ;
+        residuals[0] = T ( 0 );
         return true;
     }
-    static ceres::CostFunction *Create ( RangeDataTuple data_tuple, double weight ) {
-        return ( new ceres::AutoDiffCostFunction<RangeError, 1, 5> ( new RangeError ( data_tuple, weight ) ) );
+    static ceres::CostFunction *Create ( RangeDataTuple cluster_tuple, double weight ) {
+        return ( new ceres::AutoDiffCostFunction<ClusterError, 1, 3> ( new ClusterError ( cluster_tuple, weight ) ) );
     }
-    RangeDataTuple data_tuple;
+    RangeDataTuple cluster_tuple;
+    double weight;
+};
+
+struct LineSegmentError {
+    LineSegmentError ( LineSegmentDataTuple line_tuple, double weight )
+        : line_tuple ( line_tuple ), weight ( weight ) {}
+    template <typename T>
+    bool operator() ( const T *const x_y_theta,
+                      T *residuals ) const {
+        T v1x = line_tuple.x_frontal - x_y_theta[0];
+        T v1y = line_tuple.y_frontal - x_y_theta[1];
+        T v2x = line_tuple.x_distal - x_y_theta[0];
+        T v2y = line_tuple.y_distal - x_y_theta[1];
+
+        T px = T ( line_tuple.x_distal - line_tuple.x_frontal );
+        T py = T ( line_tuple.y_distal - line_tuple.y_frontal );
+        T dAB = T ( px*px + py*py );
+        T u = T ( ( x_y_theta[0] - line_tuple.x_frontal ) * px + ( x_y_theta[1] - line_tuple.y_frontal ) * py ) / T ( dAB );
+        T projx = T ( line_tuple.x_frontal ) + u * px;
+        T projy = T ( line_tuple.y_frontal ) + u * py;
+
+        T v3x = projx - x_y_theta[0];
+        T v3y = projy - x_y_theta[1];
+
+        if ( ( T(line_tuple.x_frontal) - projx ) * ( T(line_tuple.x_distal) - projx ) < T(0.0) ) {
+            residuals[0] = T(weight) * exp(-(v3x*v3x + v3y*v3y));
+        } else {
+            residuals[0] = T(weight) * exp(-std::min ( v1x*v1x + v1y*v1y , v2x*v2x + v2y*v2y ));
+        }
+        return true;
+    }
+    static ceres::CostFunction *Create ( LineSegmentDataTuple line_tuple, double weight ) {
+        return ( new ceres::AutoDiffCostFunction<LineSegmentError, 1, 3> ( new LineSegmentError ( line_tuple, weight ) ) );
+    }
+    LineSegmentDataTuple line_tuple;
     double weight;
 };
 
@@ -168,33 +201,29 @@ private:
 
 
 struct xyError {
-    xyError ( const Eigen::Matrix4d tag_in_world, const double weight, const Eigen::Vector3d last_gt, const double dt ) :
-        tag_in_world_ ( tag_in_world ), weight_ ( weight ), last_gt_ ( last_gt ), dt_ ( dt ) {}
+    xyError ( const Eigen::Vector4d tag_in_body, const double weight, const Eigen::Vector3d last_gt, const double dt ) :
+        tag_in_body_ ( tag_in_body ), weight_ ( weight ), last_gt_ ( last_gt ), dt_ ( dt ) {}
 
     template <typename T>
     bool operator() ( const T *const x_y_theta,
                       T *residuals ) const {
 
-        if ( tag_in_world_ ( 0,0 ) != tag_in_world_ ( 0,0 ) ) {
+        if ( tag_in_body_ ( 0,0 ) != tag_in_body_ ( 0,0 ) ) {
             residuals[0] = T ( 0 );
             return true;
         }
-        Eigen::Matrix<T, 4, 4> Ttag_in_world = tag_in_world_.cast<T>();
+        Eigen::Matrix<T, 4, 1> Ttag_in_world = tag_in_body_.cast<T>();
         Eigen::Matrix<T, 3, 1> Tlast_gt = last_gt_.cast<T>();
 
-        residuals[0] = T ( weight_ ) * T ( x_y_theta[0] - Ttag_in_world ( 0,3 ) );
-        residuals[1] = T ( weight_ ) * T ( x_y_theta[1] - Ttag_in_world ( 1,3 ) );
+        residuals[0] = T ( weight_ ) * T ( x_y_theta[0] - Ttag_in_world ( 0,0 ) );
+        residuals[1] = T ( weight_ ) * T ( x_y_theta[1] - Ttag_in_world ( 1,0 ) );
 
-//         std::cout << "Xdesired: " << Ttag_in_world ( 0,3 ) << std::endl;
-//         std::cout << "Ydesired: " << Ttag_in_world ( 1,3 ) << std::endl;
-//         std::cout << "X1: " << x_y_[0] << std::endl;
-//         std::cout << "Y1: " << x_y_[1] << std::endl;
         return true;
     }
-    static ceres::CostFunction *Create ( const Eigen::Matrix4d tag_in_world, const double weight, const Eigen::Vector3d last_gt, const double dt ) {
-        return ( new ceres::AutoDiffCostFunction<xyError, 2, 3> ( new xyError ( tag_in_world, weight, last_gt, dt ) ) );
+    static ceres::CostFunction *Create ( const Eigen::Vector4d tag_in_body, const double weight, const Eigen::Vector3d last_gt, const double dt ) {
+        return ( new ceres::AutoDiffCostFunction<xyError, 2, 3> ( new xyError ( tag_in_body, weight, last_gt, dt ) ) );
     }
-    const Eigen::Matrix4d tag_in_world_;
+    const Eigen::Vector4d tag_in_body_;
     const double weight_;
     const Eigen::Vector3d last_gt_;
     const double dt_;
@@ -274,21 +303,7 @@ struct ProjectionErrorPTOnly {
         Eigen::Matrix<T, 4, 4> Tcam_in_body_old = cam_in_body_old.cast<T> ();
         Eigen::Matrix<T, 4, 1> Ttarget_in_cam = target_in_cam.cast<T>();
         Eigen::Matrix<T, 3, 1> new_projection = TK * ( Tbody_in_cam_new * Tcam_in_body_old * Ttarget_in_cam ) / Ttarget_in_cam ( 2 , 0 );
-	
-        std::cout << "Cam_in_body_old = [" << Tcam_in_body_old ( 0,0 ) << " " << Tcam_in_body_old ( 0,1 ) << " " << Tcam_in_body_old ( 0,2 ) << " "<< Tcam_in_body_old ( 0,3 ) << ";" << std::endl
-                  << Tcam_in_body_old ( 1,0 ) << " " << Tcam_in_body_old ( 1,1 ) << " " << Tcam_in_body_old ( 1,2 ) << " "<< Tcam_in_body_old ( 1,3 ) << ";" << std::endl
-                  << Tcam_in_body_old ( 2,0 ) << " " << Tcam_in_body_old ( 2,1 ) << " " << Tcam_in_body_old ( 2,2 ) << " "<< Tcam_in_body_old ( 2,3 ) << ";" << std::endl
-                  << Tcam_in_body_old ( 3,0 ) << " " << Tcam_in_body_old ( 3,1 ) << " " << Tcam_in_body_old ( 3,2 ) << " "<< Tcam_in_body_old ( 3,3 ) << "]" << std::endl << std::endl;
 
-        std::cout << "Body_in_Cam_new = [" << Tbody_in_cam_new ( 0,0 ) << " " << Tbody_in_cam_new ( 0,1 ) << " " << Tbody_in_cam_new ( 0,2 ) << " "<< Tbody_in_cam_new ( 0,3 ) << ";" << std::endl
-                  << Tbody_in_cam_new ( 1,0 ) << " " << Tbody_in_cam_new ( 1,1 ) << " " << Tbody_in_cam_new ( 1,2 ) << " "<< Tbody_in_cam_new ( 1,3 ) << ";" << std::endl
-                  << Tbody_in_cam_new ( 2,0 ) << " " << Tbody_in_cam_new ( 2,1 ) << " " << Tbody_in_cam_new ( 2,2 ) << " "<< Tbody_in_cam_new ( 2,3 ) << ";" << std::endl
-                  << Tbody_in_cam_new ( 3,0 ) << " " << Tbody_in_cam_new ( 3,1 ) << " " << Tbody_in_cam_new ( 3,2 ) << " "<< Tbody_in_cam_new ( 3,3 ) << "]" << std::endl << std::endl;
-
-        std::cout << "Target_in_cam = [" << Ttarget_in_cam ( 0 , 0 ) <<  "; " << Ttarget_in_cam ( 1 , 0 ) << "; " <<  Ttarget_in_cam ( 2 , 0 ) << "; " << Ttarget_in_cam ( 3 , 0 ) << "] " << std::endl;
-
-        std::cout << "PT = [" <<  new_projection ( 0 , 0 ) <<  " " <<  new_projection ( 1 , 0 ) << "] " << std::endl;
-	
         residuals[0] = T ( weight ) * ( new_projection ( 0 , 0 ) - TK ( 0 , 2 ) );
         residuals[1] = T ( weight ) * ( new_projection ( 1 , 0 ) - TK ( 1 , 2 ) );
         return true;

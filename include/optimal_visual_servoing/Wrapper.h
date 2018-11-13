@@ -36,7 +36,6 @@
 #include <sensor_msgs/CompressedImage.h>
 #include <mutex>
 
-
 struct WrapperParams {
     WrapperParams() {
     }
@@ -94,6 +93,7 @@ public:
     void publishPanAndTilt ( PTZCommand cmd );
     void publishCommandVel ( double vx, double w );
     std::vector<RangeDataTuple> last_data_clusters_;
+    std::vector<LineSegmentDataTuple> last_line_segments_;
     ros::Time last_optimization_time;
     Eigen::Vector4d pt_for_optimization_;
     bool ready_for_optimization_aruco_ = false;
