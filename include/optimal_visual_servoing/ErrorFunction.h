@@ -166,6 +166,40 @@ private:
     const double dt_;
 };
 
+
+struct xyError {
+    xyError ( const Eigen::Matrix4d tag_in_world, const double weight, const Eigen::Vector3d last_gt, const double dt ) :
+        tag_in_world_ ( tag_in_world ), weight_ ( weight ), last_gt_ ( last_gt ), dt_ ( dt ) {}
+
+    template <typename T>
+    bool operator() ( const T *const x_y_theta,
+                      T *residuals ) const {
+
+        if ( tag_in_world_ ( 0,0 ) != tag_in_world_ ( 0,0 ) ) {
+            residuals[0] = T ( 0 );
+            return true;
+        }
+        Eigen::Matrix<T, 4, 4> Ttag_in_world = tag_in_world_.cast<T>();
+        Eigen::Matrix<T, 3, 1> Tlast_gt = last_gt_.cast<T>();
+
+        residuals[0] = T ( weight_ ) * T ( x_y_theta[0] - Ttag_in_world ( 0,3 ) );
+        residuals[1] = T ( weight_ ) * T ( x_y_theta[1] - Ttag_in_world ( 1,3 ) );
+
+//         std::cout << "Xdesired: " << Ttag_in_world ( 0,3 ) << std::endl;
+//         std::cout << "Ydesired: " << Ttag_in_world ( 1,3 ) << std::endl;
+//         std::cout << "X1: " << x_y_[0] << std::endl;
+//         std::cout << "Y1: " << x_y_[1] << std::endl;
+        return true;
+    }
+    static ceres::CostFunction *Create ( const Eigen::Matrix4d tag_in_world, const double weight, const Eigen::Vector3d last_gt, const double dt ) {
+        return ( new ceres::AutoDiffCostFunction<xyError, 2, 3> ( new xyError ( tag_in_world, weight, last_gt, dt ) ) );
+    }
+    const Eigen::Matrix4d tag_in_world_;
+    const double weight_;
+    const Eigen::Vector3d last_gt_;
+    const double dt_;
+};
+
 struct DistanceError {
     DistanceError ( const Eigen::Matrix4d tag_in_world, const double weight, const Eigen::Vector3d last_gt, const double dt ) :
         tag_in_world_ ( tag_in_world ), weight_ ( weight ), last_gt_ ( last_gt ), dt_ ( dt ) {}
@@ -179,7 +213,7 @@ struct DistanceError {
 
         if ( tag_in_world_ ( 0,0 ) != tag_in_world_ ( 0,0 ) ) {
             residuals[0] = T ( 0 );
-	    residuals[1] = T ( 0 );
+            residuals[1] = T ( 0 );
             return true;
         }
         Eigen::Matrix<T, 4, 4> Ttag_in_world = tag_in_world_.cast<T>();
@@ -188,90 +222,22 @@ struct DistanceError {
         T x1 = Tlast_gt ( 0,0 ) - vel / omega * sin ( Tlast_gt ( 2,0 ) ) + vel / omega * sin ( Tlast_gt ( 2,0 ) + omega * T ( dt_ ) );
         T y1 = Tlast_gt ( 1,0 ) + vel / omega * cos ( Tlast_gt ( 2,0 ) ) - vel / omega * cos ( Tlast_gt ( 2,0 ) + omega * T ( dt_ ) );
 
-        residuals[0] = T ( x1 - Ttag_in_world ( 0,3 ) );
-        residuals[1] = T ( y1 - Ttag_in_world ( 1,3 ) );
+        residuals[0] = T ( x1 - Ttag_in_world ( 0,3 ) ) * T ( x1 - Ttag_in_world ( 0,3 ) ) + T ( y1 - Ttag_in_world ( 1,3 ) ) * T ( y1 - Ttag_in_world ( 1,3 ) );
+
+//         std::cout << "Xdesired: " << Ttag_in_world ( 0,3 ) << std::endl;
+//         std::cout << "Ydesired: " << Ttag_in_world ( 1,3 ) << std::endl;
+//         std::cout << "X1: " << x1 << std::endl;
+//         std::cout << "Y1: " << y1 << std::endl;
         return true;
     }
     static ceres::CostFunction *Create ( const Eigen::Matrix4d tag_in_world, const double weight, const Eigen::Vector3d last_gt, const double dt ) {
-        return ( new ceres::AutoDiffCostFunction<DistanceError, 2, 2> ( new DistanceError ( tag_in_world, weight, last_gt, dt ) ) );
+        return ( new ceres::AutoDiffCostFunction<DistanceError, 1, 2> ( new DistanceError ( tag_in_world, weight, last_gt, dt ) ) );
     }
     const Eigen::Matrix4d tag_in_world_;
     const double weight_;
     const Eigen::Vector3d last_gt_;
     const double dt_;
 };
-
-
-// struct DistanceError {
-//     DistanceError ( const Eigen::Vector4d target_in_cam, const Eigen::Matrix4d cam_in_body_old, const double weight, const double desired_distance, const Eigen::Vector3d last_gt, const double dt, const Eigen::Matrix4d tag_in_body_gt )
-//         : target_in_cam ( target_in_cam ),
-//           cam_in_body_old ( cam_in_body_old ),
-//           weight ( weight ),
-//           desired_distance ( desired_distance ),
-//           last_gt ( last_gt ),
-//           dt ( dt ),
-//           tag_in_body_gt ( tag_in_body_gt ) {
-//     }
-//     template <typename T>
-//     bool operator() ( const T *const vel_omega,
-//                       T *residuals ) const {
-//         T new_body_in_old_body[16];
-//         T sdtheta = sin ( vel_omega[1] * dt );
-//         T cdtheta = cos ( vel_omega[1] * dt );
-//
-//         new_body_in_old_body[0] = cos ( vel_omega[1] * dt );
-//         new_body_in_old_body[1] = -sin ( vel_omega[1] * dt );
-//         new_body_in_old_body[2] =  T ( 0.0 );
-//         new_body_in_old_body[3] = dt * vel_omega[0] * sin ( vel_omega[1] * dt ) * sin ( last_gt ( 2 ) ) - dt * vel_omega[0] * cos ( vel_omega[1] * dt ) * cos ( last_gt ( 2 ) );
-//         new_body_in_old_body[4] = sin ( vel_omega[1] * dt );
-//         new_body_in_old_body[5] = cos ( vel_omega[1] * dt );
-//         new_body_in_old_body[6] = T ( 0.0 );
-//         new_body_in_old_body[7] = - dt * vel_omega[0] * cos ( vel_omega[1] * dt ) * sin ( last_gt ( 2 ) ) - dt * vel_omega[0] * sin ( vel_omega[1] * dt ) * cos ( last_gt ( 2 ) );
-//         new_body_in_old_body[8] = T ( 0.0 );
-//         new_body_in_old_body[9] = T ( 0.0 );
-//         new_body_in_old_body[10] = T ( 1.0 );
-//         new_body_in_old_body[11] = T ( 0.0 );
-//         new_body_in_old_body[12] = T ( 0.0 );
-//         new_body_in_old_body[13] = T ( 0.0 );
-//         new_body_in_old_body[14] = T ( 0.0 );
-//         new_body_in_old_body[15] = T ( 1.0 );
-//         Eigen::Map<const Eigen::Matrix<T, 4, 4, Eigen::RowMajor> > Tnew_body_in_old_body ( new_body_in_old_body );
-//
-//         if ( tag_in_body_gt ( 0,0 ) != tag_in_body_gt ( 0,0 ) ) {
-//             residuals[0] = T ( 0 );
-//             return true;
-//         }
-//
-//         Eigen::Matrix<double, 4, 1> tag_in_body_gt_vec;
-//         tag_in_body_gt_vec ( 0,0 ) = tag_in_body_gt ( 0,3 );
-//         tag_in_body_gt_vec ( 1,0 ) = tag_in_body_gt ( 1,3 );
-//         tag_in_body_gt_vec ( 2,0 ) = tag_in_body_gt ( 2,3 );
-//         tag_in_body_gt_vec ( 3,0 ) = tag_in_body_gt ( 3,3 );
-//
-//         Eigen::Matrix<T, 4, 4> Tcam_in_body_old = cam_in_body_old.cast<T> ();
-//         Eigen::Matrix<T, 4, 1> Ttarget_in_cam = target_in_cam.cast<T>();
-//         Eigen::Matrix<T, 4, 1> Ttag_in_body_gt_vec = tag_in_body_gt_vec.cast<T>();
-// //         Eigen::Matrix<T, 4, 1> target_in_body_new = Tnew_body_in_old_body.inverse() * Tcam_in_body_old * Ttarget_in_cam;
-//         Eigen::Matrix<T, 4, 1> target_in_body_new = Tnew_body_in_old_body.inverse() * Ttag_in_body_gt_vec;
-//
-//         residuals[0] = T ( weight ) * T ( target_in_body_new ( 0,0 ) * target_in_body_new ( 0,0 ) + target_in_body_new ( 1,0 ) * target_in_body_new ( 1,0 ) );
-// //         residuals[0] = T ( 0 );
-//         return true;
-//     }
-//
-//     static ceres::CostFunction *Create ( Eigen::Vector4d target_in_cam, Eigen::Matrix4d cam_in_body_old, double weight, double desired_distance, Eigen::Vector3d last_gt, double dt, Eigen::Matrix4d tag_in_body_gt ) {
-//         return ( new ceres::AutoDiffCostFunction<DistanceError, 1, 2> ( new DistanceError ( target_in_cam, cam_in_body_old, weight, desired_distance, last_gt, dt, tag_in_body_gt ) ) );
-//     }
-//
-//     Eigen::Vector4d target_in_cam;
-//     Eigen::Matrix4d cam_in_body_old;
-//     Eigen::Matrix4d tag_in_body_gt;
-//     Eigen::Vector3d last_gt;
-//     double weight;
-//     double dt;
-//     double desired_distance;
-//
-// };
 
 struct ProjectionErrorPTOnly {
     ProjectionErrorPTOnly ( Eigen::Vector4d target_in_cam, Eigen::Matrix< double, 3, 4 > K, Eigen::Matrix4d cam_in_body_old, double weight )
@@ -281,17 +247,21 @@ struct ProjectionErrorPTOnly {
     bool operator() ( const T *const p_t,
                       T *residuals ) const {
         T cam_in_body_new[16];
-        cam_in_body_new[0] = -sin ( p_t[0] );
-        cam_in_body_new[1] = sin ( p_t[1] ) * cos ( p_t[0] );
-        cam_in_body_new[2] = cos ( p_t[0] ) * cos ( p_t[1] );
+        T sp = sin ( p_t[0] );
+        T st = sin ( p_t[1] );
+        T cp = cos ( p_t[0] );
+        T ct = cos ( p_t[1] );
+        cam_in_body_new[0] = -sp;
+        cam_in_body_new[1] = st * cp;
+        cam_in_body_new[2] = cp * ct;
         cam_in_body_new[3] = T ( 0.19 );
-        cam_in_body_new[4] = -cos ( p_t[0] );
-        cam_in_body_new[5] = -sin ( p_t[1] ) * sin ( p_t[0] );
-        cam_in_body_new[6] = -cos ( p_t[1] ) * sin ( p_t[0] );
+        cam_in_body_new[4] = -cp;
+        cam_in_body_new[5] = -st * sp;
+        cam_in_body_new[6] = -ct * sp;
         cam_in_body_new[7] = T ( 0.0 );
         cam_in_body_new[8] = T ( 0.0 );
-        cam_in_body_new[9] = -cos ( p_t[1] );
-        cam_in_body_new[10] = sin ( p_t[1] );
+        cam_in_body_new[9] = -ct;
+        cam_in_body_new[10] = st;
         cam_in_body_new[11] = T ( 0.395 );
         cam_in_body_new[12] = T ( 0.0 );
         cam_in_body_new[13] = T ( 0.0 );
@@ -300,33 +270,25 @@ struct ProjectionErrorPTOnly {
         Eigen::Map<const Eigen::Matrix < T, 4, 4, Eigen::RowMajor> > Tcam_in_body_new ( cam_in_body_new );
         Eigen::Matrix < T, 4, 4> Tbody_in_cam_new = Tcam_in_body_new.inverse();
 
-
         Eigen::Matrix<T, 3, 4> TK = K.cast <T> ();
         Eigen::Matrix<T, 4, 4> Tcam_in_body_old = cam_in_body_old.cast<T> ();
         Eigen::Matrix<T, 4, 1> Ttarget_in_cam = target_in_cam.cast<T>();
-
-
-
-//         std::cout << "Cam_in_body_old = [" << Tcam_in_body_old ( 0,0 ) << " " << Tcam_in_body_old ( 0,1 ) << " " << Tcam_in_body_old ( 0,2 ) << " "<< Tcam_in_body_old ( 0,3 ) << ";" << std::endl
-//                   << Tcam_in_body_old ( 1,0 ) << " " << Tcam_in_body_old ( 1,1 ) << " " << Tcam_in_body_old ( 1,2 ) << " "<< Tcam_in_body_old ( 1,3 ) << ";" << std::endl
-//                   << Tcam_in_body_old ( 2,0 ) << " " << Tcam_in_body_old ( 2,1 ) << " " << Tcam_in_body_old ( 2,2 ) << " "<< Tcam_in_body_old ( 2,3 ) << ";" << std::endl
-//                   << Tcam_in_body_old ( 3,0 ) << " " << Tcam_in_body_old  (3,1 ) << " " << Tcam_in_body_old ( 3,2 ) << " "<< Tcam_in_body_old ( 3,3 ) << "]" << std::endl << std::endl;
-//
-//         std::cout << "Body_in_Cam_new = [" << Tbody_in_cam_new ( 0,0 ) << " " << Tbody_in_cam_new ( 0,1 ) << " " << Tbody_in_cam_new ( 0,2 ) << " "<< Tbody_in_cam_new ( 0,3 ) << ";" << std::endl
-//                   << Tbody_in_cam_new ( 1,0 ) << " " << Tbody_in_cam_new ( 1,1 ) << " " << Tbody_in_cam_new ( 1,2 ) << " "<< Tbody_in_cam_new ( 1,3 ) << ";" << std::endl
-//                   << Tbody_in_cam_new ( 2,0 ) << " " << Tbody_in_cam_new ( 2,1 ) << " " << Tbody_in_cam_new ( 2,2 ) << " "<< Tbody_in_cam_new ( 2,3 ) << ";" << std::endl
-//                   << Tbody_in_cam_new ( 3,0 ) << " " << Tbody_in_cam_new ( 3,1 ) << " " << Tbody_in_cam_new ( 3,2 ) << " "<< Tbody_in_cam_new ( 3,3 ) << "]" << std::endl << std::endl;
-//
-//         std::cout << "Target_in_cam = [" << Ttarget_in_cam ( 0 , 0 ) <<  "; " << Ttarget_in_cam ( 1 , 0 ) << "; " <<  Ttarget_in_cam ( 2 , 0 ) << "; " << Ttarget_in_cam ( 3 , 0 ) << "] " << std::endl;
-//
-// 	std::cout << "PT = [" << p_t[0] <<  " " << p_t[1] << "] " << std::endl;
-
-
         Eigen::Matrix<T, 3, 1> new_projection = TK * ( Tbody_in_cam_new * Tcam_in_body_old * Ttarget_in_cam ) / Ttarget_in_cam ( 2 , 0 );
+	
+        std::cout << "Cam_in_body_old = [" << Tcam_in_body_old ( 0,0 ) << " " << Tcam_in_body_old ( 0,1 ) << " " << Tcam_in_body_old ( 0,2 ) << " "<< Tcam_in_body_old ( 0,3 ) << ";" << std::endl
+                  << Tcam_in_body_old ( 1,0 ) << " " << Tcam_in_body_old ( 1,1 ) << " " << Tcam_in_body_old ( 1,2 ) << " "<< Tcam_in_body_old ( 1,3 ) << ";" << std::endl
+                  << Tcam_in_body_old ( 2,0 ) << " " << Tcam_in_body_old ( 2,1 ) << " " << Tcam_in_body_old ( 2,2 ) << " "<< Tcam_in_body_old ( 2,3 ) << ";" << std::endl
+                  << Tcam_in_body_old ( 3,0 ) << " " << Tcam_in_body_old ( 3,1 ) << " " << Tcam_in_body_old ( 3,2 ) << " "<< Tcam_in_body_old ( 3,3 ) << "]" << std::endl << std::endl;
 
+        std::cout << "Body_in_Cam_new = [" << Tbody_in_cam_new ( 0,0 ) << " " << Tbody_in_cam_new ( 0,1 ) << " " << Tbody_in_cam_new ( 0,2 ) << " "<< Tbody_in_cam_new ( 0,3 ) << ";" << std::endl
+                  << Tbody_in_cam_new ( 1,0 ) << " " << Tbody_in_cam_new ( 1,1 ) << " " << Tbody_in_cam_new ( 1,2 ) << " "<< Tbody_in_cam_new ( 1,3 ) << ";" << std::endl
+                  << Tbody_in_cam_new ( 2,0 ) << " " << Tbody_in_cam_new ( 2,1 ) << " " << Tbody_in_cam_new ( 2,2 ) << " "<< Tbody_in_cam_new ( 2,3 ) << ";" << std::endl
+                  << Tbody_in_cam_new ( 3,0 ) << " " << Tbody_in_cam_new ( 3,1 ) << " " << Tbody_in_cam_new ( 3,2 ) << " "<< Tbody_in_cam_new ( 3,3 ) << "]" << std::endl << std::endl;
 
+        std::cout << "Target_in_cam = [" << Ttarget_in_cam ( 0 , 0 ) <<  "; " << Ttarget_in_cam ( 1 , 0 ) << "; " <<  Ttarget_in_cam ( 2 , 0 ) << "; " << Ttarget_in_cam ( 3 , 0 ) << "] " << std::endl;
 
-
+        std::cout << "PT = [" <<  new_projection ( 0 , 0 ) <<  " " <<  new_projection ( 1 , 0 ) << "] " << std::endl;
+	
         residuals[0] = T ( weight ) * ( new_projection ( 0 , 0 ) - TK ( 0 , 2 ) );
         residuals[1] = T ( weight ) * ( new_projection ( 1 , 0 ) - TK ( 1 , 2 ) );
         return true;

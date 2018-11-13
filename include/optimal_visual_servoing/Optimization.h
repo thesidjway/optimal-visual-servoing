@@ -46,13 +46,19 @@ class Optimization
 private:
 
     ceres::Problem problem_;
-    double dx_dy_dtheta_vel_omega_[];
-    double vel_omega_[];
-    double p_t_[];
+    double x_y_theta_[3];
+    double vel_omega_[2];
+    double p_t_[2];
+    double p_t_new_[2];
+    double last_p;
+    double last_t;
     OptimizationParams params_;
     ceres::CostFunction *cost_function_distance;
     ceres::CostFunction *cost_function_projection;
     ceres::CostFunction *cost_function_range;
+    bool ready_for_projection_ = false;
+    bool ready_for_distance_ = false;
+    bool ready_for_range_ = false;
     
 public:
     Optimization();
@@ -63,7 +69,7 @@ public:
     void optimizeGraph( );
     void readOptimizationParams ( std:: string params_file );
     inline PTZCommand getPTZCommand() {
-        return PTZCommand ( asin ( sin ( p_t_[0] ) ) , acos ( cos ( p_t_[1] ) ) , 0 );
+        return PTZCommand ( asin ( sin ( p_t_new_[0] ) ) , acos ( cos ( p_t_new_[1] ) ) , 0 );
     }
     inline MotionCommand getMotionCommand() {
         return MotionCommand ( vel_omega_[0], vel_omega_[1] );

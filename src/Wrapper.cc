@@ -205,9 +205,6 @@ void OVSWrapper::arucoTagCallback ( const gazebo_msgs::ModelStatesConstPtr& aruc
             Eigen::Map<const Eigen::Matrix < double, 4, 4, Eigen::RowMajor> > Ttag_in_world ( tag_in_world );
             //     Eigen::Matrix<double, 4, 4> Ttag_in_world = Eigen::MatrixXd::Identity ( 4, 4 );
             Ttag_in_world_ = Ttag_in_world;
-            m_.lock();
-            temp_ = y;
-            m_.unlock();
         }
     }
 }
@@ -263,18 +260,16 @@ int main ( int argc, char **argv ) {
             double dt = ( ros::Time::now().toNSec() - wrapper.last_optimization_time.toNSec() ) / 1000000000.0;
             if ( wrapper.ready_for_optimization_aruco_ ) {
                 wrapper.opt_problem_.addTagFactors ( wrapper.pt_for_optimization_, 1 );
-                Eigen::Matrix4d tag_in_world = wrapper.Ttag_in_world_;
-// 	    std::cout << tag_in_world << std::endl << std::endl;
-//                 wrapper.m_.lock();
-//                 wrapper.opt_problem_.addDistanceFactor ( wrapper.pt_for_optimization_, wrapper.last_gt_, dt, 1, tag_in_world );
-//                 wrapper.m_.unlock();
-                wrapper.opt_problem_.optimizeGraph();
-//                 MotionCommand motion_cmd = wrapper.opt_problem_.getMotionCommand();
-//                 wrapper.publishCommandVel ( motion_cmd.v, motion_cmd.omega );
+//                 wrapper.opt_problem_.optimizeGraph();
                 PTZCommand cmd = wrapper.opt_problem_.getPTZCommand();
                 wrapper.publishPanAndTilt ( cmd );
                 wrapper.ready_for_optimization_aruco_ = false;
             }
+            Eigen::Matrix4d tag_in_world = wrapper.Ttag_in_world_;
+            wrapper.opt_problem_.addDistanceFactor ( wrapper.pt_for_optimization_, wrapper.last_gt_, dt, 1, tag_in_world );
+            wrapper.opt_problem_.optimizeGraph();
+// 	    MotionCommand motion_cmd = wrapper.opt_problem_.getMotionCommand();
+// 	    wrapper.publishCommandVel ( motion_cmd.v, motion_cmd.omega );
             wrapper.last_optimization_time = ros::Time::now();
         }
 

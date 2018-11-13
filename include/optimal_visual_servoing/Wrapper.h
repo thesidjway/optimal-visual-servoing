@@ -100,6 +100,4 @@ public:
     Eigen::Vector3d last_gt_;
     Eigen::Matrix4d Tbody_in_world_;
     Eigen::Matrix4d Ttag_in_world_;
-    double temp_;
-    std::mutex m_;
 };
