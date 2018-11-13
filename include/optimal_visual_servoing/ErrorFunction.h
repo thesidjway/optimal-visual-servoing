@@ -67,7 +67,11 @@ struct ClusterError {
     template <typename T>
     bool operator() ( const T *const x_y_theta,
                       T *residuals ) const {
-        residuals[0] = T ( 0 );
+	T x = T(cluster_tuple.median_dist) * T(cos(cluster_tuple.bearing));
+	T y = T(cluster_tuple.median_dist) * T(sin(cluster_tuple.bearing));
+	T v1x = x - x_y_theta[0];
+	T v1y = y - x_y_theta[1];
+        residuals[0] = T(weight) * exp(-(v1x*v1x + v1y*v1y));
         return true;
     }
     static ceres::CostFunction *Create ( RangeDataTuple cluster_tuple, double weight ) {
