@@ -44,9 +44,8 @@ struct OptimizationParams { //Placeholder
 class Optimization
 {
 private:
-    double x_y_theta_[3];
+    double dx_dy_dtheta_[3];
     double vel_omega_[2];
-    double p_t_[2];
     double p_t_new_[2];
     double last_p;
     double last_t;
@@ -57,12 +56,12 @@ private:
     bool ready_for_projection_ = false;
     bool ready_for_distance_ = false;
     bool ready_for_range_ = false;
-    
+
 public:
     Optimization();
     ~Optimization();
     void addTagFactors ( Eigen::Vector4d target_in_cam, double weight );
-    void addDistanceFactor ( Eigen::Vector4d target_in_cam, Eigen::Vector3d last_gt, double dt, double weight );
+    void addDistanceFactor ( Eigen::Vector4d target_in_cam, Eigen::Vector3d last_gt, double dt, Eigen::Vector3d last_vels, double weight );
     void addRangeFactors ( std::vector<RangeDataTuple> &cluster_tuple, std::vector<LineSegmentDataTuple> &line_tuple, double weight );
     void optimizeGraph( );
     void readOptimizationParams ( std:: string params_file );
@@ -71,6 +70,20 @@ public:
     }
     inline MotionCommand getMotionCommand() {
         return MotionCommand ( vel_omega_[0], vel_omega_[1] );
+    }
+    inline PositionCommand getPositionCommand ( Eigen::Vector3d& last_gt ) {
+        Eigen::Matrix3d Tcurr;
+        Tcurr << cos ( last_gt ( 2 ) ), -sin ( last_gt ( 2 ) ), last_gt ( 0 ),
+              sin ( last_gt ( 2 ) ), cos ( last_gt ( 2 ) ), last_gt ( 1 ),
+              0 , 0 , 1 ;
+        Eigen::Matrix3d Tdelta;
+        Tdelta << cos ( dx_dy_dtheta_[2] ), -sin ( dx_dy_dtheta_[2] ), dx_dy_dtheta_[0],
+               sin ( dx_dy_dtheta_[2] ), cos ( dx_dy_dtheta_[2] ), dx_dy_dtheta_[1],
+               0 , 0 , 1 ;
+
+        Eigen::Matrix3d Tfinal = Tcurr * Tdelta;
+
+        return PositionCommand ( Tfinal ( 0,2 ), Tfinal ( 1,2 ) , atan2 ( Tfinal ( 1,0 ), Tfinal ( 0,0 ) ) );
     }
 };
 

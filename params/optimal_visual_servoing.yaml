@@ -9,6 +9,9 @@ ros:
   cmd_vel_topic: "/summit_xl_a/robotnik_base_control/cmd_vel"
   gt_topic: "/gazebo/link_states"
   tag_topic: "/gazebo/model_states"
+  publish_xy_topic: "/gazebo/set_model_state"
+  vehicle_name: "summit_xl_a"
+  reference_frame: "world"
   robot_type: "summit_xl"
 
 
@@ -66,6 +69,6 @@ trajectory:
   num_bezier_pts: 4
   num_traj_pts: 5000
   publish_rate: 100
-  ros_topic: /gazebo/set_model_state
-  model_name: aruco
-  reference_frame: world
+  ros_topic: "/gazebo/set_model_state"
+  model_name: "aruco"
+  reference_frame: "world"

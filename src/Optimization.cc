@@ -20,13 +20,15 @@
 #include <optimal_visual_servoing/Optimization.h>
 
 Optimization::Optimization() {
-    x_y_theta_[0] = 0.0;
-    x_y_theta_[1] = 0.0;
+    dx_dy_dtheta_[0] = 0.0;
+    dx_dy_dtheta_[1] = 0.0;
     last_p = 0.0;
     last_t = 1.59;
     p_t_new_[0] = 0.0;
     p_t_new_[1] = 1.59;
-    x_y_theta_[2] = 0.0;
+    dx_dy_dtheta_[2] = 0.0;
+    vel_omega_[0] = 0;
+    vel_omega_[1] = 0.001;
 }
 
 Optimization::~Optimization() {
@@ -52,7 +54,13 @@ void Optimization::addRangeFactors ( std::vector<RangeDataTuple> &cluster_tuples
 
 }
 
-void Optimization::addDistanceFactor ( Eigen::Vector4d tag_in_cam, Eigen::Vector3d last_gt, double dt, double weight) {
+void Optimization::addDistanceFactor ( Eigen::Vector4d tag_in_cam, Eigen::Vector3d last_gt, double dt, Eigen::Vector3d last_vels, double weight) {
+    vel_omega_[0] = sqrt(last_vels(0) * last_vels(0) + last_vels(1) * last_vels(1));
+    if (last_vels(2) * last_vels(2) > 1e-9) {
+      vel_omega_[1] = last_vels(2);
+    } else {
+      vel_omega_[1] = 1e-3;
+    }
     double cam_in_body_old[16];
     double tag_in_world_copy[16];
     double sp = sin ( p_t_new_[0] );
@@ -79,6 +87,7 @@ void Optimization::addDistanceFactor ( Eigen::Vector4d tag_in_cam, Eigen::Vector
     Eigen::Vector4d tag_in_body = eigen_cam_in_body_old * tag_in_cam;
     std::cout << "Tag in body: [ " << tag_in_body(0,0) << " , " << tag_in_body(1,0) << " ]" <<  std::endl;
     cost_function_distance = xyError::Create ( tag_in_body, 1, last_gt, dt );
+//     cost_function_distance = DistanceError::Create ( tag_in_body, 1, last_gt, dt );
     ready_for_distance_ = true;
 }
 
@@ -137,33 +146,37 @@ void Optimization::optimizeGraph() {
     if ( ready_for_projection_ ) {
         problem.AddResidualBlock ( cost_function_projection,
                                    NULL,
-                                   p_t_new_ );
+                                   p_t_new_,
+				   dx_dy_dtheta_
+);
         last_p = p_t_new_[0];
         last_t = p_t_new_[1];
     }
     if ( ready_for_distance_ ) {
         problem.AddResidualBlock ( cost_function_distance,
                                    NULL,
-                                   x_y_theta_ );
+                                   dx_dy_dtheta_ );
     }
     if ( ready_for_range_ ) {
         for ( uint i = 0; i < cost_functions_range.size(); i++ ) {
             problem.AddResidualBlock ( cost_functions_range[i],
                                        NULL,
-                                       x_y_theta_ );
+                                       dx_dy_dtheta_ );
         }
         cost_functions_range.clear();
     }
 
-//     problem.SetParameterLowerBound ( vel_omega_, 0, -1.5 );
-//     problem.SetParameterUpperBound ( vel_omega_, 0, 1.5 );
-//     problem.SetParameterLowerBound ( vel_omega_, 1, -3 );
-//     problem.SetParameterUpperBound ( vel_omega_, 1, 3 );
+//     problem.SetParameterLowerBound ( vel_omega_, 0, vel_omega_[0] - 0.3);
+//     problem.SetParameterUpperBound ( vel_omega_, 0, vel_omega_[0] + 0.3);
+//     problem.SetParameterLowerBound ( vel_omega_, 1, vel_omega_[1] - 0.15);
+//     problem.SetParameterUpperBound ( vel_omega_, 1, vel_omega_[1] + 0.15);
     ceres::Solve ( options, &problem, &summary );
 
     ready_for_projection_ = false;
     ready_for_distance_ = false;
     ready_for_range_ = false;
-    std::cout << "Results Projection: " << asin(sin(p_t_new_[0])) << " " << acos(cos(p_t_new_[1])) << std::endl;
-    std::cout << "Results XY: " << x_y_theta_[0] << " " << x_y_theta_[1] << std::endl;
+    std::cout << "Results Projection: " << p_t_new_[0] << " " << p_t_new_[1] << std::endl;
+//     std::cout << "Results Projection: " << asin(sin(p_t_new_[0])) << " " << acos(cos(p_t_new_[1])) << std::endl;
+    std::cout << "Results Vel: " << vel_omega_[0] << " " << vel_omega_[1] << std::endl;
+    std::cout << "Results XYtheta: " << dx_dy_dtheta_[0] << " " << dx_dy_dtheta_[1] << " " <<  dx_dy_dtheta_[2] << std::endl;
 }

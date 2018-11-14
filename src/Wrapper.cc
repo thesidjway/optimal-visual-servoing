@@ -57,6 +57,30 @@ void OVSWrapper::publishCommandVel ( double vx, double w ) {
     cmd_vel_pub_.publish ( cmd_vel_msg );
 }
 
+void OVSWrapper::publishPosition ( double x, double y, double theta ) {
+    gazebo_msgs::ModelState state;
+    state.model_name = wrapper_params_.vehicleName;
+    state.pose.position.x = x;
+    state.pose.position.y = y;
+    state.pose.position.z = 0;
+    double cy = cos ( theta * 0.5 );
+    double sy = sin ( theta * 0.5 );
+    double cr = 1;
+    double sr = 0;
+    double cp = 1;
+    double sp = 0;
+    double qw = cy * cr * cp + sy * sr * sp;
+    double qx = cy * sr * cp - sy * cr * sp;
+    double qy = cy * cr * sp + sy * sr * cp;
+    double qz = sy * cr * cp - cy * sr * sp;
+    state.pose.orientation.x = qx;
+    state.pose.orientation.y = qy;
+    state.pose.orientation.z = qz;
+    state.pose.orientation.w = qw;
+    state.reference_frame = wrapper_params_.referenceFrame;
+    trajectory_pub_.publish ( state );
+}
+
 
 void OVSWrapper::readWrapperParams ( std:: string params_file ) {
     YAML::Node config = YAML::LoadFile ( params_file );
@@ -73,6 +97,9 @@ void OVSWrapper::readWrapperParams ( std:: string params_file ) {
     wrapper_params_.robotType = config["ros"]["robot_type"].as<std::string>();
     wrapper_params_.gtTopic = config["ros"]["gt_topic"].as<std::string>();
     wrapper_params_.tagTopic = config["ros"]["tag_topic"].as<std::string>();
+    wrapper_params_.publishXYTopic = config["ros"]["publish_xy_topic"].as<std::string>();
+    wrapper_params_.vehicleName = config["ros"]["vehicle_name"].as<std::string>();
+    wrapper_params_.referenceFrame = config["ros"]["reference_frame"].as<std::string>();
 
     wrapper_params_.fx = config["camera"]["fx"].as<double>();
     wrapper_params_.fy = config["camera"]["fy"].as<double>();
@@ -129,6 +156,9 @@ void OVSWrapper::gtCallback ( const gazebo_msgs::LinkStatesConstPtr& gt_msg ) {
     double x = gt_msg->pose[2].position.x;
     double y = gt_msg->pose[2].position.y;
     double z = gt_msg->pose[2].position.z;
+    double vx = gt_msg->twist[2].linear.x;
+    double vy = gt_msg->twist[2].linear.y;
+    double wz = gt_msg->twist[2].angular.z;
 
 
     tf::Quaternion q (
@@ -140,6 +170,7 @@ void OVSWrapper::gtCallback ( const gazebo_msgs::LinkStatesConstPtr& gt_msg ) {
     double roll, pitch, yaw;
     m.getRPY ( roll, pitch, yaw );
     last_gt_ = Eigen::Vector3d ( x , y , yaw );
+    last_vels_ = Eigen::Vector3d ( vx , vy , wz );
     double body_in_world[16];
     body_in_world[0] = m[0][0];
     body_in_world[1] = m[0][1];
@@ -243,6 +274,8 @@ void OVSWrapper::initializeRosPipeline() {
     pan_pub_ = n_.advertise<std_msgs::Float64> ( wrapper_params_.panTopic, 1000 );
     tilt_pub_ = n_.advertise<std_msgs::Float64> ( wrapper_params_.tiltTopic, 1000 );
     cmd_vel_pub_ = n_.advertise<geometry_msgs::Twist> ( wrapper_params_.cmdVelTopic, 1000 );
+    trajectory_pub_ = n_.advertise<gazebo_msgs::ModelState> ( wrapper_params_.publishXYTopic, 1000 );
+
 }
 
 
@@ -257,22 +290,26 @@ int main ( int argc, char **argv ) {
         if ( ( ros::Time::now().toNSec() - wrapper.last_optimization_time.toNSec() ) > 99999999 ) {
             double dt = ( ros::Time::now().toNSec() - wrapper.last_optimization_time.toNSec() ) / 1000000000.0;
             Eigen::Matrix4d tag_in_world = wrapper.Ttag_in_world_;
-            wrapper.opt_problem_.addDistanceFactor ( wrapper.pt_for_optimization_, wrapper.last_gt_, dt, 5 );
-            if ( wrapper.last_data_clusters_.size() > 0 || wrapper.last_line_segments_.size() > 0 ) {
-                wrapper.opt_problem_.addRangeFactors ( wrapper.last_data_clusters_, wrapper.last_line_segments_, 20 );
-                wrapper.last_data_clusters_.clear();
-                wrapper.last_line_segments_.clear();
-            }
             if ( wrapper.ready_for_optimization_aruco_ ) {
-                wrapper.opt_problem_.addTagFactors ( wrapper.pt_for_optimization_, 1 );
-                PTZCommand cmd = wrapper.opt_problem_.getPTZCommand();
-                wrapper.publishPanAndTilt ( cmd );
+                wrapper.opt_problem_.addDistanceFactor ( wrapper.pt_for_optimization_, wrapper.last_gt_, dt, wrapper.last_vels_, 10 );
+                if ( wrapper.last_data_clusters_.size() > 0 || wrapper.last_line_segments_.size() > 0 ) {
+                    wrapper.opt_problem_.addRangeFactors ( wrapper.last_data_clusters_, wrapper.last_line_segments_, 10 );
+                    wrapper.last_data_clusters_.clear();
+                    wrapper.last_line_segments_.clear();
+                }
+//                 wrapper.opt_problem_.addTagFactors ( wrapper.pt_for_optimization_, 1);
+//                 PTZCommand cmd = wrapper.opt_problem_.getPTZCommand();
+//                 wrapper.publishPanAndTilt ( cmd );
+                wrapper.opt_problem_.optimizeGraph();
+//             MotionCommand motion_cmd = wrapper.opt_problem_.getMotionCommand();
+//             wrapper.publishCommandVel ( motion_cmd.v, motion_cmd.omega );
+                PositionCommand position_cmd = wrapper.opt_problem_.getPositionCommand ( wrapper.last_gt_ );
+                wrapper.publishPosition ( position_cmd.x, position_cmd.y, position_cmd.theta );
                 wrapper.ready_for_optimization_aruco_ = false;
+
             }
-            wrapper.opt_problem_.optimizeGraph();
-// 	    MotionCommand motion_cmd = wrapper.opt_problem_.getMotionCommand();
-// 	    wrapper.publishCommandVel ( motion_cmd.v, motion_cmd.omega );
             wrapper.last_optimization_time = ros::Time::now();
+
         }
 
 

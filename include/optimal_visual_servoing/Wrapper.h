@@ -31,6 +31,7 @@
 #include <std_msgs/Float64.h>
 #include <yaml-cpp/yaml.h>
 #include <gazebo_msgs/LinkStates.h>
+#include <gazebo_msgs/ModelState.h>
 #include <gazebo_msgs/ModelStates.h>
 #include <sensor_msgs/PointCloud2.h>
 #include <sensor_msgs/CompressedImage.h>
@@ -59,6 +60,9 @@ struct WrapperParams {
     std::string robotType;
     std::string gtTopic;
     std::string tagTopic;
+    std::string publishXYTopic;
+    std::string referenceFrame;
+    std::string vehicleName;
 };
 
 class OVSWrapper
@@ -74,6 +78,7 @@ private:
     ros::Publisher pan_pub_;
     ros::Publisher tilt_pub_;
     ros::Publisher cmd_vel_pub_;
+    ros::Publisher trajectory_pub_;
     WrapperParams wrapper_params_;
     unsigned long num_images_ = 0;
     void initializeRosPipeline();
@@ -91,13 +96,16 @@ public:
     Optimization opt_problem_;
     ArucoTagsDetection detector_;
     void publishPanAndTilt ( PTZCommand cmd );
-    void publishCommandVel ( double vx, double w );
+    void publishCommandVel ( double vx, double omega );
+    void publishPosition ( double x, double y, double theta );
     std::vector<RangeDataTuple> last_data_clusters_;
     std::vector<LineSegmentDataTuple> last_line_segments_;
     ros::Time last_optimization_time;
     Eigen::Vector4d pt_for_optimization_;
     bool ready_for_optimization_aruco_ = false;
     Eigen::Vector3d last_gt_;
+    Eigen::Vector3d last_vels_;
     Eigen::Matrix4d Tbody_in_world_;
     Eigen::Matrix4d Ttag_in_world_;
+    
 };
