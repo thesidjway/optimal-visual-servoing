@@ -23,9 +23,9 @@ Optimization::Optimization() {
     dx_dy_dtheta_[0] = 0.0;
     dx_dy_dtheta_[1] = 0.0;
     last_p = 0.0;
-    last_t = 1.59;
-    p_t_new_[0] = 0.0;
-    p_t_new_[1] = 1.59;
+    last_t = 1.571;
+    p_t_[0] = 0.0;
+    p_t_[1] = 1.571;
     dx_dy_dtheta_[2] = 0.0;
     vel_omega_[0] = 0;
     vel_omega_[1] = 0.001;
@@ -53,20 +53,32 @@ void Optimization::addRangeFactors ( std::vector<RangeDataTuple> &cluster_tuples
     }
 
 }
-
-void Optimization::addDistanceFactor ( Eigen::Vector4d tag_in_cam, Eigen::Vector3d last_gt, double dt, Eigen::Vector3d last_vels, double weight) {
-    vel_omega_[0] = sqrt(last_vels(0) * last_vels(0) + last_vels(1) * last_vels(1));
-    if (last_vels(2) * last_vels(2) > 1e-9) {
-      vel_omega_[1] = last_vels(2);
-    } else {
-      vel_omega_[1] = 1e-3;
+/*
+void Optimization::addDynamicWindowFactors ( std::vector<RangeDataTuple> &cluster_tuples, std::vector<LineSegmentDataTuple> &line_tuples, double weight ) {
+    for ( uint i = 0 ; i < line_tuples.size() ; i++ ) {
+        ceres::CostFunction* cost_function_line =
+            LineSegmentError::Create ( line_tuples[i], weight );
+        cost_functions_range.push_back ( cost_function_line );
     }
+    for ( uint i = 0 ; i < cluster_tuples.size() ; i++ ) {
+        ceres::CostFunction* cost_function_range =
+            ClusterError::Create ( cluster_tuples[i], weight );
+        cost_functions_range.push_back ( cost_function_range );
+    }
+
+    if ( cluster_tuples.size() > 0 || line_tuples.size() > 0 ) {
+        ready_for_range_ = true;
+    }
+
+}*/
+
+void Optimization::addDistanceFactor ( Eigen::Vector4d tag_in_cam, Eigen::Vector3d last_gt, double dt, Eigen::Vector3d last_vels, double weight ) {
     double cam_in_body_old[16];
     double tag_in_world_copy[16];
-    double sp = sin ( p_t_new_[0] );
-    double st = sin ( p_t_new_[1] );
-    double cp = cos ( p_t_new_[0] );
-    double ct = cos ( p_t_new_[1] );
+    double sp = sin ( p_t_[0] );
+    double st = sin ( p_t_[1] );
+    double cp = cos ( p_t_[0] );
+    double ct = cos ( p_t_[1] );
     cam_in_body_old[0] = -sp;
     cam_in_body_old[1] = st * cp;
     cam_in_body_old[2] = cp * ct;
@@ -85,8 +97,8 @@ void Optimization::addDistanceFactor ( Eigen::Vector4d tag_in_cam, Eigen::Vector
     cam_in_body_old[15] = 1.0;
     Eigen::Map<const Eigen::Matrix<double, 4, 4, Eigen::RowMajor> > eigen_cam_in_body_old ( cam_in_body_old );
     Eigen::Vector4d tag_in_body = eigen_cam_in_body_old * tag_in_cam;
-    std::cout << "Tag in body: [ " << tag_in_body(0,0) << " , " << tag_in_body(1,0) << " ]" <<  std::endl;
-    cost_function_distance = xyError::Create ( tag_in_body, 1, last_gt, dt );
+    std::cout << "Tag in body: [ " << tag_in_body ( 0, 0 ) << " , " << tag_in_body ( 1, 0 ) << " ]" <<  std::endl;
+    cost_function_distance = xyError::Create ( tag_in_body, weight, last_gt, dt );
 //     cost_function_distance = DistanceError::Create ( tag_in_body, 1, last_gt, dt );
     ready_for_distance_ = true;
 }
@@ -135,23 +147,20 @@ void Optimization::readOptimizationParams ( std::string params_file ) { //placeh
               0.0, 0.0, 1.0, 0.0;
 }
 
+void Optimization::addFeasibleBoundary ( Boundary boundary, double weight ) {
+    cost_function_boundary = BoundaryError::Create ( boundary, weight );
+    ready_boundary_ = true;
+}
+
 
 void Optimization::optimizeGraph() {
     ceres::Problem problem;
     ceres::Solver::Options options;
     options.max_num_iterations = 1000;
     options.linear_solver_type = ceres::SPARSE_NORMAL_CHOLESKY;
-    options.minimizer_progress_to_stdout = false;
+    options.minimizer_progress_to_stdout = true;
     ceres::Solver::Summary summary;
-    if ( ready_for_projection_ ) {
-        problem.AddResidualBlock ( cost_function_projection,
-                                   NULL,
-                                   p_t_new_,
-				   dx_dy_dtheta_
-);
-        last_p = p_t_new_[0];
-        last_t = p_t_new_[1];
-    }
+
     if ( ready_for_distance_ ) {
         problem.AddResidualBlock ( cost_function_distance,
                                    NULL,
@@ -165,6 +174,24 @@ void Optimization::optimizeGraph() {
         }
         cost_functions_range.clear();
     }
+    if ( ready_for_projection_ ) {
+        problem.AddResidualBlock ( cost_function_projection,
+                                   NULL,
+                                   p_t_,
+                                   dx_dy_dtheta_ );
+        problem.SetParameterLowerBound ( p_t_, 0, -1.571 );
+        problem.SetParameterUpperBound ( p_t_, 0, 1.571 );
+        problem.SetParameterLowerBound ( p_t_, 1, 0.0 );
+        problem.SetParameterUpperBound ( p_t_, 1, 3.1415 );
+        last_p = p_t_[0];
+        last_t = p_t_[1];
+    }
+    if ( ready_boundary_ ) {
+        problem.AddResidualBlock ( cost_function_boundary,
+                                   NULL,
+                                   dx_dy_dtheta_ );
+    }
+
 
 //     problem.SetParameterLowerBound ( vel_omega_, 0, vel_omega_[0] - 0.3);
 //     problem.SetParameterUpperBound ( vel_omega_, 0, vel_omega_[0] + 0.3);
@@ -175,8 +202,11 @@ void Optimization::optimizeGraph() {
     ready_for_projection_ = false;
     ready_for_distance_ = false;
     ready_for_range_ = false;
-    std::cout << "Results Projection: " << p_t_new_[0] << " " << p_t_new_[1] << std::endl;
-//     std::cout << "Results Projection: " << asin(sin(p_t_new_[0])) << " " << acos(cos(p_t_new_[1])) << std::endl;
+    ready_boundary_ = false;
+    std::cout << "Results Projection: " << asin(sin(p_t_[0])) << " " << acos(cos(p_t_[1])) << std::endl;
     std::cout << "Results Vel: " << vel_omega_[0] << " " << vel_omega_[1] << std::endl;
     std::cout << "Results XYtheta: " << dx_dy_dtheta_[0] << " " << dx_dy_dtheta_[1] << " " <<  dx_dy_dtheta_[2] << std::endl;
+
+
+
 }

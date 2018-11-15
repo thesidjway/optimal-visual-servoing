@@ -41,6 +41,41 @@ void DynamicWindowSampler::calcTrajectory ( RobotState &state, Velocity curr_vel
     //state.printState();
 }
 
+void DynamicWindowSampler::calcVertex ( double omega, double vel, double yaw, BoundaryPoint &vert, RobotState state ) {
+    vert = BoundaryPoint ( state.x - vel / omega * sin ( yaw ) + vel / omega * sin ( yaw + omega * params_.dt ),
+                           state.y + vel / omega * cos ( yaw ) - vel / omega * cos ( yaw + omega * params_.dt ),
+                           omega * params_.dt );
+}
+
+void DynamicWindowSampler::calcBoundary ( DynamicWindow dynamic_window, Boundary &boundary, RobotState state ) {
+    double omega;
+    double vel;
+    double yaw = state.yaw;
+
+    boundary.shape_1.vert_1.bound_x = 0;
+    boundary.shape_1.vert_1.bound_y = 0;
+    boundary.shape_2.vert_1.bound_x = 0;
+    boundary.shape_2.vert_1.bound_y = 0;
+
+    omega = dynamic_window.yawrate_min;
+    vel   = dynamic_window.vmin;
+    calcVertex ( omega, vel, yaw, boundary.shape_1.vert_2, state );
+
+    omega = dynamic_window.yawrate_max;
+    vel   = dynamic_window.vmin;
+    calcVertex ( omega, vel, yaw, boundary.shape_1.vert_3, state );
+
+    omega = dynamic_window.yawrate_min;
+    vel   = dynamic_window.vmax;
+    calcVertex ( omega, vel, yaw, boundary.shape_2.vert_2, state );
+
+    omega = dynamic_window.yawrate_max;
+    vel   =  dynamic_window.vmax;
+    calcVertex ( omega, vel, yaw, boundary.shape_2.vert_3, state );
+
+    //state.printState();
+}
+
 void DynamicWindowSampler::calcDynamicWindow ( const RobotState state, DynamicWindow &dynamic_window ) {
     DynamicWindow Vs = DynamicWindow ( params_.min_speed, params_.max_speed,
                                        -params_.max_yawrate, params_.max_yawrate );
@@ -68,4 +103,9 @@ void DynamicWindowSampler::getFeasibleSearchSpace ( RobotState &state, std::vect
 }
 
 
+void DynamicWindowSampler::getFeasibleSearchSpaceBoundary ( RobotState &state, Boundary &boundary ) {
+    DynamicWindow dynamic_window;
+    calcDynamicWindow ( state, dynamic_window );
+    calcBoundary ( dynamic_window, boundary, state );
+}
 

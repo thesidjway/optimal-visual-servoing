@@ -21,6 +21,7 @@
 #include <vector>
 #include <iostream>
 #include <ceres/ceres.h>
+#include <optimal_visual_servoing/DynamicWindowSampler.h>
 
 struct RangeDataTuple {
     RangeDataTuple () {}
@@ -66,6 +67,43 @@ struct PositionCommand {
     double x;
     double y;
     double theta;
+};
+
+struct BoundaryError {
+    BoundaryError ( Boundary boundary, double weight )
+        : boundary_ ( boundary ), weight_ ( weight ) {}
+    template <typename T>
+    int isinside ( BoundaryShape boundary, T dx, T dy ) const {
+        T d = T ( boundary.vert_2.bound_x * boundary.vert_3.bound_y - boundary.vert_2.bound_y * boundary.vert_3.bound_x );
+        T w1 = ( dx* T ( boundary.vert_2.bound_y - boundary.vert_3.bound_y ) + dy * T ( boundary.vert_3.bound_x - boundary.vert_2.bound_x ) + d ) / d;
+        T w2 = ( dx* T ( boundary.vert_3.bound_y ) - dy * T ( boundary.vert_3.bound_x ) ) / d;
+        T w3 = ( -dx* T ( boundary.vert_2.bound_y ) + dy * T ( boundary.vert_2.bound_x ) ) / d;
+        if ( w1 > T ( 0.0 ) && w1 < T ( 1.0 ) && w2 >  T ( 0.0 ) && w2 < T ( 1.0 ) && w3 >  T ( 0.0 ) && w3 <  T ( 1.0 ) ) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+    template <typename T>
+    bool operator() ( const T *const dx_dy_dtheta,
+                      T *residuals ) const {
+        if ( dx_dy_dtheta[2] < boundary_.shape_1.vert_2.bound_theta && boundary_.shape_1.vert_3.bound_theta < dx_dy_dtheta[2] ) {
+            residuals[0] = T ( weight_ ) * T ( 0.0 );
+        } else {
+            residuals[0] = T ( weight_ ) * T ( 1.0 );
+        }
+        if ( isinside ( boundary_.shape_1, dx_dy_dtheta[0], dx_dy_dtheta[1] ) + isinside ( boundary_.shape_1, dx_dy_dtheta[0], dx_dy_dtheta[1] ) == 1 ) {
+            residuals[1] = T ( weight_ ) * T ( 0.0 );
+        } else {
+            residuals[1] = T ( weight_ ) * T ( 1.0 );
+        }
+        return true;
+    }
+    static ceres::CostFunction *Create ( Boundary boundary, double weight ) {
+        return ( new ceres::AutoDiffCostFunction<BoundaryError, 2, 3> ( new BoundaryError ( boundary, weight ) ) );
+    }
+    Boundary boundary_;
+    double weight_;
 };
 
 struct ClusterError {
@@ -365,6 +403,7 @@ struct ProjectionErrorPTOnly {
     Eigen::Matrix4d cam_in_body_old;
     double weight;
 };
+
 
 
 struct ProjectionError {

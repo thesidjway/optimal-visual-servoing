@@ -28,6 +28,7 @@
 #include <yaml-cpp/yaml.h>
 
 #include <optimal_visual_servoing/ErrorFunction.h>
+#include <optimal_visual_servoing/DynamicWindowSampler.h>
 
 
 struct OptimizationParams { //Placeholder
@@ -46,16 +47,18 @@ class Optimization
 private:
     double dx_dy_dtheta_[3];
     double vel_omega_[2];
-    double p_t_new_[2];
+    double p_t_[2];
     double last_p;
     double last_t;
     OptimizationParams params_;
     ceres::CostFunction *cost_function_distance;
     ceres::CostFunction *cost_function_projection;
+    ceres::CostFunction *cost_function_boundary;
     std::vector<ceres::CostFunction*> cost_functions_range;
     bool ready_for_projection_ = false;
     bool ready_for_distance_ = false;
     bool ready_for_range_ = false;
+    bool ready_boundary_ = false;
 
 public:
     Optimization();
@@ -63,10 +66,11 @@ public:
     void addTagFactors ( Eigen::Vector4d target_in_cam, double weight );
     void addDistanceFactor ( Eigen::Vector4d target_in_cam, Eigen::Vector3d last_gt, double dt, Eigen::Vector3d last_vels, double weight );
     void addRangeFactors ( std::vector<RangeDataTuple> &cluster_tuple, std::vector<LineSegmentDataTuple> &line_tuple, double weight );
-    void optimizeGraph( );
+    void optimizeGraph();
+    void addFeasibleBoundary ( Boundary boundary, double weight );
     void readOptimizationParams ( std:: string params_file );
     inline PTZCommand getPTZCommand() {
-        return PTZCommand ( asin ( sin ( p_t_new_[0] ) ) , acos ( cos ( p_t_new_[1] ) ) , 0 );
+        return PTZCommand ( asin ( sin ( p_t_[0] ) ) , acos ( cos ( p_t_[1] ) ) , 0 );
     }
     inline MotionCommand getMotionCommand() {
         return MotionCommand ( vel_omega_[0], vel_omega_[1] );
@@ -82,10 +86,14 @@ public:
                0 , 0 , 1 ;
 
         Eigen::Matrix3d Tfinal = Tcurr * Tdelta;
+        dx_dy_dtheta_[0] = 0.0;
+        dx_dy_dtheta_[1] = 0.0;
+        dx_dy_dtheta_[2] = 0.0;
 
         return PositionCommand ( Tfinal ( 0,2 ), Tfinal ( 1,2 ) , atan2 ( Tfinal ( 1,0 ), Tfinal ( 0,0 ) ) );
     }
 };
+
 
 
 

@@ -191,7 +191,7 @@ void OVSWrapper::gtCallback ( const gazebo_msgs::LinkStatesConstPtr& gt_msg ) {
     Eigen::Map<const Eigen::Matrix < double, 4, 4, Eigen::RowMajor> > Tbody_in_world ( body_in_world );
 //     Eigen::Matrix<double, 4, 4> Tbody_in_world = Eigen::MatrixXd::Identity ( 4, 4 );
     Tbody_in_world_ = Tbody_in_world;
-
+    last_state_gt_ = Eigen::Vector3d ( sqrt ( vx * vx + vy * vy ) , wz, yaw );
 
 
 }
@@ -297,12 +297,25 @@ int main ( int argc, char **argv ) {
                     wrapper.last_data_clusters_.clear();
                     wrapper.last_line_segments_.clear();
                 }
-//                 wrapper.opt_problem_.addTagFactors ( wrapper.pt_for_optimization_, 1);
-//                 PTZCommand cmd = wrapper.opt_problem_.getPTZCommand();
-//                 wrapper.publishPanAndTilt ( cmd );
+                wrapper.state_.x = 0.0;
+                wrapper.state_.y = 0.0;
+                wrapper.state_.vel = wrapper.last_state_gt_(0);
+		if (wrapper.last_state_gt_(1) * wrapper.last_state_gt_(1) > 1e-6) {
+		  wrapper.state_.omega = wrapper.last_state_gt_(1);
+		} else {
+		  wrapper.state_.omega = 0.001;
+		}
+                wrapper.state_.yaw = 0;
+                wrapper.dyn_win_.getFeasibleSearchSpaceBoundary ( wrapper.state_, wrapper.boundary_ );
+                wrapper.opt_problem_.addFeasibleBoundary ( wrapper.boundary_, 10000000 );
+
+                wrapper.opt_problem_.addTagFactors ( wrapper.pt_for_optimization_, 10 );
+                PTZCommand cmd = wrapper.opt_problem_.getPTZCommand();
+                wrapper.publishPanAndTilt ( cmd );
                 wrapper.opt_problem_.optimizeGraph();
 //             MotionCommand motion_cmd = wrapper.opt_problem_.getMotionCommand();
 //             wrapper.publishCommandVel ( motion_cmd.v, motion_cmd.omega );
+
                 PositionCommand position_cmd = wrapper.opt_problem_.getPositionCommand ( wrapper.last_gt_ );
                 wrapper.publishPosition ( position_cmd.x, position_cmd.y, position_cmd.theta );
                 wrapper.ready_for_optimization_aruco_ = false;

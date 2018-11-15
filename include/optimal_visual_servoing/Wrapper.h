@@ -88,7 +88,7 @@ private:
     void imageCallback ( const sensor_msgs::CompressedImageConstPtr& callback_image );
     void gtCallback ( const gazebo_msgs::LinkStatesConstPtr& gt_msg );
     void arucoTagCallback ( const gazebo_msgs::ModelStatesConstPtr& msg );
-    
+
 public:
     OVSWrapper ( std::string params_file, std::string aruco_params_file );
     ~OVSWrapper();
@@ -104,8 +104,12 @@ public:
     Eigen::Vector4d pt_for_optimization_;
     bool ready_for_optimization_aruco_ = false;
     Eigen::Vector3d last_gt_;
+    Eigen::Vector3d last_state_gt_;
+    RobotState state_;
+    Boundary boundary_;
+    DynamicWindowSampler dyn_win_;
     Eigen::Vector3d last_vels_;
     Eigen::Matrix4d Tbody_in_world_;
     Eigen::Matrix4d Ttag_in_world_;
-    
+
 };
