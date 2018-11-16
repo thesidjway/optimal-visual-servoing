@@ -8,12 +8,13 @@ find_package (catkin REQUIRED COMPONENTS
   rospy
   cv_bridge
   laser_geometry
+  moveit_ros_planning_interface
   std_msgs)
 
 catkin_package(
 #	INCLUDE_DIRS include
 	LIBRARIES optimal_visual_servoing
-	CATKIN_DEPENDS roscpp rospy std_msgs pcl_ros cv_bridge laser_geometry
+	CATKIN_DEPENDS roscpp rospy std_msgs pcl_ros cv_bridge laser_geometry moveit_ros_planning_interface
 )
 
 include_directories(
@@ -34,7 +35,7 @@ find_package (OpenCV REQUIRED)
 find_package (PCL REQUIRED COMPONENTS common io)
 
 
-add_executable(optimal_visual_servoing src/Optimization.cc src/ArucoTagsDetection.cc src/DynamicWindowSampler.cc src/Wrapper.cc src/ClusterExtractor.cc)
+add_executable(optimal_visual_servoing src/Optimization.cc src/ArucoTagsDetection.cc src/DynamicWindowSampler.cc src/Wrapper.cc src/ClusterExtractor.cc src/RobotMoveIt.cc)
 target_link_libraries(optimal_visual_servoing ceres ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} pcl_search pcl_segmentation yaml-cpp)
 
 add_executable(calibration calibration/charuco_calib.cpp)

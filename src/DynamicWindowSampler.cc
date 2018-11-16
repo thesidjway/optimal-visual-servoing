@@ -27,6 +27,19 @@ DynamicWindowSampler::~DynamicWindowSampler() {
 
 }
 
+void DynamicWindowSampler::deriveVelocityCommand ( PositionCommand cmd, MotionCommand& cmd_vel , DynamicWindow dynamic_window ) {
+    cmd_vel.omega = cmd.theta / params_.dt;
+    if ( cmd_vel.omega * cmd_vel.omega < 1e-4 ) {
+        cmd_vel.v = cmd.x / params_.dt;
+        cmd_vel.omega = 0.001;
+	return;
+    } 
+    cmd_vel.v = cmd.x * cmd_vel.omega  / sin ( cmd_vel.omega * params_.dt );
+    cmd_vel.omega  = std::max ( std::min ( dynamic_window.yawrate_max, cmd_vel.omega ), dynamic_window.yawrate_min );
+    cmd_vel.v = std::max ( std::min ( dynamic_window.vmax, cmd_vel.v ), dynamic_window.vmin );
+}
+
+
 
 void DynamicWindowSampler::propagateMotion ( RobotState &state, Velocity &curr_velocity ) {
     state.yaw += curr_velocity.omega * params_.dt;
@@ -79,7 +92,7 @@ void DynamicWindowSampler::calcBoundary ( DynamicWindow dynamic_window, Boundary
 void DynamicWindowSampler::calcDynamicWindow ( const RobotState state, DynamicWindow &dynamic_window ) {
     DynamicWindow Vs = DynamicWindow ( params_.min_speed, params_.max_speed,
                                        -params_.max_yawrate, params_.max_yawrate );
-
+    
     DynamicWindow Vd = DynamicWindow ( state.vel - params_.max_accel * params_.dt,
                                        state.vel + params_.max_accel * params_.dt,
                                        state.omega - params_.max_dyawrate * params_.dt,
@@ -103,8 +116,7 @@ void DynamicWindowSampler::getFeasibleSearchSpace ( RobotState &state, std::vect
 }
 
 
-void DynamicWindowSampler::getFeasibleSearchSpaceBoundary ( RobotState &state, Boundary &boundary ) {
-    DynamicWindow dynamic_window;
+void DynamicWindowSampler::getFeasibleSearchSpaceBoundary ( RobotState &state, Boundary &boundary, DynamicWindow &dynamic_window ) {
     calcDynamicWindow ( state, dynamic_window );
     calcBoundary ( dynamic_window, boundary, state );
 }

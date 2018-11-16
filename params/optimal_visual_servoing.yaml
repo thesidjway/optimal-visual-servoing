@@ -16,13 +16,13 @@ ros:
 
 
 clustering:
-  cluster_tolerance: 0.1
+  cluster_tolerance: 0.25
   min_cluster_size: 10
   max_cluster_size: 1000
   inlier_fraction: 0.85
   inlier_tolerance: 0.05
   min_line_segment_size: 25
-  max_irregular_cluster_size: 15
+  max_irregular_cluster_size: 24
 
 aruco:
   adaptiveThreshWinSizeMin: 3

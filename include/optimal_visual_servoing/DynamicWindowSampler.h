@@ -17,10 +17,34 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 #pragma once
+
 #include <cmath>
 #include <algorithm>
 #include <iostream>
 #include <iomanip>
+
+struct PTZCommand {
+    PTZCommand() {}
+    PTZCommand ( double pan, double tilt, double zoom ) : pan ( pan ), tilt ( tilt ), zoom ( zoom ) {}
+    double pan;
+    double tilt;
+    double zoom;
+};
+
+struct MotionCommand {
+    MotionCommand() {}
+    MotionCommand ( double v, double omega ) : v ( v ), omega ( omega ) {}
+    double v;
+    double omega;
+};
+
+struct PositionCommand {
+    PositionCommand() {}
+    PositionCommand ( double x, double y, double theta ) : x ( x ), y ( y ), theta ( theta ) {}
+    double x;
+    double y;
+    double theta;
+};
 
 struct Velocity {
     Velocity () {}
@@ -31,7 +55,7 @@ struct Velocity {
 
 struct BoundaryPoint {
     BoundaryPoint () {}
-    BoundaryPoint ( double bound_x, double bound_y, double bound_theta ) : bound_x ( bound_x ), bound_y ( bound_y ), bound_theta (bound_theta) {}
+    BoundaryPoint ( double bound_x, double bound_y, double bound_theta ) : bound_x ( bound_x ), bound_y ( bound_y ), bound_theta ( bound_theta ) {}
     double bound_x;
     double bound_y;
     double bound_theta;
@@ -104,9 +128,9 @@ struct DynamicWindowParams {
 
     double max_speed = 3.0;
     double min_speed = -3.0;
-    double max_yawrate = 3.0;
-    double max_accel = 3.0; //0.2
-    double max_dyawrate = 1.5;  //40
+    double max_yawrate = 0.5;
+    double max_accel = 1.0; //0.2
+    double max_dyawrate = 0.5;  //40
     double v_reso = 0.001;
     double yawrate_reso = 0.01 * M_PI / 180.0;
     double dt = 0.1;
@@ -128,5 +152,7 @@ public:
     DynamicWindowSampler();
     ~DynamicWindowSampler();
     void getFeasibleSearchSpace ( RobotState &state, std::vector<RobotState> &feasible_states );
-    void getFeasibleSearchSpaceBoundary ( RobotState &state, Boundary &boundary );
+    void getFeasibleSearchSpaceBoundary ( RobotState &state, Boundary &boundary, DynamicWindow &dynamic_window );
+    void deriveVelocityCommand ( PositionCommand cmd, MotionCommand& cmd_vel , DynamicWindow dynamic_window);
+
 };

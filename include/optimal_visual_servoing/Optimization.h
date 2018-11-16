@@ -75,7 +75,11 @@ public:
     inline MotionCommand getMotionCommand() {
         return MotionCommand ( vel_omega_[0], vel_omega_[1] );
     }
-    inline PositionCommand getPositionCommand ( Eigen::Vector3d& last_gt ) {
+    
+    inline PositionCommand getLocalPositionCommand () {
+        return PositionCommand ( dx_dy_dtheta_[0], dx_dy_dtheta_[1] , dx_dy_dtheta_[2] );
+    }
+    inline PositionCommand getGlobalPositionCommand ( Eigen::Vector3d& last_gt ) {
         Eigen::Matrix3d Tcurr;
         Tcurr << cos ( last_gt ( 2 ) ), -sin ( last_gt ( 2 ) ), last_gt ( 0 ),
               sin ( last_gt ( 2 ) ), cos ( last_gt ( 2 ) ), last_gt ( 1 ),

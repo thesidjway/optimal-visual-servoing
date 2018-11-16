@@ -189,7 +189,6 @@ void OVSWrapper::gtCallback ( const gazebo_msgs::LinkStatesConstPtr& gt_msg ) {
     body_in_world[14] = 0;
     body_in_world[15] = 1;
     Eigen::Map<const Eigen::Matrix < double, 4, 4, Eigen::RowMajor> > Tbody_in_world ( body_in_world );
-//     Eigen::Matrix<double, 4, 4> Tbody_in_world = Eigen::MatrixXd::Identity ( 4, 4 );
     Tbody_in_world_ = Tbody_in_world;
     last_state_gt_ = Eigen::Vector3d ( sqrt ( vx * vx + vy * vy ) , wz, yaw );
 
@@ -232,7 +231,6 @@ void OVSWrapper::arucoTagCallback ( const gazebo_msgs::ModelStatesConstPtr& aruc
             tag_in_world[14] = 0;
             tag_in_world[15] = 1;
             Eigen::Map<const Eigen::Matrix < double, 4, 4, Eigen::RowMajor> > Ttag_in_world ( tag_in_world );
-            //     Eigen::Matrix<double, 4, 4> Ttag_in_world = Eigen::MatrixXd::Identity ( 4, 4 );
             Ttag_in_world_ = Ttag_in_world;
         }
     }
@@ -245,7 +243,6 @@ void OVSWrapper::imageCallback ( const sensor_msgs::CompressedImageConstPtr& ima
         cv::Mat read_image_distorted = cv_ptr->image;
         cv::cvtColor ( read_image_distorted, read_image_distorted, CV_BGR2GRAY );
         cv::Mat read_image;
-        //cv::undistort ( read_image_distorted, read_image, wrapper_params_.K, wrapper_params_.dist );
         read_image = read_image_distorted;
         Eigen::Vector4d pt;
         Eigen::Vector2d proj ( -10000, -10000 );
@@ -275,8 +272,8 @@ void OVSWrapper::initializeRosPipeline() {
     tilt_pub_ = n_.advertise<std_msgs::Float64> ( wrapper_params_.tiltTopic, 1000 );
     cmd_vel_pub_ = n_.advertise<geometry_msgs::Twist> ( wrapper_params_.cmdVelTopic, 1000 );
     trajectory_pub_ = n_.advertise<gazebo_msgs::ModelState> ( wrapper_params_.publishXYTopic, 1000 );
-
 }
+
 
 
 
@@ -285,8 +282,8 @@ int main ( int argc, char **argv ) {
     OVSWrapper wrapper ( "/home/thesidjway/research_ws/src/optimal-visual-servoing/params/optimal_visual_servoing.yaml",
                          "/home/thesidjway/research_ws/src/optimal-visual-servoing/params/aruco_params.yaml" );
     wrapper.last_optimization_time = ros::Time::now();
-
     while ( ros::ok() ) {
+
         if ( ( ros::Time::now().toNSec() - wrapper.last_optimization_time.toNSec() ) > 99999999 ) {
             double dt = ( ros::Time::now().toNSec() - wrapper.last_optimization_time.toNSec() ) / 1000000000.0;
             Eigen::Matrix4d tag_in_world = wrapper.Ttag_in_world_;
@@ -299,28 +296,37 @@ int main ( int argc, char **argv ) {
                 }
                 wrapper.state_.x = 0.0;
                 wrapper.state_.y = 0.0;
-                wrapper.state_.vel = wrapper.last_state_gt_(0);
-		if (wrapper.last_state_gt_(1) * wrapper.last_state_gt_(1) > 1e-6) {
-		  wrapper.state_.omega = wrapper.last_state_gt_(1);
-		} else {
-		  wrapper.state_.omega = 0.001;
-		}
+                wrapper.state_.vel = wrapper.last_state_gt_ ( 0 );
+                if ( wrapper.last_state_gt_ ( 1 ) * wrapper.last_state_gt_ ( 1 ) > 1e-6 ) {
+                    wrapper.state_.omega = wrapper.last_state_gt_ ( 1 );
+                } else {
+                    wrapper.state_.omega = 0.001;
+                }
                 wrapper.state_.yaw = 0;
-                wrapper.dyn_win_.getFeasibleSearchSpaceBoundary ( wrapper.state_, wrapper.boundary_ );
-                wrapper.opt_problem_.addFeasibleBoundary ( wrapper.boundary_, 10000000 );
+                wrapper.dyn_win_.getFeasibleSearchSpaceBoundary ( wrapper.state_, wrapper.boundary_, wrapper.dynamic_window_ );
+                wrapper.opt_problem_.addFeasibleBoundary ( wrapper.boundary_, 10000 );
 
                 wrapper.opt_problem_.addTagFactors ( wrapper.pt_for_optimization_, 10 );
                 PTZCommand cmd = wrapper.opt_problem_.getPTZCommand();
                 wrapper.publishPanAndTilt ( cmd );
                 wrapper.opt_problem_.optimizeGraph();
-//             MotionCommand motion_cmd = wrapper.opt_problem_.getMotionCommand();
+// 		MotionCommand motion_cmd = wrapper.opt_problem_.getMotionCommand();
 //             wrapper.publishCommandVel ( motion_cmd.v, motion_cmd.omega );
 
-                PositionCommand position_cmd = wrapper.opt_problem_.getPositionCommand ( wrapper.last_gt_ );
+//                 PositionCommand position_cmd = wrapper.opt_problem_.getLocalPositionCommand ( );
+//                 MotionCommand motion_cmd;
+//                 wrapper.dyn_win_.deriveVelocityCommand ( position_cmd, motion_cmd, wrapper.dynamic_window_ );
+//                 wrapper.publishCommandVel ( motion_cmd.v, motion_cmd.omega );
+// 		std::cout << "Results Vel: " <<  motion_cmd.v << " " << motion_cmd.omega << std::endl;
+                PositionCommand position_cmd = wrapper.opt_problem_.getGlobalPositionCommand ( wrapper.last_gt_ );
                 wrapper.publishPosition ( position_cmd.x, position_cmd.y, position_cmd.theta );
                 wrapper.ready_for_optimization_aruco_ = false;
 
+            } else {
+//                 MotionCommand motion_cmd;
+//                 wrapper.publishCommandVel ( 0.0, 0.0001 );
             }
+
             wrapper.last_optimization_time = ros::Time::now();
 
         }

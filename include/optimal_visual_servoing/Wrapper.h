@@ -22,6 +22,7 @@
 #include <optimal_visual_servoing/DynamicWindowSampler.h>
 #include <optimal_visual_servoing/ArucoTagsDetection.h>
 #include <optimal_visual_servoing/ClusterExtractor.h>
+#include <optimal_visual_servoing/RobotMoveIt.h>
 #include <ros/ros.h>
 #include <cv_bridge/cv_bridge.h>
 #include <image_transport/image_transport.h>
@@ -107,6 +108,7 @@ public:
     Eigen::Vector3d last_state_gt_;
     RobotState state_;
     Boundary boundary_;
+    DynamicWindow dynamic_window_;
     DynamicWindowSampler dyn_win_;
     Eigen::Vector3d last_vels_;
     Eigen::Matrix4d Tbody_in_world_;

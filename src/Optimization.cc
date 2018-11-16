@@ -204,7 +204,7 @@ void Optimization::optimizeGraph() {
     ready_for_range_ = false;
     ready_boundary_ = false;
     std::cout << "Results Projection: " << asin(sin(p_t_[0])) << " " << acos(cos(p_t_[1])) << std::endl;
-    std::cout << "Results Vel: " << vel_omega_[0] << " " << vel_omega_[1] << std::endl;
+//     std::cout << "Results Vel: " << vel_omega_[0] << " " << vel_omega_[1] << std::endl;
     std::cout << "Results XYtheta: " << dx_dy_dtheta_[0] << " " << dx_dy_dtheta_[1] << " " <<  dx_dy_dtheta_[2] << std::endl;
 
 

@@ -46,28 +46,7 @@ struct LineSegmentDataTuple {
     }
 };
 
-struct PTZCommand {
-    PTZCommand() {}
-    PTZCommand ( double pan, double tilt, double zoom ) : pan ( pan ), tilt ( tilt ), zoom ( zoom ) {}
-    double pan;
-    double tilt;
-    double zoom;
-};
 
-struct MotionCommand {
-    MotionCommand() {}
-    MotionCommand ( double v, double omega ) : v ( v ), omega ( omega ) {}
-    double v;
-    double omega;
-};
-
-struct PositionCommand {
-    PositionCommand() {}
-    PositionCommand ( double x, double y, double theta ) : x ( x ), y ( y ), theta ( theta ) {}
-    double x;
-    double y;
-    double theta;
-};
 
 struct BoundaryError {
     BoundaryError ( Boundary boundary, double weight )
@@ -88,19 +67,19 @@ struct BoundaryError {
     bool operator() ( const T *const dx_dy_dtheta,
                       T *residuals ) const {
         if ( dx_dy_dtheta[2] < boundary_.shape_1.vert_2.bound_theta && boundary_.shape_1.vert_3.bound_theta < dx_dy_dtheta[2] ) {
-            residuals[0] = T ( weight_ ) * T ( 0.0 );
+	    if ( isinside ( boundary_.shape_1, dx_dy_dtheta[0], dx_dy_dtheta[1] ) + isinside ( boundary_.shape_1, dx_dy_dtheta[0], dx_dy_dtheta[1] ) == 1 ) {
+	      residuals[0] = T ( weight_ ) * T ( 0.0 );
+	    } else {
+            residuals[0] = T ( weight_ ) * T ( 1.0 );
+	    }
         } else {
             residuals[0] = T ( weight_ ) * T ( 1.0 );
         }
-        if ( isinside ( boundary_.shape_1, dx_dy_dtheta[0], dx_dy_dtheta[1] ) + isinside ( boundary_.shape_1, dx_dy_dtheta[0], dx_dy_dtheta[1] ) == 1 ) {
-            residuals[1] = T ( weight_ ) * T ( 0.0 );
-        } else {
-            residuals[1] = T ( weight_ ) * T ( 1.0 );
-        }
+
         return true;
     }
     static ceres::CostFunction *Create ( Boundary boundary, double weight ) {
-        return ( new ceres::AutoDiffCostFunction<BoundaryError, 2, 3> ( new BoundaryError ( boundary, weight ) ) );
+        return ( new ceres::AutoDiffCostFunction<BoundaryError, 1, 3> ( new BoundaryError ( boundary, weight ) ) );
     }
     Boundary boundary_;
     double weight_;
@@ -266,11 +245,7 @@ struct xyError {
 
         residuals[0] = T ( weight_ ) * T ( dx_dy_dtheta[0] - Ttag_in_body ( 0,0 ) );
         residuals[1] = T ( weight_ ) * T ( dx_dy_dtheta[1] - Ttag_in_body ( 1,0 ) );
-        if ( Ttag_in_body ( 1,0 ) * Ttag_in_body ( 1,0 ) > T ( 1e-3 ) && Ttag_in_body ( 1,0 ) * Ttag_in_body ( 1,0 ) > T ( 1e-3 ) ) {
-            residuals[2] = T ( 500000000.0 ) * T ( dx_dy_dtheta[2] - atan2 ( Ttag_in_body ( 1,0 ), Ttag_in_body ( 0,0 ) ) );
-        } else {
-            residuals[2] = T ( 500000000.0 ) * T ( dx_dy_dtheta[2] );
-        }
+        residuals[2] = T ( 0.0 );
         return true;
     }
     static ceres::CostFunction *Create ( const Eigen::Vector4d tag_in_body, const double weight, const Eigen::Vector3d last_gt, const double dt ) {
@@ -306,7 +281,8 @@ struct DistanceError {
 
         residuals[0] = T ( x1 - Ttag_in_body ( 0,0 ) );
         residuals[1] = T ( y1 - Ttag_in_body ( 1,0 ) );
-        residuals[2] = T ( weight_ ) * T ( omega * dt_ - atan2 ( Ttag_in_body ( 1,0 ), Ttag_in_body ( 0,0 ) ) );
+//         residuals[2] = T ( weight_ ) * T ( omega * dt_ - atan2 ( Ttag_in_body ( 1,0 ), Ttag_in_body ( 0,0 ) ) );
+        residuals[2] = T ( weight_ ) * T ( 0.0 );
 
 //         std::cout << "Xdesired: " << Ttag_in_world ( 0,3 ) << std::endl;
 //         std::cout << "Ydesired: " << Ttag_in_world ( 1,3 ) << std::endl;
@@ -484,6 +460,9 @@ struct ProjectionError {
     Eigen::Matrix4d cam_in_body_old;
     double weight;
 };
+
+
+
 
 
 
