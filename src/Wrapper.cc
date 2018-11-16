@@ -148,51 +148,51 @@ void OVSWrapper::pointCloudCallback3D ( const sensor_msgs::PointCloud2ConstPtr& 
 }
 
 void OVSWrapper::gtCallback ( const gazebo_msgs::LinkStatesConstPtr& gt_msg ) {
+    for ( unsigned int i = 0 ; i < gt_msg->name.size(); i++ ) {
+        if ( gt_msg->name[i] == "summit_xl_a::summit_xl_a_base_footprint" ) {
+            double qx = gt_msg->pose[i].orientation.x;
+            double qy = gt_msg->pose[i].orientation.y;
+            double qz = gt_msg->pose[i].orientation.z;
+            double qw = gt_msg->pose[i].orientation.w;
+            double x = gt_msg->pose[i].position.x;
+            double y = gt_msg->pose[i].position.y;
+            double z = gt_msg->pose[i].position.z;
+            double vx = gt_msg->twist[i].linear.x;
+            double vy = gt_msg->twist[i].linear.y;
+            double wz = gt_msg->twist[i].angular.z;
+            tf::Quaternion q (
+                qx,
+                qy,
+                qz,
+                qw );
 
-    double qx = gt_msg->pose[2].orientation.x;
-    double qy = gt_msg->pose[2].orientation.y;
-    double qz = gt_msg->pose[2].orientation.z;
-    double qw = gt_msg->pose[2].orientation.w;
-    double x = gt_msg->pose[2].position.x;
-    double y = gt_msg->pose[2].position.y;
-    double z = gt_msg->pose[2].position.z;
-    double vx = gt_msg->twist[2].linear.x;
-    double vy = gt_msg->twist[2].linear.y;
-    double wz = gt_msg->twist[2].angular.z;
-
-
-    tf::Quaternion q (
-        qx,
-        qy,
-        qz,
-        qw );
-    tf::Matrix3x3 m ( q );
-    double roll, pitch, yaw;
-    m.getRPY ( roll, pitch, yaw );
-    last_gt_ = Eigen::Vector3d ( x , y , yaw );
-    last_vels_ = Eigen::Vector3d ( vx , vy , wz );
-    double body_in_world[16];
-    body_in_world[0] = m[0][0];
-    body_in_world[1] = m[0][1];
-    body_in_world[2] = m[0][2];
-    body_in_world[3] = x;
-    body_in_world[4] = m[1][0];
-    body_in_world[5] = m[1][1];
-    body_in_world[6] = m[1][2];
-    body_in_world[7] = y;
-    body_in_world[8] = m[2][0];
-    body_in_world[9] = m[2][1];
-    body_in_world[10] = m[2][2];
-    body_in_world[11] = z;
-    body_in_world[12] = 0;
-    body_in_world[13] = 0;
-    body_in_world[14] = 0;
-    body_in_world[15] = 1;
-    Eigen::Map<const Eigen::Matrix < double, 4, 4, Eigen::RowMajor> > Tbody_in_world ( body_in_world );
-    Tbody_in_world_ = Tbody_in_world;
-    last_state_gt_ = Eigen::Vector3d ( sqrt ( vx * vx + vy * vy ) , wz, yaw );
-
-
+            tf::Matrix3x3 m ( q );
+            double roll, pitch, yaw;
+            m.getRPY ( roll, pitch, yaw );
+            last_gt_ = Eigen::Vector3d ( x , y , yaw );
+            last_vels_ = Eigen::Vector3d ( vx , vy , wz );
+            double body_in_world[16];
+            body_in_world[0] = m[0][0];
+            body_in_world[1] = m[0][1];
+            body_in_world[2] = m[0][2];
+            body_in_world[3] = x;
+            body_in_world[4] = m[1][0];
+            body_in_world[5] = m[1][1];
+            body_in_world[6] = m[1][2];
+            body_in_world[7] = y;
+            body_in_world[8] = m[2][0];
+            body_in_world[9] = m[2][1];
+            body_in_world[10] = m[2][2];
+            body_in_world[11] = z;
+            body_in_world[12] = 0;
+            body_in_world[13] = 0;
+            body_in_world[14] = 0;
+            body_in_world[15] = 1;
+            Eigen::Map<const Eigen::Matrix < double, 4, 4, Eigen::RowMajor> > Tbody_in_world ( body_in_world );
+            Tbody_in_world_ = Tbody_in_world;
+            last_state_gt_ = Eigen::Vector3d ( sqrt ( vx * vx + vy * vy ) , wz, yaw );
+        }
+    }
 }
 
 void OVSWrapper::arucoTagCallback ( const gazebo_msgs::ModelStatesConstPtr& aruco_msg ) {

@@ -80,7 +80,7 @@ void ClusterExtractor::computeClusterParams ( double& width, double& min_dist, d
             pcl::PointXYZ v1 = ip->points[j], v2 = ip->points[k];;
             Eigen::Vector2d pcl_v1 ( v1._PointXYZ::data[0], v1._PointXYZ::data[1] );
             Eigen::Vector2d pcl_v2 ( v2._PointXYZ::data[0], v2._PointXYZ::data[1] );
-            min_dist = std::min ( min_dist, sqrt(pcl_v1.dot ( pcl_v1 )) );
+            min_dist = std::min ( min_dist, sqrt ( pcl_v1.dot ( pcl_v1 ) ) );
             double angle = atan2 ( pcl_v1 ( 0 ) * pcl_v2 ( 1 ) - pcl_v1 ( 1 ) * pcl_v2 ( 0 ), ( pcl_v1.dot ( pcl_v2 ) ) );
             if ( ( angle ) > width ) {
                 width = ( angle );
@@ -101,7 +101,7 @@ void ClusterExtractor::computeSegments ( pcl::PointCloud<pcl::PointXYZ>::Ptr& cl
 
     if ( ( distal - frontal ) < params_.min_line_segment_size ) {
         double bearing_angle, width, min_dist;
-        computeClusterParams ( width, min_dist, bearing_angle, cloud, frontal, distal, segments);
+        computeClusterParams ( width, min_dist, bearing_angle, cloud, frontal, distal, segments );
         return;
     }
 
@@ -160,18 +160,24 @@ void ClusterExtractor::showResults ( std::vector<RangeDataTuple>& segments, std:
         col1 = std::max ( std::min ( col1, 600 ), 0 );
         col2 = std::max ( std::min ( col2, 600 ), 0 );
         cv::Scalar colour = cv::Scalar ( rng.uniform ( 0, 255 ), rng.uniform ( 0, 255 ), rng.uniform ( 0, 255 ) );
-        cv::line ( segmented_cloud, cv::Point2d ( col1, row1 ), cv::Point2d ( col2, row2 ), colour );
+//         cv::line ( segmented_cloud, cv::Point2d ( col1, row1 ), cv::Point2d ( col2, row2 ), colour );
     }
     for ( uint i = 0 ; i < segments.size() ; i++ ) {
         cv::Scalar colour = cv::Scalar ( rng.uniform ( 0, 255 ), rng.uniform ( 0, 255 ), rng.uniform ( 0, 255 ) );
         double start_angle = ( 1.5 * M_PI - segments[i].bearing + segments[i].width / 2 ) * 180 / M_PI;
         double end_angle = ( 1.5 * M_PI - segments[i].bearing - segments[i].width / 2 ) * 180 / M_PI;
-        cv::ellipse ( segmented_cloud, cv::Point2d ( 300 , 300 ), cv::Size ( segments[i].median_dist * 37.5, segments[i].median_dist * 37.5 ), 0, start_angle, end_angle, cv::Scalar ( rng.uniform ( 0, 255 ), rng.uniform ( 0, 255 ), rng.uniform ( 0, 255 ) ) );
+        cv::ellipse ( segmented_cloud,
+                      cv::Point2d ( 300 , 300 ),
+                      cv::Size ( segments[i].median_dist * 37.5, segments[i].median_dist * 37.5 ),
+                      0,
+                      end_angle,
+                      start_angle,
+                      cv::Scalar ( rng.uniform ( 0, 255 ), rng.uniform ( 0, 255 ), rng.uniform ( 0, 255 ) ) );
     }
-    cv::namedWindow ( "Laser Segments and Clusters", CV_WINDOW_AUTOSIZE );
-    cv::imshow ( "Laser Segments and Clusters", segmented_cloud );
-    cv::namedWindow ( "Raw laser Data", CV_WINDOW_AUTOSIZE );
-    cv::imshow ( "Raw laser Data", raw_laser );
+//     cv::namedWindow ( "Laser Segments and Clusters", CV_WINDOW_AUTOSIZE );
+//     cv::imshow ( "Laser Segments and Clusters", segmented_cloud );
+//     cv::namedWindow ( "Raw laser Data", CV_WINDOW_AUTOSIZE );
+//     cv::imshow ( "Raw laser Data", raw_laser );
 };
 
 void ClusterExtractor::extractSegmentFeatures ( std::vector<RangeDataTuple>& segments, std::vector< LineSegmentDataTuple >& line_segments ) {
@@ -184,8 +190,8 @@ void ClusterExtractor::extractSegmentFeatures ( std::vector<RangeDataTuple>& seg
         }
         int frontal = 0;
         int distal = cloud_cluster->points.size() - 1;
-        double bearing_angle, width, min_dist;
-        computeClusterParams ( width, min_dist, bearing_angle, cloud_cluster, frontal, distal , segments );
+//         double bearing_angle, width, min_dist;
+//         computeClusterParams ( width, min_dist, bearing_angle, cloud_cluster, frontal, distal , segments );
         computeSegments ( cloud_cluster, line_segments, frontal, distal, segments );
 
         //cluster.printDataTuple();

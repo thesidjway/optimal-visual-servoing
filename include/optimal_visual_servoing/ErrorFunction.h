@@ -140,24 +140,6 @@ struct LineSegmentError {
     double weight;
 };
 
-struct VelocityConstraints { //TO BE MODIFIED
-    VelocityConstraints ( double max_vel, double max_omega, double dt )
-        : max_vel ( max_vel ), max_omega ( max_omega ), dt ( dt ) {}
-
-    template <typename T>
-    bool operator () ( const T *const dx_dy_dtheta_vel_omega,
-                       T *residuals ) const {
-        residuals[0] = T ( max_vel * max_vel - dx_dy_dtheta_vel_omega[0] / dt * dx_dy_dtheta_vel_omega[0] / dt - dx_dy_dtheta_vel_omega[1] / dt * dx_dy_dtheta_vel_omega[1] / dt );
-        residuals[1] = T ( max_omega * max_omega - dx_dy_dtheta_vel_omega[2] / dt * dx_dy_dtheta_vel_omega[2] / dt );
-        return true;
-    }
-    static ceres::CostFunction *Create ( double max_vel, double max_omega, double dt ) {
-        return ( new ceres::AutoDiffCostFunction<VelocityConstraints, 2, 5> ( new VelocityConstraints ( max_vel, max_omega, dt ) ) );
-    }
-    double max_vel;
-    double max_omega;
-    double dt;
-};
 
 struct PanTiltChangeError {
     PanTiltChangeError ( double last_p, double last_t, double weight_p, double weight_t )

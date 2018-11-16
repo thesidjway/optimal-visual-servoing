@@ -17,7 +17,7 @@ ros:
 
 clustering:
   cluster_tolerance: 0.25
-  min_cluster_size: 10
+  min_cluster_size: 4
   max_cluster_size: 1000
   inlier_fraction: 0.85
   inlier_tolerance: 0.05

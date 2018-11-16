@@ -35,7 +35,7 @@ find_package (OpenCV REQUIRED)
 find_package (PCL REQUIRED COMPONENTS common io)
 
 
-add_executable(optimal_visual_servoing src/Optimization.cc src/ArucoTagsDetection.cc src/DynamicWindowSampler.cc src/Wrapper.cc src/ClusterExtractor.cc src/RobotMoveIt.cc)
+add_executable(optimal_visual_servoing src/Optimization.cc src/ArucoTagsDetection.cc src/DynamicWindowSampler.cc src/Wrapper.cc src/ClusterExtractor.cc )
 target_link_libraries(optimal_visual_servoing ceres ${catkin_LIBRARIES} ${OpenCV_LIBRARIES} ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} pcl_search pcl_segmentation yaml-cpp)
 
 add_executable(calibration calibration/charuco_calib.cpp)
