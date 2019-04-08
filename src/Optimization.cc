@@ -82,7 +82,7 @@ void Optimization::addDistanceFactor ( Eigen::Vector4d tag_in_cam, Eigen::Vector
     cam_in_body_old[0] = -sp;
     cam_in_body_old[1] = st * cp;
     cam_in_body_old[2] = cp * ct;
-    cam_in_body_old[3] = 0.19;
+    cam_in_body_old[3] = 0;
     cam_in_body_old[4] = -cp;
     cam_in_body_old[5] = -st * sp;
     cam_in_body_old[6] = -ct * sp;
@@ -90,14 +90,13 @@ void Optimization::addDistanceFactor ( Eigen::Vector4d tag_in_cam, Eigen::Vector
     cam_in_body_old[8] = 0.0;
     cam_in_body_old[9] = -ct;
     cam_in_body_old[10] = st;
-    cam_in_body_old[11] = 0.395;
+    cam_in_body_old[11] = 0.34;
     cam_in_body_old[12] = 0.0;
     cam_in_body_old[13] = 0.0;
     cam_in_body_old[14] = 0.0;
     cam_in_body_old[15] = 1.0;
     Eigen::Map<const Eigen::Matrix<double, 4, 4, Eigen::RowMajor> > eigen_cam_in_body_old ( cam_in_body_old );
     Eigen::Vector4d tag_in_body = eigen_cam_in_body_old * tag_in_cam;
-    std::cout << "Tag in body: [ " << tag_in_body ( 0, 0 ) << " , " << tag_in_body ( 1, 0 ) << " ]" <<  std::endl;
     cost_function_distance = xyError::Create ( tag_in_body, weight, last_gt, dt );
 //     cost_function_distance = DistanceError::Create ( tag_in_body, 1, last_gt, dt );
     ready_for_distance_ = true;
@@ -114,7 +113,7 @@ void Optimization::addTagFactors ( Eigen::Vector4d target_in_cam, double weight 
     cam_in_body_old[0] = -sp;
     cam_in_body_old[1] = st * cp;
     cam_in_body_old[2] = cp * ct;
-    cam_in_body_old[3] = 0.19;
+    cam_in_body_old[3] = 0;
     cam_in_body_old[4] = -cp;
     cam_in_body_old[5] = -st * sp;
     cam_in_body_old[6] = -ct * sp;
@@ -122,7 +121,7 @@ void Optimization::addTagFactors ( Eigen::Vector4d target_in_cam, double weight 
     cam_in_body_old[8] = 0.0;
     cam_in_body_old[9] = -ct;
     cam_in_body_old[10] = st;
-    cam_in_body_old[11] = 0.395;
+    cam_in_body_old[11] = 0.34;
     cam_in_body_old[12] = 0.0;
     cam_in_body_old[13] = 0.0;
     cam_in_body_old[14] = 0.0;

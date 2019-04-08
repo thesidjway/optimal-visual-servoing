@@ -84,12 +84,14 @@ public:
         Tcurr << cos ( last_gt ( 2 ) ), -sin ( last_gt ( 2 ) ), last_gt ( 0 ),
               sin ( last_gt ( 2 ) ), cos ( last_gt ( 2 ) ), last_gt ( 1 ),
               0 , 0 , 1 ;
+        std::cout << Tcurr << std::endl;
         Eigen::Matrix3d Tdelta;
         Tdelta << cos ( dx_dy_dtheta_[2] ), -sin ( dx_dy_dtheta_[2] ), dx_dy_dtheta_[0],
                sin ( dx_dy_dtheta_[2] ), cos ( dx_dy_dtheta_[2] ), dx_dy_dtheta_[1],
                0 , 0 , 1 ;
 
         Eigen::Matrix3d Tfinal = Tcurr * Tdelta;
+        std::cout << Tfinal << std::endl;
         dx_dy_dtheta_[0] = 0.0;
         dx_dy_dtheta_[1] = 0.0;
         dx_dy_dtheta_[2] = 0.0;

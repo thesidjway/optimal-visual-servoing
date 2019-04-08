@@ -41,7 +41,7 @@ void OVSWrapper::publishPanAndTilt ( PTZCommand cmd ) {
         ptz_msg.pan = cmd.pan;
         ptz_msg.tilt = cmd.tilt;
         ptz_pub_.publish ( ptz_msg );
-    } else if ( wrapper_params_.robotType == "summit_xl" ) {
+    } else if ( wrapper_params_.robotType == "summit_xl" || wrapper_params_.robotType == "husky_sim" ) {
         std_msgs::Float64 pan_msg, tilt_msg;
         pan_msg.data = cmd.pan;
         tilt_msg.data = cmd.tilt;
@@ -149,7 +149,7 @@ void OVSWrapper::pointCloudCallback3D ( const sensor_msgs::PointCloud2ConstPtr& 
 
 void OVSWrapper::gtCallback ( const gazebo_msgs::LinkStatesConstPtr& gt_msg ) {
     for ( unsigned int i = 0 ; i < gt_msg->name.size(); i++ ) {
-        if ( gt_msg->name[i] == "summit_xl_a::summit_xl_a_base_footprint" ) {
+        if ( gt_msg->name[i] == "husky::husky/base_link" ) {
             double qx = gt_msg->pose[i].orientation.x;
             double qy = gt_msg->pose[i].orientation.y;
             double qz = gt_msg->pose[i].orientation.z;
@@ -238,7 +238,6 @@ void OVSWrapper::arucoTagCallback ( const gazebo_msgs::ModelStatesConstPtr& aruc
 
 void OVSWrapper::imageCallback ( const sensor_msgs::CompressedImageConstPtr& image_msg ) {
     try {
-
         cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy ( image_msg, sensor_msgs::image_encodings::BGR8 );
         cv::Mat read_image_distorted = cv_ptr->image;
         cv::cvtColor ( read_image_distorted, read_image_distorted, CV_BGR2GRAY );
@@ -279,8 +278,8 @@ void OVSWrapper::initializeRosPipeline() {
 
 int main ( int argc, char **argv ) {
     ros::init ( argc, argv, "optimal_visual_servoing" );
-    OVSWrapper wrapper ( "/home/thesidjway/research_ws/src/optimal-visual-servoing/params/optimal_visual_servoing.yaml",
-                         "/home/thesidjway/research_ws/src/optimal-visual-servoing/params/aruco_params.yaml" );
+    OVSWrapper wrapper ( "/home/thesidjway/exploration_ws/src/optimal-visual-servoing/params/optimal_visual_servoing.yaml",
+                         "/home/thesidjway/exploration_ws/src/optimal-visual-servoing/params/aruco_params.yaml" );
     wrapper.last_optimization_time = ros::Time::now();
     while ( ros::ok() ) {
 
@@ -289,11 +288,11 @@ int main ( int argc, char **argv ) {
             Eigen::Matrix4d tag_in_world = wrapper.Ttag_in_world_;
             if ( wrapper.ready_for_optimization_aruco_ ) {
                 wrapper.opt_problem_.addDistanceFactor ( wrapper.pt_for_optimization_, wrapper.last_gt_, dt, wrapper.last_vels_, 10 );
-                if ( wrapper.last_data_clusters_.size() > 0 || wrapper.last_line_segments_.size() > 0 ) {
-                    wrapper.opt_problem_.addRangeFactors ( wrapper.last_data_clusters_, wrapper.last_line_segments_, 10 );
-                    wrapper.last_data_clusters_.clear();
-                    wrapper.last_line_segments_.clear();
-                }
+                // if ( wrapper.last_data_clusters_.size() > 0 || wrapper.last_line_segments_.size() > 0 ) {
+                //     wrapper.opt_problem_.addRangeFactors ( wrapper.last_data_clusters_, wrapper.last_line_segments_, 10 );
+                //     wrapper.last_data_clusters_.clear();
+                //     wrapper.last_line_segments_.clear();
+                // }
                 wrapper.state_.x = 0.0;
                 wrapper.state_.y = 0.0;
                 wrapper.state_.vel = wrapper.last_state_gt_ ( 0 );
@@ -303,10 +302,10 @@ int main ( int argc, char **argv ) {
                     wrapper.state_.omega = 0.001;
                 }
                 wrapper.state_.yaw = 0;
-                wrapper.dyn_win_.getFeasibleSearchSpaceBoundary ( wrapper.state_, wrapper.boundary_, wrapper.dynamic_window_ );
-                wrapper.opt_problem_.addFeasibleBoundary ( wrapper.boundary_, 10000 );
+                //wrapper.dyn_win_.getFeasibleSearchSpaceBoundary ( wrapper.state_, wrapper.boundary_, wrapper.dynamic_window_ );
+                //wrapper.opt_problem_.addFeasibleBoundary ( wrapper.boundary_, 10000 );
 
-                wrapper.opt_problem_.addTagFactors ( wrapper.pt_for_optimization_, 10 );
+                //wrapper.opt_problem_.addTagFactors ( wrapper.pt_for_optimization_, 10 );
                 PTZCommand cmd = wrapper.opt_problem_.getPTZCommand();
                 wrapper.publishPanAndTilt ( cmd );
                 wrapper.opt_problem_.optimizeGraph();

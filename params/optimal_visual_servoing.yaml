@@ -1,18 +1,18 @@
 %YAML:1.0
 ros:
-  pc_2d_topic: "summit_xl_a/front_laser/scan"
+  pc_2d_topic: "/husky/front_laser/scan"
   pc_3d_topic: "/velodyne_points"
   ptz_topic: "/axis_ptz/cmd"
-  image_topic: "/summit_xl_a/summit_xl_a_front_ptz_camera/image_raw/compressed"
-  pan_topic: "/summit_xl_a/joint_pan_position_controller/command"
-  tilt_topic: "/summit_xl_a/joint_tilt_position_controller/command"
-  cmd_vel_topic: "/summit_xl_a/robotnik_base_control/cmd_vel"
+  image_topic: "/husky/ptz/image_raw/compressed"
+  pan_topic: "/husky/joint_pan_position_controller/command"
+  tilt_topic: "/husky/joint_tilt_position_controller/command"
+  cmd_vel_topic: "/husky/cmd_vel"
   gt_topic: "/gazebo/link_states"
   tag_topic: "/gazebo/model_states"
   publish_xy_topic: "/gazebo/set_model_state"
-  vehicle_name: "summit_xl_a"
+  vehicle_name: "husky"
   reference_frame: "world"
-  robot_type: "summit_xl"
+  robot_type: "husky_sim"
 
 
 clustering:

@@ -160,7 +160,7 @@ void ClusterExtractor::showResults ( std::vector<RangeDataTuple>& segments, std:
         col1 = std::max ( std::min ( col1, 600 ), 0 );
         col2 = std::max ( std::min ( col2, 600 ), 0 );
         cv::Scalar colour = cv::Scalar ( rng.uniform ( 0, 255 ), rng.uniform ( 0, 255 ), rng.uniform ( 0, 255 ) );
-//         cv::line ( segmented_cloud, cv::Point2d ( col1, row1 ), cv::Point2d ( col2, row2 ), colour );
+        cv::line ( segmented_cloud, cv::Point2d ( col1, row1 ), cv::Point2d ( col2, row2 ), colour );
     }
     for ( uint i = 0 ; i < segments.size() ; i++ ) {
         cv::Scalar colour = cv::Scalar ( rng.uniform ( 0, 255 ), rng.uniform ( 0, 255 ), rng.uniform ( 0, 255 ) );
@@ -174,10 +174,10 @@ void ClusterExtractor::showResults ( std::vector<RangeDataTuple>& segments, std:
                       start_angle,
                       cv::Scalar ( rng.uniform ( 0, 255 ), rng.uniform ( 0, 255 ), rng.uniform ( 0, 255 ) ) );
     }
-//     cv::namedWindow ( "Laser Segments and Clusters", CV_WINDOW_AUTOSIZE );
-//     cv::imshow ( "Laser Segments and Clusters", segmented_cloud );
-//     cv::namedWindow ( "Raw laser Data", CV_WINDOW_AUTOSIZE );
-//     cv::imshow ( "Raw laser Data", raw_laser );
+    cv::namedWindow ( "Laser Segments and Clusters", CV_WINDOW_AUTOSIZE );
+    cv::imshow ( "Laser Segments and Clusters", segmented_cloud );
+    cv::namedWindow ( "Raw laser Data", CV_WINDOW_AUTOSIZE );
+    cv::imshow ( "Raw laser Data", raw_laser );
 };
 
 void ClusterExtractor::extractSegmentFeatures ( std::vector<RangeDataTuple>& segments, std::vector< LineSegmentDataTuple >& line_segments ) {
@@ -197,7 +197,7 @@ void ClusterExtractor::extractSegmentFeatures ( std::vector<RangeDataTuple>& seg
         //cluster.printDataTuple();
         //std::cout << "PointCloud representing the Cluster: " << cloud_cluster->points.size () << " data points." << std::endl;
     }
-    showResults ( segments, line_segments );
+    //showResults ( segments, line_segments );
     cluster_indices_.clear();
 }
 

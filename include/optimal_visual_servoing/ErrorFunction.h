@@ -298,7 +298,7 @@ struct ProjectionErrorPTOnly {
         cam_in_body_new[0] = -sp;
         cam_in_body_new[1] = st * cp;
         cam_in_body_new[2] = cp * ct;
-        cam_in_body_new[3] = T ( 0.19 );
+        cam_in_body_new[3] = T ( 0.0 );
         cam_in_body_new[4] = -cp;
         cam_in_body_new[5] = -st * sp;
         cam_in_body_new[6] = -ct * sp;
@@ -306,7 +306,7 @@ struct ProjectionErrorPTOnly {
         cam_in_body_new[8] = T ( 0.0 );
         cam_in_body_new[9] = -ct;
         cam_in_body_new[10] = st;
-        cam_in_body_new[11] = T ( 0.395 );
+        cam_in_body_new[11] = T ( 0.34 );
         cam_in_body_new[12] = T ( 0.0 );
         cam_in_body_new[13] = T ( 0.0 );
         cam_in_body_new[14] = T ( 0.0 );
@@ -380,7 +380,7 @@ struct ProjectionError {
         cam_in_body_new[0] = -sp;
         cam_in_body_new[1] = st * cp;
         cam_in_body_new[2] = cp * ct;
-        cam_in_body_new[3] = T ( 0.19 );
+        cam_in_body_new[3] = T ( 0.0 );
         cam_in_body_new[4] = -cp;
         cam_in_body_new[5] = -st * sp;
         cam_in_body_new[6] = -ct * sp;
@@ -388,7 +388,7 @@ struct ProjectionError {
         cam_in_body_new[8] = T ( 0.0 );
         cam_in_body_new[9] = -ct;
         cam_in_body_new[10] = st;
-        cam_in_body_new[11] = T ( 0.395 );
+        cam_in_body_new[11] = T ( 0.34 );
         cam_in_body_new[12] = T ( 0.0 );
         cam_in_body_new[13] = T ( 0.0 );
         cam_in_body_new[14] = T ( 0.0 );
